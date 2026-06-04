@@ -421,7 +421,8 @@ h4 {
   gap: 1rem;
 }
 
-.quest-grid {
+.quest-grid,
+.daily-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
@@ -611,14 +612,16 @@ h4 {
 }
 
 .quest-layout,
-.log-layout {
+.log-layout,
+.quest-board {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
   gap: 1rem;
 }
 
 .task-list,
-.board-list {
+.board-list,
+.quest-board {
   display: grid;
   gap: 0.75rem;
 }
@@ -722,8 +725,9 @@ h4 {
 
 .mini-rank {
   display: inline-grid;
-  width: 22px;
+  min-width: 22px;
   height: 22px;
+  padding: 0 0.28rem;
   margin-right: 0.25rem;
   color: #fff8eb;
   background: linear-gradient(120deg, var(--accent), var(--accent-deep));
@@ -858,6 +862,9 @@ h4 {
 }
 
 .cta-form input:focus,
+.guild-form input:focus,
+.guild-form textarea:focus,
+.guild-form select:focus,
 .log-form input:focus,
 .log-form textarea:focus {
   outline: 2px solid color-mix(in srgb, var(--accent) 44%, #fff);
@@ -1006,6 +1013,7 @@ body {
 }
 
 .quest-grid .card::after,
+.daily-grid .card::after,
 .benefit-grid .card::after,
 .daily-quest::after {
   position: absolute;
@@ -1029,20 +1037,44 @@ body {
   content: "III";
 }
 
+.daily-grid .card:nth-child(1)::after {
+  content: "IN";
+}
+
+.daily-grid .card:nth-child(2)::after {
+  content: "Q";
+}
+
+.daily-grid .card:nth-child(3)::after {
+  content: "LOG";
+}
+
+.quest-grid .card:nth-child(4)::after {
+  content: "IV";
+}
+
+.quest-grid .card:nth-child(5)::after {
+  content: "V";
+}
+
+.quest-grid .card:nth-child(6)::after {
+  content: "VI";
+}
+
 .benefit-grid .card:nth-child(1)::after {
-  content: "AI";
+  content: "Q";
 }
 
 .benefit-grid .card:nth-child(2)::after {
-  content: "集";
+  content: "LOG";
 }
 
 .benefit-grid .card:nth-child(3)::after {
-  content: "地";
+  content: "SOON";
 }
 
 .benefit-grid .card:nth-child(4)::after {
-  content: "匠";
+  content: "JOB";
 }
 
 .section h2::after,
@@ -1124,6 +1156,7 @@ body {
   .hero-grid,
   .quest-layout,
   .log-layout,
+  .quest-board,
   .dashboard-grid,
   .dashboard-two,
   .section-head {
@@ -1132,6 +1165,7 @@ body {
   }
 
   .quest-grid,
+  .daily-grid,
   .benefit-grid,
   .voice-grid,
   .room-grid {
