@@ -1,6 +1,7 @@
 const tabs = document.querySelectorAll("[data-tab]");
 const panels = document.querySelectorAll("[role='tabpanel']");
 const logForm = document.querySelector(".log-form");
+const lightRequestForm = document.querySelector(".light-request-form");
 
 tabs.forEach((tab) => {
   tab.addEventListener("click", () => {
@@ -25,6 +26,15 @@ if (logForm) {
     event.preventDefault();
     const button = logForm.querySelector("button");
     button.textContent = "記録済み / +10 XP";
+    button.disabled = true;
+  });
+}
+
+if (lightRequestForm) {
+  lightRequestForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const button = lightRequestForm.querySelector("button");
+    button.textContent = "掲示済み";
     button.disabled = true;
   });
 }

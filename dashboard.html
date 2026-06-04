@@ -33,6 +33,7 @@
           <a href="#today">本日の一手</a>
           <a href="#quests">クエスト</a>
           <a href="#logs">冒険記録</a>
+          <a href="#requests">ライト依頼</a>
           <a href="#coming-soon">Coming Soon</a>
         </nav>
         <a class="btn btn-ghost" href="index.html">LPへ戻る</a>
@@ -192,21 +193,70 @@
         </div>
       </section>
 
+      <section id="requests" class="section section-light">
+        <div class="container dashboard-two">
+          <div>
+            <p class="eyebrow">LIGHT REQUEST BOARD</p>
+            <h2>ライトな協力依頼を出す</h2>
+            <p class="section-copy">利用フィードバック、トライアル利用、モニター募集、SNSでの拡散など、お金のやり取りが発生しない小さな協力を依頼できます。対応した冒険者もXPを獲得できます。</p>
+            <div class="board-list">
+              <article class="post">
+                <span class="category tool">+15 XP</span>
+                <div>
+                  <h3>新しいLPのファーストビューに感想がほしい</h3>
+                  <p><span class="mini-rank">9</span> 利用フィードバック / 所要10分</p>
+                  <a class="text-link" href="#">対応して +15 XP</a>
+                </div>
+              </article>
+              <article class="post">
+                <span class="category success">+20 XP</span>
+                <div>
+                  <h3>β版の予約フォームを試してくれるモニター募集</h3>
+                  <p><span class="mini-rank">14</span> トライアル利用 / 所要15分</p>
+                  <a class="text-link" href="#">対応して +20 XP</a>
+                </div>
+              </article>
+              <article class="post">
+                <span class="category job">+10 XP</span>
+                <div>
+                  <h3>告知ポストの拡散に協力してほしい</h3>
+                  <p><span class="mini-rank">7</span> SNS拡散 / 所要3分</p>
+                  <a class="text-link" href="#">対応して +10 XP</a>
+                </div>
+              </article>
+            </div>
+          </div>
+          <form class="guild-form light-request-form card" action="#" method="post">
+            <p class="eyebrow">POST LIGHT REQUEST</p>
+            <h3>ライト依頼を掲示する</h3>
+            <label for="light-request-title">依頼タイトル</label>
+            <input id="light-request-title" name="light-request-title" type="text" placeholder="例: LPを見て率直な感想がほしい" />
+            <label for="light-request-kind">依頼の種類</label>
+            <select id="light-request-kind" name="light-request-kind">
+              <option>利用フィードバック</option>
+              <option>トライアル利用</option>
+              <option>モニター募集</option>
+              <option>SNSでの拡散</option>
+              <option>軽いレビュー</option>
+              <option>アンケート回答</option>
+            </select>
+            <label for="light-request-body">依頼内容</label>
+            <textarea id="light-request-body" name="light-request-body" rows="5" placeholder="見てほしいURL、所要時間、協力してほしいことを書いてください。"></textarea>
+            <button class="btn btn-solid" type="submit">依頼を掲示する</button>
+          </form>
+        </div>
+      </section>
+
       <section id="coming-soon" class="section section-light">
         <div class="container">
           <p class="eyebrow">COMING SOON</p>
           <h2>これから開放されるギルド機能</h2>
-          <p class="section-copy">クエストで事業を進め、冒険記録で学びを蓄積する。その先には、同じ道を進むソロプレナーとつながり、仕事の機会を広げるギルド機能が待っています。</p>
-          <div class="cards benefit-grid">
+          <p class="section-copy">クエスト、冒険記録、ライト依頼の先には、同じ道を進むソロプレナーとより深くつながるギルド機能が待っています。</p>
+          <div class="cards">
             <article class="card locked-card">
               <span class="lock">準備中</span>
               <h3>ギルドの小部屋</h3>
               <p>起業準備、プロダクト開発、営業、地域など、テーマ別に相談・共有できる部屋を開放予定。</p>
-            </article>
-            <article class="card locked-card">
-              <span class="lock">準備中</span>
-              <h3>仕事の依頼掲示板</h3>
-              <p>得意なことで助け合い、小さな相談や案件につながる掲示板を追加予定。</p>
             </article>
           </div>
         </div>
@@ -220,6 +270,7 @@
           <a href="index.html">トップページ</a>
           <a href="#quests">クエスト</a>
           <a href="#logs">冒険記録</a>
+          <a href="#requests">ライト依頼</a>
         </div>
       </div>
     </footer>
