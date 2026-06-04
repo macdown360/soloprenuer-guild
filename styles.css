@@ -85,6 +85,29 @@ textarea {
 .logo-mark {
   width: 34px;
   height: 34px;
+  background: #fff9ef;
+  overflow: hidden;
+}
+
+.logo-mark svg {
+  width: 24px;
+  height: 24px;
+}
+
+.crest-shield {
+  fill: var(--accent);
+  stroke: var(--accent-deep);
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+}
+
+.crest-panel {
+  fill: color-mix(in srgb, var(--accent-deep) 72%, var(--ink));
+  opacity: 0.82;
+}
+
+.crest-star {
+  fill: #fff8eb;
 }
 
 .logo-text {
