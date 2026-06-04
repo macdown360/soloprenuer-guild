@@ -908,8 +908,8 @@ body {
   overflow: hidden;
   color: #fff8eb;
   background:
-    linear-gradient(90deg, rgba(33, 21, 12, 0.86), rgba(33, 21, 12, 0.58) 46%, rgba(33, 21, 12, 0.22)),
-    url("assets/guild-hero.png") center / cover no-repeat;
+    linear-gradient(90deg, rgba(33, 21, 12, 0.78), rgba(33, 21, 12, 0.48) 46%, rgba(33, 21, 12, 0.08)),
+    url("assets/guild-hero-business-fantasy-human-ears.png") center / cover no-repeat;
 }
 
 .hero-illustrated::after,
@@ -1043,7 +1043,7 @@ body {
   overflow: hidden;
   background:
     linear-gradient(90deg, rgba(242, 238, 229, 0.95), rgba(242, 238, 229, 0.86) 52%, rgba(242, 238, 229, 0.64)),
-    url("assets/guild-hero.png") center / cover no-repeat;
+    url("assets/guild-hero-business-fantasy-human-ears.png") center / cover no-repeat;
 }
 
 .dashboard-hero .container {
