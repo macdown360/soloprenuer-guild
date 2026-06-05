@@ -121,6 +121,13 @@ textarea {
   flex-wrap: wrap;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
 .nav-links a,
 .footer-links a {
   color: var(--ink-soft);
@@ -164,6 +171,46 @@ textarea {
 .btn-outline {
   color: var(--accent-deep);
   background: transparent;
+}
+
+.header-cta {
+  min-height: 44px;
+  min-width: 132px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  padding: 0.7rem 1.05rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 0.24s ease, box-shadow 0.24s ease, background 0.24s ease;
+}
+
+.header-cta:hover {
+  transform: translateY(-2px);
+}
+
+.header-cta-primary {
+  color: #fff8eb;
+  border: 1px solid transparent;
+  background: linear-gradient(120deg, #c17224, #6f3c0f);
+  box-shadow: 0 9px 18px rgba(111, 60, 15, 0.22), inset 0 1px 0 rgba(255, 248, 235, 0.42);
+}
+
+.header-cta-secondary {
+  color: #5c3510;
+  border: 1px solid color-mix(in srgb, var(--accent-deep) 62%, #fff);
+  background: #fffaf0;
+  box-shadow: 0 7px 16px rgba(90, 66, 33, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+.header-cta-primary:focus-visible,
+.header-cta-secondary:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 45%, #fff);
+  outline-offset: 3px;
 }
 
 .section {
@@ -1478,6 +1525,18 @@ body {
     padding: 0.8rem 0;
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .header-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+  }
+
+  .header-cta {
+    width: 100%;
+    min-height: 48px;
   }
 
   .hero {
