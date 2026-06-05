@@ -48,8 +48,28 @@
               <div>
                 <span class="caption">ADVENTURER STATUS</span>
                 <strong>Lv.12 / 事業仮説の探索者</strong>
+                <small>Rank C / 次回昇格まで 180 XP</small>
               </div>
-              <span class="rank-badge">12</span>
+              <span class="rank-badge" aria-label="現在レベル12">C</span>
+            </div>
+            <div class="level-meter">
+              <div class="level-row">
+                <span>Lv.12</span>
+                <strong>820 / 1,000 XP</strong>
+                <span>Lv.13</span>
+              </div>
+              <div class="progress-track" aria-label="次のレベルまでの進捗">
+                <span style="width: 82%"></span>
+              </div>
+            </div>
+            <div class="rank-ladder" aria-label="冒険者ランク">
+              <span class="is-cleared">F</span>
+              <span class="is-cleared">E</span>
+              <span class="is-cleared">D</span>
+              <span class="is-current">C</span>
+              <span>B</span>
+              <span>A</span>
+              <span>S</span>
             </div>
             <div class="progress-track" aria-label="次のランクまでの進捗">
               <span style="width: 64%"></span>
@@ -68,6 +88,11 @@
                 <strong>2/4</strong>
               </article>
             </div>
+            <div class="achievement-row" aria-label="獲得バッジ">
+              <span>初受注</span>
+              <span>7日継続</span>
+              <span>営業5件</span>
+            </div>
             <div class="next-action">
               <span>次の一手</span>
               <strong>営業クエストを1つ完了し、冒険記録に学びを残す。</strong>
@@ -77,12 +102,35 @@
           <div id="today" class="daily-quest card">
             <p class="eyebrow">DAILY QUEST</p>
             <h1>事業を、一歩前へ進める。</h1>
+            <div class="daily-reward">
+              <span>本日の報酬</span>
+              <strong>+80 XP</strong>
+              <span>連続達成 6日目</span>
+            </div>
             <ul class="quest-checks">
               <li><span class="check">✓</span>現在XPと次のランクを確認</li>
               <li><span class="check">✓</span>プロダクト改善メモを1件作成</li>
               <li><span class="check">3</span>見込み客候補を5件リストアップ</li>
               <li><span class="check">4</span>冒険記録に学びを残して +10 XP</li>
             </ul>
+            <div class="party-stats" aria-label="事業ステータス">
+              <article>
+                <span>仮説</span>
+                <strong>72</strong>
+              </article>
+              <article>
+                <span>実装</span>
+                <strong>58</strong>
+              </article>
+              <article>
+                <span>営業</span>
+                <strong>64</strong>
+              </article>
+              <article>
+                <span>発信</span>
+                <strong>41</strong>
+              </article>
+            </div>
           </div>
         </div>
       </section>
@@ -101,49 +149,73 @@
             <article class="task">
               <span class="check">起</span>
               <div>
-                <span class="pill">起業準備 / +20 XP</span>
+                <div class="task-meta">
+                  <span class="pill">起業準備 / +20 XP</span>
+                  <span class="difficulty">★☆☆</span>
+                </div>
                 <h3>顧客インタビューの質問を10個作る</h3>
                 <p>誰に何を聞くかを明確にし、最初のヒアリング依頼を送る。</p>
+                <div class="mini-progress"><span style="width: 40%"></span></div>
               </div>
             </article>
             <article class="task">
               <span class="check">事</span>
               <div>
-                <span class="pill">事業作り / +30 XP</span>
+                <div class="task-meta">
+                  <span class="pill">事業作り / +30 XP</span>
+                  <span class="difficulty">★★☆</span>
+                </div>
                 <h3>価格と提供範囲を1枚にまとめる</h3>
                 <p>初回商品、継続商品、追加支援の境界を決める。</p>
+                <div class="mini-progress"><span style="width: 62%"></span></div>
               </div>
             </article>
             <article class="task">
               <span class="check">作</span>
               <div>
-                <span class="pill">プロダクト作り / +40 XP</span>
+                <div class="task-meta">
+                  <span class="pill">プロダクト作り / +40 XP</span>
+                  <span class="difficulty">★★★</span>
+                </div>
                 <h3>MVPの申込導線を公開する</h3>
                 <p>LP、フォーム、返信文を用意し、1人に見せられる状態にする。</p>
+                <div class="mini-progress"><span style="width: 24%"></span></div>
               </div>
             </article>
             <article class="task">
               <span class="check">営</span>
               <div>
-                <span class="pill">営業 / +30 XP</span>
+                <div class="task-meta">
+                  <span class="pill">営業 / +30 XP</span>
+                  <span class="difficulty">★★☆</span>
+                </div>
                 <h3>見込み客候補を5件リストアップする</h3>
                 <p>相手の課題仮説、送る一文、次のアクションまで書く。</p>
+                <div class="mini-progress"><span style="width: 80%"></span></div>
               </div>
             </article>
             <article class="task">
               <span class="check">売</span>
               <div>
-                <span class="pill">販売 / +25 XP</span>
+                <div class="task-meta">
+                  <span class="pill">販売 / +25 XP</span>
+                  <span class="difficulty">★★☆</span>
+                </div>
                 <h3>購入前の不安を3つ潰す</h3>
                 <p>FAQ、実績、返金条件、導入手順のどれかを改善する。</p>
+                <div class="mini-progress"><span style="width: 50%"></span></div>
               </div>
             </article>
             <article class="task">
               <span class="check">認</span>
               <div>
-                <span class="pill">周知・認知 / +20 XP</span>
+                <div class="task-meta">
+                  <span class="pill">周知・認知 / +20 XP</span>
+                  <span class="difficulty">★☆☆</span>
+                </div>
                 <h3>学びをSNSかブログに公開する</h3>
                 <p>冒険記録から1つ選び、外部発信に転用する。</p>
+                <div class="mini-progress"><span style="width: 34%"></span></div>
               </div>
             </article>
           </div>
@@ -197,7 +269,7 @@
         <div class="container dashboard-two">
           <div>
             <p class="eyebrow">LIGHT REQUEST BOARD</p>
-            <h2>ライトな協力依頼を出す</h2>
+            <h2>協力依頼を出す</h2>
             <p class="section-copy">利用フィードバック、トライアル利用、モニター募集、SNSでの拡散など、お金のやり取りが発生しない小さな協力を依頼できます。対応した冒険者もXPを獲得できます。</p>
             <div class="board-list">
               <article class="post">
@@ -228,7 +300,7 @@
           </div>
           <form class="guild-form light-request-form card" action="#" method="post">
             <p class="eyebrow">POST LIGHT REQUEST</p>
-            <h3>ライト依頼を掲示する</h3>
+            <h3>協力依頼を掲示する</h3>
             <label for="light-request-title">依頼タイトル</label>
             <input id="light-request-title" name="light-request-title" type="text" placeholder="例: LPを見て率直な感想がほしい" />
             <label for="light-request-kind">依頼の種類</label>

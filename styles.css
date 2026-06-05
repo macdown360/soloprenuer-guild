@@ -331,13 +331,41 @@ h4 {
   font-size: 1.15rem;
 }
 
+.status-head small {
+  display: block;
+  margin-top: 0.18rem;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+}
+
 .rank-badge {
   width: 48px;
   height: 48px;
   color: #fff8eb;
-  background: linear-gradient(120deg, var(--accent), var(--accent-deep));
+  background:
+    radial-gradient(circle at 34% 24%, rgba(255, 248, 235, 0.72), transparent 22%),
+    linear-gradient(120deg, var(--accent), var(--accent-deep));
   border-color: transparent;
   font-size: 1.35rem;
+}
+
+.level-meter {
+  margin-top: 1rem;
+}
+
+.level-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+}
+
+.level-row strong {
+  color: var(--accent-deep);
+  text-align: center;
+  font-size: 0.9rem;
 }
 
 .progress-track {
@@ -352,7 +380,42 @@ h4 {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(120deg, var(--accent), var(--accent-deep));
+  background:
+    linear-gradient(90deg, rgba(255, 248, 235, 0.42), transparent 24%, rgba(255, 248, 235, 0.28) 48%, transparent 72%),
+    linear-gradient(120deg, var(--accent), var(--accent-deep));
+  background-size: 48px 100%, auto;
+}
+
+.rank-ladder {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin-top: 1rem;
+}
+
+.rank-ladder span {
+  min-height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--line) 70%, #fff);
+  border-radius: 7px;
+  color: var(--ink-soft);
+  background: rgba(255, 249, 239, 0.68);
+  font-family: "Shippori Mincho", serif;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.rank-ladder .is-cleared {
+  color: var(--accent-deep);
+  background: color-mix(in srgb, var(--line) 22%, #fff);
+}
+
+.rank-ladder .is-current {
+  color: #fff8eb;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+  box-shadow: 0 8px 18px rgba(146, 90, 26, 0.18);
 }
 
 .status-grid {
@@ -384,6 +447,28 @@ h4 {
   color: var(--accent-deep);
   font-size: 1.3rem;
   line-height: 1.2;
+}
+
+.achievement-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+  margin-top: 0.75rem;
+}
+
+.achievement-row span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  border: 1px solid color-mix(in srgb, var(--line) 78%, #fff);
+  border-radius: 999px;
+  padding: 0.18rem 0.62rem;
+  color: var(--accent-deep);
+  background:
+    radial-gradient(circle at 18% 30%, rgba(255, 248, 235, 0.95), transparent 18%),
+    color-mix(in srgb, var(--line) 22%, #fff);
+  font-size: 0.72rem;
+  font-weight: 700;
 }
 
 .next-action {
@@ -634,6 +719,21 @@ h4 {
   box-shadow: none;
 }
 
+.task-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 0.4rem;
+}
+
+.difficulty {
+  color: var(--accent-deep);
+  font-size: 0.76rem;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
 .task p,
 .room-card p,
 .post p,
@@ -653,6 +753,21 @@ h4 {
   color: var(--accent-deep);
   font-size: 0.82rem;
   font-weight: 700;
+}
+
+.mini-progress {
+  height: 7px;
+  margin-top: 0.7rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--line) 28%, #fff);
+}
+
+.mini-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--accent-deep));
 }
 
 .task.is-done {
@@ -787,6 +902,31 @@ h4 {
   font-size: clamp(1.8rem, 3.4vw, 3rem);
 }
 
+.daily-reward {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 1rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--line) 70%, #fff);
+  border-radius: 9px;
+  background:
+    linear-gradient(120deg, rgba(255, 248, 235, 0.92), rgba(216, 177, 115, 0.22)),
+    #fff9ef;
+}
+
+.daily-reward span {
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+}
+
+.daily-reward strong {
+  color: var(--accent-deep);
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
 .quest-checks {
   list-style: none;
   margin: 1rem 0 0;
@@ -800,6 +940,35 @@ h4 {
   align-items: center;
   gap: 0.65rem;
   color: var(--ink-soft);
+}
+
+.party-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.party-stats article {
+  min-height: 70px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  border: 1px solid color-mix(in srgb, var(--line) 64%, #fff);
+  border-radius: 8px;
+  background: rgba(255, 249, 239, 0.68);
+}
+
+.party-stats span {
+  color: var(--ink-soft);
+  font-size: 0.75rem;
+}
+
+.party-stats strong {
+  color: var(--accent-deep);
+  font-family: "Shippori Mincho", serif;
+  font-size: 1.45rem;
+  line-height: 1.1;
 }
 
 .guild-form {
@@ -1246,6 +1415,20 @@ body {
   .post,
   .status-grid {
     grid-template-columns: 1fr;
+  }
+
+  .daily-reward {
+    align-items: flex-start;
+    grid-template-columns: 1fr;
+  }
+
+  .task-meta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .party-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .status-grid article {
