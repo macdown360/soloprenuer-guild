@@ -890,6 +890,99 @@ h4 {
   border-bottom: 1px solid color-mix(in srgb, var(--line) 74%, #fff);
 }
 
+.charter-hero {
+  padding: 88px 0 58px;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 74%, #fff);
+}
+
+.charter-hero-inner {
+  max-width: 840px;
+}
+
+.charter-hero .lead {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+.charter-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 1.5rem;
+}
+
+.charter-meta span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  border: 1px solid color-mix(in srgb, var(--line) 78%, #fff);
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  color: var(--accent-deep);
+  background: rgba(255, 249, 239, 0.74);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.charter-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.32fr) minmax(0, 1fr);
+  gap: 1.2rem;
+  align-items: start;
+}
+
+.charter-toc {
+  position: sticky;
+  top: 96px;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.charter-toc a {
+  display: block;
+  border-radius: 8px;
+  padding: 0.42rem 0.55rem;
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+.charter-toc a:hover {
+  color: var(--accent-deep);
+  background: rgba(255, 249, 239, 0.82);
+}
+
+.charter-body {
+  display: grid;
+  gap: 1rem;
+}
+
+.charter-section {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.9rem;
+  padding: 1.2rem;
+  scroll-margin-top: 96px;
+}
+
+.charter-section h2 {
+  font-size: clamp(1.35rem, 2.3vw, 1.9rem);
+}
+
+.charter-section p {
+  margin: 0.7rem 0 0;
+  color: var(--ink-soft);
+}
+
+.charter-section ul {
+  margin: 0.75rem 0 0;
+  padding-left: 1.2rem;
+  color: var(--ink-soft);
+}
+
+.charter-section li + li {
+  margin-top: 0.35rem;
+}
+
 .dashboard-grid,
 .dashboard-two {
   display: grid;
@@ -1328,9 +1421,14 @@ body {
   .quest-board,
   .dashboard-grid,
   .dashboard-two,
+  .charter-layout,
   .section-head {
     grid-template-columns: 1fr;
     display: grid;
+  }
+
+  .charter-toc {
+    position: static;
   }
 
   .quest-grid,
@@ -1413,7 +1511,8 @@ body {
   }
 
   .post,
-  .status-grid {
+  .status-grid,
+  .charter-section {
     grid-template-columns: 1fr;
   }
 
