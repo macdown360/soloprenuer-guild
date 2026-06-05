@@ -30,8 +30,9 @@
           <span class="logo-text">ソロプレナー・ギルド</span>
         </a>
         <nav class="nav-links" aria-label="ギルドメニュー">
-          <a href="#today">本日の一手</a>
+          <a href="#today">今日の鍛錬</a>
           <a href="#quests">クエスト</a>
+          <a href="#rank">ランク</a>
           <a href="#logs">冒険記録</a>
           <a href="#requests">協力依頼</a>
         </nav>
@@ -40,25 +41,25 @@
     </header>
 
     <main>
-      <section class="dashboard-hero section-tone">
+      <section id="today" class="dashboard-hero section-tone">
         <div class="container dashboard-grid">
-          <div class="guild-status">
+          <div class="guild-status workout-status">
             <div class="status-head">
               <div>
-                <span class="caption">ADVENTURER STATUS</span>
-                <strong>Lv.12 / 事業仮説の探索者</strong>
-                <small>Rank C / 次回昇格まで 180 XP</small>
+                <span class="caption">BUSINESS WORKOUT STATUS</span>
+                <strong>Rank C / 収益冒険者</strong>
+                <small>次のRank Bまで 680 XP / 取引完了あと2件</small>
               </div>
-              <span class="rank-badge" aria-label="現在レベル12">C</span>
+              <span class="rank-badge" aria-label="現在ランクC">C</span>
             </div>
             <div class="level-meter">
               <div class="level-row">
-                <span>Lv.12</span>
-                <strong>820 / 1,000 XP</strong>
-                <span>Lv.13</span>
+                <span>Rank C</span>
+                <strong>820 / 1,500 XP</strong>
+                <span>Rank B</span>
               </div>
-              <div class="progress-track" aria-label="次のレベルまでの進捗">
-                <span style="width: 82%"></span>
+              <div class="progress-track" aria-label="次のランクまでの進捗">
+                <span style="width: 55%"></span>
               </div>
             </div>
             <div class="rank-ladder" aria-label="冒険者ランク">
@@ -70,65 +71,106 @@
               <span>A</span>
               <span>S</span>
             </div>
-            <div class="progress-track" aria-label="次のランクまでの進捗">
-              <span style="width: 64%"></span>
-            </div>
             <div class="status-grid">
               <article>
-                <span>現在XP</span>
+                <span>累計XP</span>
                 <strong>820</strong>
               </article>
               <article>
-                <span>実践記録</span>
-                <strong>8本</strong>
+                <span>ストリーク</span>
+                <strong>7日</strong>
               </article>
               <article>
-                <span>本日の任務</span>
-                <strong>2/4</strong>
+                <span>今週達成</span>
+                <strong>68%</strong>
               </article>
             </div>
             <div class="achievement-row" aria-label="獲得バッジ">
-              <span>初受注</span>
               <span>7日継続</span>
-              <span>営業5件</span>
+              <span>初相談募集</span>
+              <span>助かった10件</span>
+              <span>営業3件</span>
+            </div>
+            <div class="xp-limits">
+              <article>
+                <span>通常XP</span>
+                <strong>30 / 50</strong>
+              </article>
+              <article>
+                <span>貢献XP</span>
+                <strong>25 / 80</strong>
+              </article>
+              <article>
+                <span>営業・取引XP</span>
+                <strong>上限なし</strong>
+              </article>
             </div>
             <div class="next-action">
               <span>次の一手</span>
-              <strong>営業クエストを1つ完了し、冒険記録に学びを残す。</strong>
+              <strong>見込み客を1人リストアップし、相談募集文を1つ下書きする。</strong>
             </div>
           </div>
 
-          <div id="today" class="daily-quest card">
-            <p class="eyebrow">DAILY QUEST</p>
-            <h1>事業を、一歩前へ進める。</h1>
-            <div class="daily-reward">
-              <span>本日の報酬</span>
-              <strong>+80 XP</strong>
-              <span>連続達成 6日目</span>
+          <div class="daily-quest card workout-card">
+            <div class="workout-head">
+              <div>
+                <p class="eyebrow">TODAY'S 3 QUESTS</p>
+                <h1>今日の事業筋トレ</h1>
+              </div>
+              <span class="workout-type">営業強化日</span>
             </div>
-            <ul class="quest-checks">
-              <li><span class="check">✓</span>現在XPと次のランクを確認</li>
-              <li><span class="check">✓</span>プロダクト改善メモを1件作成</li>
-              <li><span class="check">3</span>見込み客候補を5件リストアップ</li>
-              <li><span class="check">4</span>冒険記録に学びを残して +10 XP</li>
-            </ul>
-            <div class="party-stats" aria-label="事業ステータス">
-              <article>
-                <span>仮説</span>
-                <strong>72</strong>
+            <div class="daily-reward">
+              <span>本日の見込み報酬</span>
+              <strong>+45 XP</strong>
+              <span>7日ストリーク / XP 1.2倍</span>
+            </div>
+            <div class="workout-calendar" aria-label="今週のワークアウト記録">
+              <span class="is-done">月</span>
+              <span class="is-done">火</span>
+              <span class="is-done">水</span>
+              <span class="is-done">木</span>
+              <span class="is-today">金</span>
+              <span>土</span>
+              <span class="is-rest">休</span>
+            </div>
+            <div class="workout-quests" aria-label="今日の3クエスト">
+              <article class="workout-item is-complete">
+                <span class="check">✓</span>
+                <div>
+                  <div class="task-meta">
+                    <span class="pill">軽い行動 / 5分 / 発信筋</span>
+                    <span class="difficulty">+10 XP</span>
+                  </div>
+                  <h3>昨日の作業を冒険記録に残す</h3>
+                  <p>小さな行動も記録し、事業ログとして積み上げる。</p>
+                </div>
               </article>
-              <article>
-                <span>実装</span>
-                <strong>58</strong>
+              <article class="workout-item">
+                <span class="check">2</span>
+                <div>
+                  <div class="task-meta">
+                    <span class="pill">事業前進 / 15分 / 営業筋</span>
+                    <span class="difficulty">+25 XP</span>
+                  </div>
+                  <h3>見込み客を1人リストアップする</h3>
+                  <p>相手の課題仮説、送る一文、次のアクションまで書く。</p>
+                </div>
               </article>
-              <article>
-                <span>営業</span>
-                <strong>64</strong>
+              <article class="workout-item">
+                <span class="check">3</span>
+                <div>
+                  <div class="task-meta">
+                    <span class="pill">信頼貢献 / 5分 / 信頼筋</span>
+                    <span class="difficulty">+10 XP</span>
+                  </div>
+                  <h3>他の冒険者の相談に1件コメントする</h3>
+                  <p>相手の次の一歩が明確になるように、具体的な観点を返す。</p>
+                </div>
               </article>
-              <article>
-                <span>発信</span>
-                <strong>41</strong>
-              </article>
+            </div>
+            <div class="recovery-note">
+              <strong>休息日ルール</strong>
+              <span>月2回まで休息日を使えます。XPボーナスは付きませんが、ストリークは途切れません。</span>
             </div>
           </div>
         </div>
@@ -138,84 +180,196 @@
         <div class="container">
           <div class="section-head">
             <div>
-              <p class="eyebrow">QUEST BOARD</p>
-              <h2>事業を前に進めるクエスト</h2>
-              <p>起業から販売まで、事業の前進につながる行動だけを並べます。</p>
+              <p class="eyebrow">QUEST WORKOUT</p>
+              <h2>事業筋トレを記録・管理する</h2>
+              <p>クエストは一度きりの達成項目ではなく、日々の行動量と負荷を積み上げるワークアウトです。</p>
             </div>
-            <a class="btn btn-outline" href="#logs">学びを残す</a>
+            <a class="btn btn-outline" href="#logs">今日の記録を書く</a>
           </div>
-          <div class="quest-board">
-            <article class="task">
-              <span class="check">起</span>
-              <div>
-                <div class="task-meta">
-                  <span class="pill">起業準備 / +20 XP</span>
-                  <span class="difficulty">★☆☆</span>
-                </div>
-                <h3>顧客インタビューの質問を10個作る</h3>
-                <p>誰に何を聞くかを明確にし、最初のヒアリング依頼を送る。</p>
-                <div class="mini-progress"><span style="width: 40%"></span></div>
-              </div>
+
+          <div class="workout-summary">
+            <article class="card">
+              <span class="chip">今週</span>
+              <strong>17</strong>
+              <p>完了クエスト</p>
             </article>
-            <article class="task">
-              <span class="check">事</span>
-              <div>
-                <div class="task-meta">
-                  <span class="pill">事業作り / +30 XP</span>
-                  <span class="difficulty">★★☆</span>
-                </div>
-                <h3>価格と提供範囲を1枚にまとめる</h3>
-                <p>初回商品、継続商品、追加支援の境界を決める。</p>
-                <div class="mini-progress"><span style="width: 62%"></span></div>
-              </div>
+            <article class="card">
+              <span class="chip">月間</span>
+              <strong>330 XP</strong>
+              <p>獲得XP</p>
             </article>
-            <article class="task">
-              <span class="check">作</span>
-              <div>
-                <div class="task-meta">
-                  <span class="pill">プロダクト作り / +40 XP</span>
-                  <span class="difficulty">★★★</span>
-                </div>
-                <h3>MVPの申込導線を公開する</h3>
-                <p>LP、フォーム、返信文を用意し、1人に見せられる状態にする。</p>
-                <div class="mini-progress"><span style="width: 24%"></span></div>
-              </div>
+            <article class="card">
+              <span class="chip">営業</span>
+              <strong>4件</strong>
+              <p>ヒアリング・応募</p>
             </article>
-            <article class="task">
-              <span class="check">営</span>
-              <div>
-                <div class="task-meta">
-                  <span class="pill">営業 / +30 XP</span>
-                  <span class="difficulty">★★☆</span>
-                </div>
-                <h3>見込み客候補を5件リストアップする</h3>
-                <p>相手の課題仮説、送る一文、次のアクションまで書く。</p>
-                <div class="mini-progress"><span style="width: 80%"></span></div>
-              </div>
+            <article class="card">
+              <span class="chip">信頼</span>
+              <strong>12</strong>
+              <p>助かった・コメント</p>
             </article>
-            <article class="task">
-              <span class="check">売</span>
-              <div>
-                <div class="task-meta">
-                  <span class="pill">販売 / +25 XP</span>
-                  <span class="difficulty">★★☆</span>
-                </div>
-                <h3>購入前の不安を3つ潰す</h3>
-                <p>FAQ、実績、返金条件、導入手順のどれかを改善する。</p>
-                <div class="mini-progress"><span style="width: 50%"></span></div>
+          </div>
+
+          <div class="training-grid" aria-label="事業筋トレの5領域">
+            <article class="training-card card">
+              <div class="training-head">
+                <span class="icon">発</span>
+                <strong>発信筋</strong>
+                <small>今週 5回</small>
               </div>
+              <p>SNS投稿、note、冒険記録、事例紹介、失敗談共有。</p>
+              <div class="mini-progress"><span style="width: 72%"></span></div>
             </article>
-            <article class="task">
-              <span class="check">認</span>
-              <div>
-                <div class="task-meta">
-                  <span class="pill">周知・認知 / +20 XP</span>
-                  <span class="difficulty">★☆☆</span>
-                </div>
-                <h3>学びをSNSかブログに公開する</h3>
-                <p>冒険記録から1つ選び、外部発信に転用する。</p>
-                <div class="mini-progress"><span style="width: 34%"></span></div>
+            <article class="training-card card">
+              <div class="training-head">
+                <span class="icon">商</span>
+                <strong>商品化筋</strong>
+                <small>今週 3回</small>
               </div>
+              <p>提供メニュー、価格設定、サービス説明文、FAQ作成。</p>
+              <div class="mini-progress"><span style="width: 58%"></span></div>
+            </article>
+            <article class="training-card card is-focus">
+              <div class="training-head">
+                <span class="icon">営</span>
+                <strong>営業筋</strong>
+                <small>強化中</small>
+              </div>
+              <p>見込み客リスト、ヒアリング、相談募集、提案文、依頼応募。</p>
+              <div class="mini-progress"><span style="width: 46%"></span></div>
+            </article>
+            <article class="training-card card">
+              <div class="training-head">
+                <span class="icon">信</span>
+                <strong>信頼筋</strong>
+                <small>今週 6回</small>
+              </div>
+              <p>コメント、助かった獲得、レビュー、実績報告、他者紹介。</p>
+              <div class="mini-progress"><span style="width: 66%"></span></div>
+            </article>
+            <article class="training-card card">
+              <div class="training-head">
+                <span class="icon">運</span>
+                <strong>運営筋</strong>
+                <small>今週 2回</small>
+              </div>
+              <p>タスク整理、収支確認、顧客管理、テンプレート化、振り返り。</p>
+              <div class="mini-progress"><span style="width: 34%"></span></div>
+            </article>
+          </div>
+
+          <div class="quest-library">
+            <article class="card quest-column">
+              <span class="chip">DAILY / 5-20分</span>
+              <h3>デイリークエスト</h3>
+              <ul class="quest-menu">
+                <li><span>発信筋</span>冒険記録を1件書く <strong>+10 XP</strong></li>
+                <li><span>商品化筋</span>商品説明を1文だけ改善する <strong>+10 XP</strong></li>
+                <li><span>営業筋</span>見込み客を1人リストアップする <strong>+10 XP</strong></li>
+                <li><span>信頼筋</span>他の冒険者にコメントする <strong>+5 XP</strong></li>
+              </ul>
+            </article>
+            <article class="card quest-column">
+              <span class="chip">WEEKLY / 少し重め</span>
+              <h3>ウィークリークエスト</h3>
+              <ul class="quest-menu">
+                <li><span>商品化筋</span>提供メニューを1つ作る <strong>+30 XP</strong></li>
+                <li><span>営業筋</span>相談募集を1回出す <strong>+40 XP</strong></li>
+                <li><span>営業筋</span>見込み客3人にヒアリングする <strong>+50 XP</strong></li>
+                <li><span>運営筋</span>週次振り返りを書く <strong>+50 XP</strong></li>
+              </ul>
+            </article>
+            <article class="card quest-column">
+              <span class="chip">CHALLENGE</span>
+              <h3>チャレンジクエスト</h3>
+              <ul class="quest-menu">
+                <li><span>7日間</span>プロフィール改善チャレンジ <strong>+150 XP</strong></li>
+                <li><span>14日間</span>発信チャレンジ <strong>+150 XP</strong></li>
+                <li><span>30日間</span>初売上チャレンジ <strong>+300 XP</strong></li>
+                <li><span>集中</span>営業DM改善チャレンジ <strong>+150 XP</strong></li>
+              </ul>
+            </article>
+            <article class="card quest-column">
+              <span class="chip">MILESTONE</span>
+              <h3>マイルストーン</h3>
+              <ul class="quest-menu">
+                <li><span>収益</span>初めて有料相談を販売する <strong>+200 XP</strong></li>
+                <li><span>取引</span>初めて依頼を受注する <strong>+200 XP</strong></li>
+                <li><span>成長</span>月商10万円を達成する <strong>+500 XP</strong></li>
+                <li><span>貢献</span>勉強会を主催する <strong>+300 XP</strong></li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="load-levels card">
+            <div>
+              <p class="eyebrow">LOAD LEVEL</p>
+              <h3>負荷はランクに合わせて上がる</h3>
+              <p>営業が怖い行為にならないよう、書く、公開する、対話する、提案する、改善するの順に階段を作ります。</p>
+            </div>
+            <ol>
+              <li><strong>Lv.1 着手</strong><span>商品アイデアを1行で書く</span></li>
+              <li><strong>Lv.2 公開</strong><span>相談募集をギルド内に投稿する</span></li>
+              <li><strong>Lv.3 対話</strong><span>見込み客にヒアリングする</span></li>
+              <li><strong>Lv.4 提案</strong><span>依頼掲示板に応募する</span></li>
+              <li><strong>Lv.5 成約・改善</strong><span>初回相談後に提案文を改善する</span></li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section id="rank" class="section section-tone">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">RANK PROGRAM</p>
+              <h2>ランクは実力の変化で上がる</h2>
+              <p>累計XPだけでなく、冒険記録、営業行動、取引、レビュー、貢献実績を組み合わせて昇格します。</p>
+            </div>
+            <a class="btn btn-outline" href="#quests">クエストを見る</a>
+          </div>
+          <div class="rank-program">
+            <article class="rank-card card is-cleared">
+              <span class="rank-circle">F</span>
+              <h3>見習い冒険者</h3>
+              <p>登録直後。プロフィール入力、投稿閲覧、冒険記録、コメント、デイリー参加が可能。</p>
+              <strong>条件: 会員登録 / 基本プロフィール入力</strong>
+            </article>
+            <article class="rank-card card is-cleared">
+              <span class="rank-circle">E</span>
+              <h3>発信者</h3>
+              <p>自分のことを外に出し始めた状態。依頼掲示板の閲覧と発信チャレンジが開放。</p>
+              <strong>条件: 100 XP / 冒険記録3件 / プロフィール80%</strong>
+            </article>
+            <article class="rank-card card is-cleared">
+              <span class="rank-circle">D</span>
+              <h3>実践者</h3>
+              <p>商品化と営業行動を開始。依頼への応募、小さな相談依頼、作業会参加が開放。</p>
+              <strong>条件: 300 XP / 提供メニュー1つ / 営業系3件</strong>
+            </article>
+            <article class="rank-card card is-current">
+              <span class="rank-circle">C</span>
+              <h3>収益冒険者</h3>
+              <p>初収益または初案件に到達。依頼投稿の優先表示、成功事例掲載候補、有料相談メニュー掲載が開放。</p>
+              <strong>条件: 700 XP / 初収益または依頼成立 / 助かった10件 / 7日ストリーク</strong>
+            </article>
+            <article class="rank-card card">
+              <span class="rank-circle">B</span>
+              <h3>熟練ソロプレナー</h3>
+              <p>継続的に仕事を受けられる状態。メンター申請、勉強会主催、プロフィール強調表示が開放。</p>
+              <strong>条件: 1,500 XP / 取引完了3件 / レビュー2件 / 月商10万円または継続契約</strong>
+            </article>
+            <article class="rank-card card">
+              <span class="rank-circle">A</span>
+              <h3>貢献者</h3>
+              <p>自分だけでなく他者の成長にも貢献。ギルドリーダー申請、公式ナレッジ掲載が開放。</p>
+              <strong>条件: 3,500 XP / メンタリング5回 / 助かった50件 / 安定受注実績</strong>
+            </article>
+            <article class="rank-card card">
+              <span class="rank-circle">S</span>
+              <h3>ギルドマスター級</h3>
+              <p>ギルド全体に大きく貢献する象徴的メンバー。公式メンター、共同企画、パートナー連携が開放。</p>
+              <strong>条件: 7,000 XP / 後進支援 / 推薦 / 運営審査 / 高い取引評価</strong>
             </article>
           </div>
         </div>

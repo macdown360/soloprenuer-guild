@@ -1042,6 +1042,321 @@ h4 {
   font-size: clamp(1.8rem, 3.4vw, 3rem);
 }
 
+.workout-status {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.xp-limits {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.xp-limits article,
+.workout-summary article {
+  border: 1px solid color-mix(in srgb, var(--line) 64%, #fff);
+  border-radius: 8px;
+  padding: 0.72rem;
+  background: rgba(255, 249, 239, 0.72);
+}
+
+.xp-limits span,
+.workout-summary p,
+.training-head small,
+.quest-menu span,
+.load-levels span {
+  color: var(--ink-soft);
+  font-size: 0.76rem;
+}
+
+.xp-limits strong,
+.workout-summary strong {
+  display: block;
+  color: var(--accent-deep);
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+
+.workout-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.workout-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.workout-type {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  border: 1px solid color-mix(in srgb, var(--accent-deep) 58%, #fff);
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  color: #fff8eb;
+  background: linear-gradient(120deg, var(--accent), var(--accent-deep));
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.workout-quests {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.workout-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.42rem;
+}
+
+.workout-calendar span {
+  min-height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--line) 64%, #fff);
+  border-radius: 8px;
+  color: var(--ink-soft);
+  background: rgba(255, 249, 239, 0.68);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.workout-calendar .is-done {
+  color: #fff8eb;
+  border-color: transparent;
+  background: linear-gradient(120deg, var(--accent), var(--accent-deep));
+}
+
+.workout-calendar .is-today {
+  color: var(--accent-deep);
+  border-color: var(--accent-deep);
+  background: #fff9ef;
+  box-shadow: inset 0 0 0 2px rgba(255, 248, 235, 0.72);
+}
+
+.workout-calendar .is-rest {
+  color: #6f6047;
+  background: color-mix(in srgb, var(--line) 20%, #fff);
+}
+
+.workout-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--line) 64%, #fff);
+  border-radius: 10px;
+  background: rgba(255, 249, 239, 0.72);
+}
+
+.workout-item.is-complete {
+  background: color-mix(in srgb, var(--line) 20%, #fff);
+}
+
+.workout-item h3 {
+  font-size: 1rem;
+}
+
+.workout-item p {
+  margin-top: 0.24rem;
+}
+
+.recovery-note {
+  display: grid;
+  gap: 0.18rem;
+  border: 1px dashed color-mix(in srgb, var(--line) 80%, #fff);
+  border-radius: 10px;
+  padding: 0.85rem;
+  background: #fff9ef;
+}
+
+.recovery-note strong {
+  color: var(--accent-deep);
+}
+
+.recovery-note span {
+  color: var(--ink-soft);
+  font-size: 0.86rem;
+}
+
+.workout-summary,
+.training-grid,
+.quest-library,
+.rank-program {
+  display: grid;
+  gap: 1rem;
+}
+
+.workout-summary {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 1rem;
+}
+
+.workout-summary article {
+  box-shadow: none;
+}
+
+.workout-summary strong {
+  margin-top: 0.45rem;
+  font-family: "Shippori Mincho", serif;
+  font-size: 1.8rem;
+}
+
+.workout-summary p {
+  margin: 0.15rem 0 0;
+}
+
+.training-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-bottom: 1rem;
+}
+
+.training-card {
+  min-height: 180px;
+}
+
+.training-card.is-focus {
+  border-color: var(--accent-deep);
+  box-shadow: 0 12px 26px rgba(146, 90, 26, 0.16);
+}
+
+.training-head {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.training-head small {
+  grid-column: 2;
+  line-height: 1;
+}
+
+.training-card p {
+  min-height: 74px;
+}
+
+.quest-library {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 1rem;
+}
+
+.quest-column h3 {
+  margin-top: 0.6rem;
+  font-size: 1.05rem;
+}
+
+.quest-menu {
+  list-style: none;
+  margin: 0.8rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.quest-menu li {
+  display: grid;
+  gap: 0.16rem;
+  border-top: 1px solid color-mix(in srgb, var(--line) 55%, #fff);
+  padding-top: 0.55rem;
+  color: var(--ink);
+  font-size: 0.88rem;
+}
+
+.quest-menu li:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.quest-menu strong {
+  color: var(--accent-deep);
+  font-size: 0.82rem;
+}
+
+.load-levels {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.7fr) minmax(0, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.load-levels h3 {
+  font-size: 1.12rem;
+}
+
+.load-levels p {
+  margin-top: 0.45rem;
+  color: var(--ink-soft);
+}
+
+.load-levels ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.load-levels li {
+  display: grid;
+  grid-template-columns: minmax(96px, 0.34fr) 1fr;
+  gap: 0.65rem;
+  align-items: center;
+  border: 1px solid color-mix(in srgb, var(--line) 58%, #fff);
+  border-radius: 8px;
+  padding: 0.55rem 0.7rem;
+  background: rgba(255, 249, 239, 0.68);
+}
+
+.load-levels strong {
+  color: var(--accent-deep);
+  font-size: 0.86rem;
+}
+
+.rank-program {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.rank-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem 0.75rem;
+  box-shadow: none;
+}
+
+.rank-card h3 {
+  align-self: center;
+  font-size: 1.05rem;
+}
+
+.rank-card p,
+.rank-card strong {
+  grid-column: 2;
+}
+
+.rank-card p {
+  margin-top: 0;
+}
+
+.rank-card strong {
+  color: var(--accent-deep);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.rank-card.is-current {
+  border-color: var(--accent-deep);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.58), transparent 42%),
+    #fff9ef;
+}
+
 .daily-reward {
   display: grid;
   grid-template-columns: auto auto 1fr;
@@ -1487,7 +1802,18 @@ body {
   .daily-grid,
   .benefit-grid,
   .voice-grid,
-  .room-grid {
+  .room-grid,
+  .training-grid,
+  .quest-library,
+  .rank-program {
+    grid-template-columns: 1fr;
+  }
+
+  .workout-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .load-levels {
     grid-template-columns: 1fr;
   }
 
@@ -1583,6 +1909,28 @@ body {
   .daily-reward {
     align-items: flex-start;
     grid-template-columns: 1fr;
+  }
+
+  .workout-head {
+    flex-direction: column;
+  }
+
+  .workout-type {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .workout-summary,
+  .xp-limits,
+  .workout-item,
+  .load-levels li,
+  .rank-card {
+    grid-template-columns: 1fr;
+  }
+
+  .rank-card p,
+  .rank-card strong {
+    grid-column: auto;
   }
 
   .task-meta {
