@@ -151,6 +151,13 @@ a {
   transform: translateY(-2px);
 }
 
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+  transform: none;
+  box-shadow: none;
+}
+
 .btn [data-lucide] {
   width: 15px;
   height: 15px;
@@ -484,6 +491,11 @@ h3 {
   cursor: pointer;
 }
 
+.quest-card.is-closed {
+  cursor: default;
+  opacity: 0.72;
+}
+
 .quest-card.is-selected {
   border-color: var(--gold);
   box-shadow: 0 0 0 3px rgba(214, 168, 79, 0.16), var(--shadow);
@@ -532,6 +544,37 @@ h3 {
   background: #fff0c9;
   font-size: 0.78rem;
   font-weight: 900;
+}
+
+.quest-card-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.quest-type-badge,
+.quest-status-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  border-radius: 999px;
+  padding: 0.25rem 0.62rem;
+  font-size: 0.78rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.quest-type-badge {
+  color: #1e4f73;
+  border: 1px solid #b8d8ee;
+  background: #eef8ff;
+}
+
+.quest-status-badge {
+  color: #6b2531;
+  border: 1px solid #efc4cc;
+  background: #fff1f3;
 }
 
 .gold {
@@ -1646,6 +1689,31 @@ h3 {
   padding: 0.7rem;
   border-radius: 8px;
   background: #f5f7fb;
+}
+
+.quest-flow-note,
+.report-evidence-box {
+  margin: 0.9rem 0;
+  padding: 0.8rem;
+  border: 1px solid #d7deea;
+  border-radius: 8px;
+  color: #475467;
+  background: #f8fafc;
+  font-size: 0.9rem;
+}
+
+.report-evidence-box {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.report-evidence-box label {
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.report-evidence-box input[type="file"] {
+  padding: 0.58rem;
 }
 
 .issuer-profile-card {

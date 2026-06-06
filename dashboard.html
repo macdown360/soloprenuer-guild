@@ -456,6 +456,19 @@
               <textarea id="questDescription" name="description" rows="5" required>URLを共有するので、登録から最初のメモ作成まで試して、分かりにくい点を3つ教えてください。</textarea>
               <div class="form-row">
                 <label>
+                  形式
+                  <select id="questType" name="type">
+                    <option value="report">報告型</option>
+                    <option value="recruiting">公募型</option>
+                  </select>
+                </label>
+                <label>
+                  募集人数
+                  <input id="questCapacity" name="capacity" type="number" min="1" max="50" value="5" required />
+                </label>
+              </div>
+              <div class="form-row">
+                <label>
                   報酬Gold
                   <input id="questReward" name="reward" type="number" min="1" max="300" value="20" required />
                 </label>
@@ -492,10 +505,10 @@
             </div>
             <form class="guild-form" id="reviewForm">
               <label for="completedQuest">承認するクエスト</label>
-              <select id="completedQuest">
-                <option value="50">副業SaaSのユーザーインタビュー30分 / 50G</option>
-                <option value="10">オンボーディング画面の感想 / 10G</option>
-                <option value="100">営業資料レビュー / 100G</option>
+              <select id="completedQuest" name="completedQuest">
+                <option value="2">副業SaaSのユーザーインタビュー30分 / 公募型 / 50G</option>
+                <option value="1">オンボーディング画面の感想 / 報告型 / 10G</option>
+                <option value="4">営業資料レビュー / 公募型 / 100G</option>
               </select>
               <label for="rating">評価</label>
               <select id="rating">

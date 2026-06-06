@@ -84,6 +84,8 @@ const state = {
   quests: [
     {
       id: 1,
+      type: "report",
+      status: "open",
       title: "新しいオンボーディング画面に率直な感想がほしい",
       issuer: "リナ",
       reward: 10,
@@ -92,11 +94,15 @@ const state = {
       skills: ["UXレビュー", "顧客理解"],
       deadline: "2026-06-12",
       applicants: 4,
+      capacity: 6,
+      approvedReports: 3,
       description: "SaaSの初回利用画面を見て、誰向けか、何が得られるか、次の操作に進みたくなるかを率直に教えてください。",
       comments: ["冒頭コピーが少し抽象的かもしれません。", "料金の目安があると判断しやすいです。"],
     },
     {
       id: 2,
+      type: "recruiting",
+      status: "open",
       title: "副業SaaSのユーザーインタビュー30分",
       issuer: "カイト",
       reward: 50,
@@ -105,11 +111,15 @@ const state = {
       skills: ["顧客理解", "BtoB SaaS"],
       deadline: "2026-06-15",
       applicants: 2,
+      capacity: 3,
+      approvedReports: 0,
       description: "個人でSaaSを作っている方に、課題管理と検証方法について30分ヒアリングしたいです。",
       comments: ["夜の時間帯なら参加できます。"],
     },
     {
       id: 3,
+      type: "report",
+      status: "open",
       title: "予約フォームの初回テスト利用と改善コメント",
       issuer: "ミオ",
       reward: 50,
@@ -118,11 +128,15 @@ const state = {
       skills: ["技術検証", "UXレビュー"],
       deadline: "2026-06-18",
       applicants: 6,
+      capacity: 8,
+      approvedReports: 5,
       description: "予約、確認メール、キャンセル導線まで試して、詰まった点を共有してください。",
       comments: ["スマホから確認します。"],
     },
     {
       id: 4,
+      type: "recruiting",
+      status: "open",
       title: "営業資料の構成レビュー",
       issuer: "ユウ",
       reward: 100,
@@ -131,11 +145,15 @@ const state = {
       skills: ["BtoB SaaS", "顧客理解"],
       deadline: "2026-06-22",
       applicants: 1,
+      capacity: 2,
+      approvedReports: 0,
       description: "BtoB向け営業資料10ページを見て、導入事例と価格ページの説得力をレビューしてください。",
       comments: [],
     },
     {
       id: 5,
+      type: "report",
+      status: "open",
       title: "AI活用セミナーの告知文を添削してほしい",
       issuer: "ナオ",
       reward: 15,
@@ -144,10 +162,29 @@ const state = {
       skills: ["AI実装", "コピー"],
       deadline: "2026-06-19",
       applicants: 3,
+      capacity: 5,
+      approvedReports: 2,
       description: "XとLinkedInに投稿する告知文を、刺さる見出しとCTAに整えたいです。",
       comments: ["対象者をもう少し絞るとよさそうです。"],
     },
   ],
+};
+
+const QUEST_TYPES = {
+  recruiting: {
+    label: "公募型",
+    metricLabel: "応募",
+    actionLabel: "このクエストに応募",
+    closedLabel: "募集停止",
+    guidance: "提案した冒険者とインタビューや面談の日程を約束して進めるクエストです。募集人数に達すると公募を停止します。",
+  },
+  report: {
+    label: "報告型",
+    metricLabel: "報告",
+    actionLabel: "エビデンス付きで完了報告",
+    closedLabel: "クローズ",
+    guidance: "アプリのダウンロードやテスト利用など、スクショ画面のエビデンスとフィードバックを送るクエストです。承認数が募集人数に達するとクローズします。",
+  },
 };
 
 const formatter = new Intl.DateTimeFormat("ja-JP", {
@@ -171,6 +208,7 @@ const heroCategory = document.querySelector("#heroCategory");
 const heroKeyword = document.querySelector("#heroKeyword");
 const questForm = document.querySelector("#questForm");
 const reviewForm = document.querySelector("#reviewForm");
+const completedQuestEl = document.querySelector("#completedQuest");
 const recommendedQuestsEl = document.querySelector("#recommendedQuests");
 const accountInitialsEl = document.querySelector("[data-account-initials]");
 const accountNameEl = document.querySelector("[data-account-name]");
@@ -205,6 +243,32 @@ function createChips(values, modifier = "") {
   return normalizeList(values)
     .map((value) => `<span class="tag-chip${modifier ? ` ${modifier}` : ""}">${value}</span>`)
     .join("");
+}
+
+function getQuestType(quest) {
+  return QUEST_TYPES[quest.type] || QUEST_TYPES.recruiting;
+}
+
+function getQuestCapacity(quest) {
+  return Math.max(1, Number(quest.capacity) || 1);
+}
+
+function getQuestProgress(quest) {
+  return quest.type === "report" ? Number(quest.approvedReports) || 0 : Number(quest.applicants) || 0;
+}
+
+function isQuestClosed(quest) {
+  return quest.status === "closed" || getQuestProgress(quest) >= getQuestCapacity(quest);
+}
+
+function updateQuestStatus(quest) {
+  if (isQuestClosed(quest)) quest.status = "closed";
+}
+
+function getQuestStatusText(quest) {
+  const type = getQuestType(quest);
+  const progress = Math.min(getQuestProgress(quest), getQuestCapacity(quest));
+  return `${type.metricLabel}: ${progress}/${getQuestCapacity(quest)}名`;
 }
 
 function getIssuerProfile(name) {
@@ -308,6 +372,7 @@ function renderRecommendedQuests() {
   if (!recommendedQuestsEl) return;
 
   const recommended = state.quests
+    .filter((quest) => !isQuestClosed(quest))
     .map((quest) => ({ quest, match: scoreQuest(quest) }))
     .sort((a, b) => b.match.score - a.match.score || b.quest.reward - a.quest.reward)
     .slice(0, 3);
@@ -348,6 +413,32 @@ function syncStats() {
   if (totalQuestsEl) totalQuestsEl.textContent = state.quests.length;
   if (formNote) formNote.textContent = `現在の残高: ${state.gold}G / 現在ランク: ${getRank(state.trust)}`;
   renderRecommendedQuests();
+  renderReviewOptions();
+}
+
+function renderReviewOptions() {
+  if (!completedQuestEl) return;
+
+  const previousValue = completedQuestEl.value;
+  const approvableQuests = state.quests.filter((quest) => {
+    if (quest.type === "report") return !isQuestClosed(quest);
+    return Number(quest.applicants) > 0;
+  });
+
+  completedQuestEl.innerHTML = approvableQuests
+    .map((quest) => {
+      const type = getQuestType(quest);
+      return `<option value="${quest.id}">${quest.title} / ${type.label} / ${quest.reward}G / ${getQuestStatusText(quest)}</option>`;
+    })
+    .join("");
+
+  if (approvableQuests.some((quest) => String(quest.id) === previousValue)) {
+    completedQuestEl.value = previousValue;
+  }
+
+  if (reviewNote && !approvableQuests.length) {
+    reviewNote.textContent = "承認待ちのクエストはありません。";
+  }
 }
 
 function filteredQuests() {
@@ -378,14 +469,21 @@ function renderQuestList() {
   }
 
   quests.forEach((quest) => {
+    updateQuestStatus(quest);
+    const type = getQuestType(quest);
+    const closed = isQuestClosed(quest);
     const card = document.createElement("article");
-    card.className = `quest-card${quest.id === state.selectedQuestId ? " is-selected" : ""}`;
+    card.className = `quest-card${quest.id === state.selectedQuestId ? " is-selected" : ""}${closed ? " is-closed" : ""}`;
     card.tabIndex = 0;
     card.innerHTML = `
       <div class="quest-main">
-        <span class="category">${quest.category}</span>
+        <div class="quest-card-labels">
+          <span class="category">${quest.category}</span>
+          <span class="quest-type-badge">${type.label}</span>
+          ${closed ? `<span class="quest-status-badge">${type.closedLabel}</span>` : ""}
+        </div>
         <h3>${quest.title}</h3>
-        <p>発行者: ${renderIssuerButton(quest.issuer)} / 締切: ${formatDate(quest.deadline)} / 応募: ${quest.applicants}名</p>
+        <p>発行者: ${renderIssuerButton(quest.issuer)} / 締切: ${formatDate(quest.deadline)} / ${getQuestStatusText(quest)}</p>
         <div class="quest-tags">${createChips(quest.tags || [])}</div>
       </div>
       <strong class="gold">${quest.reward}G</strong>
@@ -423,9 +521,28 @@ function renderQuestDetail(quest) {
     ? quest.comments.map((comment) => `<div class="comment">${comment}</div>`).join("")
     : '<div class="comment">まだコメントはありません。</div>';
   const issuerProfile = state.selectedIssuer === quest.issuer ? renderIssuerProfile(quest.issuer) : "";
+  updateQuestStatus(quest);
+  const type = getQuestType(quest);
+  const closed = isQuestClosed(quest);
+  const actionArea =
+    quest.type === "report"
+      ? `
+        <div class="report-evidence-box">
+          <label for="questEvidence">スクショ画面のエビデンス</label>
+          <input id="questEvidence" type="file" accept="image/*" data-evidence ${closed ? "disabled" : ""} />
+          <label for="questReportComment">完了報告</label>
+          <textarea id="questReportComment" rows="4" data-report-comment ${closed ? "disabled" : ""} placeholder="試した内容、気づいた点、再現手順など"></textarea>
+        </div>
+        <button class="btn btn-primary" type="button" data-apply ${closed ? "disabled" : ""}>${closed ? type.closedLabel : type.actionLabel}</button>
+      `
+      : `<button class="btn btn-primary" type="button" data-apply ${closed ? "disabled" : ""}>${closed ? type.closedLabel : type.actionLabel}</button>`;
 
   questDetail.innerHTML = `
-    <span class="category">${quest.category}</span>
+    <div class="quest-card-labels">
+      <span class="category">${quest.category}</span>
+      <span class="quest-type-badge">${type.label}</span>
+      ${closed ? `<span class="quest-status-badge">${type.closedLabel}</span>` : ""}
+    </div>
     <h2>${quest.title}</h2>
     <p>${quest.description}</p>
     <div class="quest-tags">${createChips(quest.tags || [])}</div>
@@ -433,10 +550,11 @@ function renderQuestDetail(quest) {
       <div><strong>発行者</strong><br />${renderIssuerButton(quest.issuer)}</div>
       <div><strong>報酬</strong><br />${quest.reward}G</div>
       <div><strong>締切</strong><br />${formatDate(quest.deadline)}</div>
-      <div><strong>応募人数</strong><br /><span data-applicants>${quest.applicants}</span>名</div>
+      <div><strong>${type.metricLabel}状況</strong><br /><span data-applicants>${Math.min(getQuestProgress(quest), getQuestCapacity(quest))}</span> / ${getQuestCapacity(quest)}名</div>
     </div>
+    <div class="quest-flow-note">${type.guidance}</div>
     ${issuerProfile}
-    <button class="btn btn-primary" type="button" data-apply>このクエストに応募</button>
+    ${actionArea}
     <h3>コメント</h3>
     ${comments}
   `;
@@ -445,7 +563,22 @@ function renderQuestDetail(quest) {
     showIssuerProfile(quest.issuer, quest.id);
   });
   questDetail.querySelector("[data-apply]")?.addEventListener("click", () => {
+    if (isQuestClosed(quest)) return;
+    if (quest.type === "report") {
+      const evidence = questDetail.querySelector("[data-evidence]");
+      if (!evidence?.files?.length) {
+        showToast("スクショ画面のエビデンスを添付してください。");
+        return;
+      }
+      quest.applicants += 1;
+      quest.comments.unshift("スクショ付きの完了報告が送信されました。承認待ちです。");
+      showToast("完了報告を送信しました。発行者の承認後にクローズ判定されます。");
+      renderQuestList();
+      return;
+    }
     quest.applicants += 1;
+    updateQuestStatus(quest);
+    showToast(isQuestClosed(quest) ? "募集人数に達したため、公募を停止しました。" : "応募しました。発行者との約束を進めてください。");
     renderQuestList();
   });
 }
@@ -512,6 +645,8 @@ questForm?.addEventListener("submit", (event) => {
   event.preventDefault();
   const data = new FormData(questForm);
   const reward = Number(data.get("reward"));
+  const capacity = Math.max(1, Number(data.get("capacity")) || 1);
+  const type = data.get("type") === "recruiting" ? "recruiting" : "report";
 
   if (reward > state.gold) {
     formNote.textContent = `残高不足です。現在のGoldは${state.gold}Gです。`;
@@ -524,6 +659,8 @@ questForm?.addEventListener("submit", (event) => {
   const tags = unique([...(state.questTaxonomy[selectedCategory] || []).slice(0, 2), ...normalizeList(data.get("tags"))]);
   const quest = {
     id: Date.now(),
+    type,
+    status: "open",
     title: data.get("title"),
     issuer: state.account.name,
     reward,
@@ -532,6 +669,8 @@ questForm?.addEventListener("submit", (event) => {
     skills: overlap(tags, state.account.strengths),
     deadline: data.get("deadline"),
     applicants: 0,
+    capacity,
+    approvedReports: 0,
     description: data.get("description"),
     comments: ["発行されたばかりのクエストです。"],
   };
@@ -542,25 +681,41 @@ questForm?.addEventListener("submit", (event) => {
   syncStats();
   renderQuestList();
   renderAccountProfile();
-  formNote.textContent = `${reward}Gを確保してクエストを発行しました。`;
+  formNote.textContent = `${reward}Gを確保して${getQuestType(quest).label}クエストを発行しました。`;
 });
 
 reviewForm?.addEventListener("submit", (event) => {
   event.preventDefault();
-  const reward = Number(document.querySelector("#completedQuest").value);
+  const quest = state.quests.find((item) => String(item.id) === String(completedQuestEl?.value));
+  if (!quest) {
+    reviewNote.textContent = "承認できるクエストがありません。";
+    return;
+  }
+
+  const reward = Number(quest.reward);
   const trustBonus = Number(document.querySelector("#rating").value);
   const gainedTrust = 5 + trustBonus;
 
   state.gold += reward;
   state.trust += gainedTrust;
   state.completed += 1;
+  if (quest.type === "report") {
+    quest.approvedReports = Math.min(getQuestCapacity(quest), (Number(quest.approvedReports) || 0) + 1);
+  }
+  updateQuestStatus(quest);
 
   // 承認 = 他のソロプレナーへのサポート → 週次チャレンジ進捗
   state.weeklyProgress = Math.min(3, state.weeklyProgress + 1);
   updateWeeklyChallenge();
 
   syncStats();
-  reviewNote.textContent = `承認完了。${reward}Gと${gainedTrust} Trustを付与しました。現在ランク: ${getRank(state.trust)}`;
+  renderQuestList();
+  const closeMessage = isQuestClosed(quest)
+    ? quest.type === "report"
+      ? "承認数が募集人数に達したため、報告型クエストをクローズしました。"
+      : "募集人数に達している公募型クエストです。"
+    : "承認待ちを更新しました。";
+  reviewNote.textContent = `承認完了。${reward}Gと${gainedTrust} Trustを付与しました。${closeMessage} 現在ランク: ${getRank(state.trust)}`;
 });
 
 categoryFilter?.addEventListener("change", renderQuestList);
