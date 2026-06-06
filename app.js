@@ -271,6 +271,15 @@ function getQuestStatusText(quest) {
   return `${type.metricLabel}: ${progress}/${getQuestCapacity(quest)}名`;
 }
 
+function getQuestProgressPercent(quest) {
+  return Math.min(100, Math.round((getQuestProgress(quest) / getQuestCapacity(quest)) * 100));
+}
+
+function getQuestActionHint(quest) {
+  if (quest.type === "report") return "スクショとフィードバックで完了報告";
+  return "発行者と日程・進め方を約束";
+}
+
 function getIssuerProfile(name) {
   if (name === state.account.name) {
     return {
@@ -472,21 +481,37 @@ function renderQuestList() {
     updateQuestStatus(quest);
     const type = getQuestType(quest);
     const closed = isQuestClosed(quest);
+    const progress = Math.min(getQuestProgress(quest), getQuestCapacity(quest));
+    const progressPercent = getQuestProgressPercent(quest);
     const card = document.createElement("article");
     card.className = `quest-card${quest.id === state.selectedQuestId ? " is-selected" : ""}${closed ? " is-closed" : ""}`;
     card.tabIndex = 0;
     card.innerHTML = `
       <div class="quest-main">
-        <div class="quest-card-labels">
-          <span class="category">${quest.category}</span>
-          <span class="quest-type-badge">${type.label}</span>
-          ${closed ? `<span class="quest-status-badge">${type.closedLabel}</span>` : ""}
+        <div class="quest-card-top">
+          <div class="quest-card-labels">
+            <span class="category">${quest.category}</span>
+            <span class="quest-type-badge">${type.label}</span>
+            ${closed ? `<span class="quest-status-badge">${type.closedLabel}</span>` : ""}
+          </div>
+          <strong class="gold">${quest.reward}G</strong>
         </div>
         <h3>${quest.title}</h3>
-        <p>発行者: ${renderIssuerButton(quest.issuer)} / 締切: ${formatDate(quest.deadline)} / ${getQuestStatusText(quest)}</p>
+        <p class="quest-card-desc">${quest.description}</p>
+        <div class="quest-card-meta">
+          <span>発行者: ${renderIssuerButton(quest.issuer)}</span>
+          <span>締切: ${formatDate(quest.deadline)}</span>
+          <span>${getQuestActionHint(quest)}</span>
+        </div>
+        <div class="quest-progress" aria-label="${getQuestStatusText(quest)}">
+          <div class="quest-progress-head">
+            <span>${type.metricLabel}状況</span>
+            <strong>${progress}/${getQuestCapacity(quest)}名</strong>
+          </div>
+          <div class="quest-progress-track"><span style="width: ${progressPercent}%"></span></div>
+        </div>
         <div class="quest-tags">${createChips(quest.tags || [])}</div>
       </div>
-      <strong class="gold">${quest.reward}G</strong>
     `;
     const issuerButton = card.querySelector("[data-issuer]");
     issuerButton?.addEventListener("click", (event) => {
@@ -524,9 +549,15 @@ function renderQuestDetail(quest) {
   updateQuestStatus(quest);
   const type = getQuestType(quest);
   const closed = isQuestClosed(quest);
+  const progress = Math.min(getQuestProgress(quest), getQuestCapacity(quest));
+  const progressPercent = getQuestProgressPercent(quest);
   const actionArea =
     quest.type === "report"
       ? `
+        <div class="quest-action-panel">
+          <strong>${closed ? type.closedLabel : type.actionLabel}</strong>
+          <span>${closed ? "このクエストは受付を終了しています。" : getQuestActionHint(quest)}</span>
+        </div>
         <div class="report-evidence-box">
           <label for="questEvidence">スクショ画面のエビデンス</label>
           <input id="questEvidence" type="file" accept="image/*" data-evidence ${closed ? "disabled" : ""} />
@@ -535,22 +566,38 @@ function renderQuestDetail(quest) {
         </div>
         <button class="btn btn-primary" type="button" data-apply ${closed ? "disabled" : ""}>${closed ? type.closedLabel : type.actionLabel}</button>
       `
-      : `<button class="btn btn-primary" type="button" data-apply ${closed ? "disabled" : ""}>${closed ? type.closedLabel : type.actionLabel}</button>`;
+      : `
+        <div class="quest-action-panel">
+          <strong>${closed ? type.closedLabel : type.actionLabel}</strong>
+          <span>${closed ? "募集人数に達したため、公募は停止されています。" : getQuestActionHint(quest)}</span>
+        </div>
+        <button class="btn btn-primary" type="button" data-apply ${closed ? "disabled" : ""}>${closed ? type.closedLabel : type.actionLabel}</button>
+      `;
 
   questDetail.innerHTML = `
-    <div class="quest-card-labels">
-      <span class="category">${quest.category}</span>
-      <span class="quest-type-badge">${type.label}</span>
-      ${closed ? `<span class="quest-status-badge">${type.closedLabel}</span>` : ""}
+    <div class="quest-detail-head">
+      <div class="quest-card-labels">
+        <span class="category">${quest.category}</span>
+        <span class="quest-type-badge">${type.label}</span>
+        ${closed ? `<span class="quest-status-badge">${type.closedLabel}</span>` : ""}
+      </div>
+      <strong class="gold detail-gold">${quest.reward}G</strong>
     </div>
     <h2>${quest.title}</h2>
-    <p>${quest.description}</p>
+    <p class="quest-detail-desc">${quest.description}</p>
     <div class="quest-tags">${createChips(quest.tags || [])}</div>
+    <div class="quest-progress detail-progress" aria-label="${getQuestStatusText(quest)}">
+      <div class="quest-progress-head">
+        <span>${type.metricLabel}状況</span>
+        <strong>${progress}/${getQuestCapacity(quest)}名</strong>
+      </div>
+      <div class="quest-progress-track"><span style="width: ${progressPercent}%"></span></div>
+    </div>
     <div class="detail-meta">
       <div><strong>発行者</strong><br />${renderIssuerButton(quest.issuer)}</div>
       <div><strong>報酬</strong><br />${quest.reward}G</div>
       <div><strong>締切</strong><br />${formatDate(quest.deadline)}</div>
-      <div><strong>${type.metricLabel}状況</strong><br /><span data-applicants>${Math.min(getQuestProgress(quest), getQuestCapacity(quest))}</span> / ${getQuestCapacity(quest)}名</div>
+      <div><strong>進め方</strong><br />${getQuestActionHint(quest)}</div>
     </div>
     <div class="quest-flow-note">${type.guidance}</div>
     ${issuerProfile}
