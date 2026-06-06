@@ -1439,7 +1439,20 @@ h3 {
   }
 
   .nav-links {
-    display: none;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .nav-links a {
+    min-height: 38px;
+    justify-content: center;
+    padding: 0.45rem 0.55rem;
+    border: 1px solid rgba(238, 242, 246, 0.16);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    font-size: 0.82rem;
   }
 
   .header-actions,
@@ -1475,7 +1488,29 @@ h3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .leaderboard li {
+    grid-template-columns: 32px minmax(0, 1fr);
+  }
+
+  .leaderboard em {
+    grid-column: 2;
+  }
+
+  .quest-detail h2 {
+    font-size: 1.45rem;
+  }
+
   .quest-card {
     display: grid;
+  }
+}
+
+@media (max-width: 420px) {
+  .hero-metrics,
+  .wallet,
+  .title-grid,
+  .title-grid-wide,
+  .detail-meta {
+    grid-template-columns: 1fr;
   }
 }
