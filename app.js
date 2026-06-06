@@ -4,6 +4,9 @@ const state = {
   completed: 18,
   issued: 7,
   selectedQuestId: 1,
+  missions: [false, false, false],
+  streak: 5,
+  weeklyProgress: 1,
   quests: [
     {
       id: 1,
@@ -239,12 +242,106 @@ reviewForm?.addEventListener("submit", (event) => {
   state.gold += reward;
   state.trust += gainedTrust;
   state.completed += 1;
+
+  // 承認 = 他のソロプレナーへのサポート → 週次チャレンジ進捗
+  state.weeklyProgress = Math.min(3, state.weeklyProgress + 1);
+  updateWeeklyChallenge();
+
   syncStats();
   reviewNote.textContent = `承認完了。${reward}Gと${gainedTrust} Trustを付与しました。現在ランク: ${getRank(state.trust)}`;
 });
 
 categoryFilter?.addEventListener("change", renderQuestList);
 keywordFilter?.addEventListener("input", renderQuestList);
+
+/* ============================================================
+   GAMIFICATION — Daily Missions
+   ============================================================ */
+const MISSION_REWARDS = [
+  { trust: 5, gold: 0, label: "+5 Trust" },
+  { trust: 8, gold: 3, label: "+8 Trust & +3G" },
+  { trust: 3, gold: 0, label: "+3 Trust" },
+];
+
+function updateMissionUI() {
+  const doneCount = state.missions.filter(Boolean).length;
+
+  document.querySelectorAll("[data-mission-item]").forEach((item) => {
+    const index = Number(item.dataset.missionItem);
+    const isDone = state.missions[index];
+    const btn = item.querySelector("[data-mission-toggle]");
+    item.classList.toggle("is-done", isDone);
+    if (btn) btn.setAttribute("aria-pressed", isDone ? "true" : "false");
+  });
+
+  const missionsDoneEl = document.querySelector("[data-missions-done]");
+  if (missionsDoneEl) missionsDoneEl.textContent = doneCount;
+
+  const missionBar = document.querySelector("[data-mission-bar]");
+  if (missionBar) missionBar.style.width = `${(doneCount / 3) * 100}%`;
+}
+
+function toggleMission(index) {
+  if (state.missions[index]) return;
+  state.missions[index] = true;
+
+  const reward = MISSION_REWARDS[index];
+  state.trust += reward.trust;
+  state.gold += reward.gold;
+
+  const allDone = state.missions.every(Boolean);
+  if (allDone) {
+    state.trust += 5;
+  }
+
+  updateMissionUI();
+  syncStats();
+
+  if (allDone) {
+    showToast("🎉 全ミッション達成！ボーナスTrust +5 獲得！");
+  } else {
+    showToast(`ミッション達成！ ${reward.label} 獲得`);
+  }
+}
+
+document.querySelectorAll("[data-mission-toggle]").forEach((btn) => {
+  btn.addEventListener("click", () => toggleMission(Number(btn.dataset.missionToggle)));
+});
+
+/* ============================================================
+   GAMIFICATION — Weekly Challenge
+   ============================================================ */
+function updateWeeklyChallenge() {
+  const bar = document.querySelector("[data-wc-bar]");
+  const count = document.querySelector("[data-wc-count]");
+  if (bar) bar.style.width = `${(state.weeklyProgress / 3) * 100}%`;
+  if (count) count.textContent = state.weeklyProgress;
+
+  if (state.weeklyProgress >= 3) {
+    showToast("🏆 週次チャレンジ達成！Gold +30・Trust +25・限定称号を獲得！");
+    state.gold += 30;
+    state.trust += 25;
+    state.weeklyProgress = 0;
+    syncStats();
+    setTimeout(updateWeeklyChallenge, 100);
+  }
+}
+
+/* ============================================================
+   GAMIFICATION — Toast notification
+   ============================================================ */
+function showToast(message) {
+  let toast = document.querySelector(".guild-toast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.className = "guild-toast";
+    document.body.appendChild(toast);
+  }
+  toast.textContent = message;
+  toast.classList.add("is-visible");
+  clearTimeout(toast._hideTimer);
+  toast._hideTimer = setTimeout(() => toast.classList.remove("is-visible"), 3600);
+}
 
 heroCategory?.addEventListener("change", () => {
   if (categoryFilter) {
@@ -270,3 +367,5 @@ document.querySelectorAll("[data-category-link]").forEach((link) => {
 
 syncStats();
 renderQuestList();
+updateMissionUI();
+updateWeeklyChallenge();

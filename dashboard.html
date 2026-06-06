@@ -78,6 +78,26 @@
               <div><dt>発行クエスト数</dt><dd data-issued-count>7</dd></div>
               <div><dt>継続利用日数</dt><dd>23日</dd></div>
             </dl>
+            <div class="streak-display">
+              <p class="panel-label">STREAK</p>
+              <div class="streak-row">
+                <span class="streak-icon-wrap">🔥</span>
+                <div>
+                  <strong data-streak-count>5日</strong>連続アクティブ
+                  <span class="streak-hint-text">あと2日で「精勤冒険者」称号が解放！</span>
+                </div>
+              </div>
+              <div class="streak-days">
+                <span class="streak-day done">月</span>
+                <span class="streak-day done">火</span>
+                <span class="streak-day done">水</span>
+                <span class="streak-day done">木</span>
+                <span class="streak-day done active">金</span>
+                <span class="streak-day">土</span>
+                <span class="streak-day">日</span>
+              </div>
+            </div>
+          </
           </aside>
 
           <section class="command-panel" aria-label="ダッシュボード概要">
@@ -136,14 +156,47 @@
                 </div>
                 <p>完了クエストあと8件、または5つ星評価あと25件が目安です。</p>
               </article>
-              <article class="action-panel">
-                <span class="panel-label">TASKS</span>
-                <h3>未処理タスク</h3>
-                <ul>
-                  <li><i data-lucide="search"></i><span>20G以上のフィードバック系クエストを1件探す</span></li>
-                  <li><i data-lucide="check-circle"></i><span>未承認の完了報告を1件確認する</span></li>
-                  <li><i data-lucide="plus-circle"></i><span>今週ほしい協力を1件クエスト化する</span></li>
+              <article class="action-panel mission-panel">
+                <div class="mission-header">
+                  <span class="panel-label">DAILY MISSIONS</span>
+                  <span class="mission-count-badge"><span data-missions-done>0</span>/3 達成</span>
+                </div>
+                <h3>今日のミッション</h3>
+                <ul class="mission-list">
+                  <li class="mission-item" data-mission-item="0">
+                    <button class="mission-btn" type="button" data-mission-toggle="0" aria-pressed="false" aria-label="ミッション達成にする">
+                      <i data-lucide="check"></i>
+                    </button>
+                    <div class="mission-body">
+                      <span class="mission-text">クエストを1件応募する</span>
+                      <span class="mission-reward-tag">+5 Trust</span>
+                    </div>
+                  </li>
+                  <li class="mission-item" data-mission-item="1">
+                    <button class="mission-btn" type="button" data-mission-toggle="1" aria-pressed="false" aria-label="ミッション達成にする">
+                      <i data-lucide="check"></i>
+                    </button>
+                    <div class="mission-body">
+                      <span class="mission-text">承認待ちを1件評価・承認する</span>
+                      <span class="mission-reward-tag">+8 Trust &amp; +3G</span>
+                    </div>
+                  </li>
+                  <li class="mission-item" data-mission-item="2">
+                    <button class="mission-btn" type="button" data-mission-toggle="2" aria-pressed="false" aria-label="ミッション達成にする">
+                      <i data-lucide="check"></i>
+                    </button>
+                    <div class="mission-body">
+                      <span class="mission-text">今週ほしい協力を1件クエスト化する</span>
+                      <span class="mission-reward-tag">+3 Trust &amp; 10%還元</span>
+                    </div>
+                  </li>
                 </ul>
+                <div class="mission-progress-area">
+                  <div class="progress-track" aria-label="デイリーミッション達成度">
+                    <span data-mission-bar style="width: 0%"></span>
+                  </div>
+                  <p class="mission-all-done-hint">全達成で <strong>ボーナスTrust +5</strong> 獲得！</p>
+                </div>
               </article>
             </div>
             <div class="activity-board" aria-label="進行中の状況">
@@ -157,13 +210,138 @@
                 <strong>2件</strong>
                 <p>フィードバック 1件 / AI 1件</p>
               </article>
-              <article>
+              <article class="activity-item urgent-item">
                 <span class="panel-label">承認待ち</span>
                 <strong>3件</strong>
-                <p>評価を付けるとTrustが反映されます</p>
+                <p>今すぐ評価で最大 <span class="trust-highlight">+30 Trust</span> 獲得！</p>
+                <a class="btn btn-primary btn-sm" href="#completion"><i data-lucide="badge-check"></i>今すぐ承認</a>
               </article>
             </div>
           </section>
+        </div>
+      </section>
+
+      <!-- ゲーミフィケーション：週次チャレンジ・ストリーク・貢献 -->
+      <section class="section gamification-section">
+        <div class="container">
+          <div class="gamification-grid">
+            <article class="weekly-challenge-card">
+              <div class="wc-head">
+                <span class="panel-label">WEEKLY CHALLENGE</span>
+                <span class="wc-timer-badge"><i data-lucide="clock"></i> 残り4日</span>
+              </div>
+              <h3>今週のギルドチャレンジ</h3>
+              <p class="wc-desc">他のソロプレナーを <strong>3人サポート</strong> する</p>
+              <div class="wc-progress-wrap">
+                <div class="wc-progress-track">
+                  <span data-wc-bar style="width: 33%"></span>
+                </div>
+                <span class="wc-progress-label"><span data-wc-count>1</span> / 3 完了</span>
+              </div>
+              <div class="wc-reward-box">
+                <i data-lucide="gift"></i>
+                <div>
+                  <span>達成報酬</span>
+                  <strong>Gold +30・Trust +25・限定称号「今週の縁の下」解放</strong>
+                </div>
+              </div>
+              <a class="btn btn-outline wc-cta" href="quests.html"><i data-lucide="search"></i>サポートできるクエストを探す</a>
+            </article>
+            <div class="incentive-cards">
+              <article class="incentive-card streak-card-big">
+                <span class="panel-label">STREAK</span>
+                <div class="streak-stat">
+                  <span class="streak-fire">🔥</span>
+                  <div>
+                    <strong><span data-streak-big>5</span>日</strong>
+                    <span>連続ギルド参加</span>
+                  </div>
+                </div>
+                <p class="streak-hint-msg">あと2日で「精勤冒険者」称号が解放されます！</p>
+                <div class="streak-bonus-info">
+                  <i data-lucide="zap"></i>
+                  <span>7日達成でTrust <strong>×1.2 ボーナス週</strong> が始まります</span>
+                </div>
+              </article>
+              <article class="incentive-card contribution-card">
+                <span class="panel-label">CONTRIBUTION</span>
+                <h3>今月の貢献</h3>
+                <dl class="contrib-stats">
+                  <div>
+                    <dt><i data-lucide="users"></i> サポートした仲間</dt>
+                    <dd>7人</dd>
+                  </div>
+                  <div>
+                    <dt><i data-lucide="message-circle"></i> 提供フィードバック</dt>
+                    <dd>12件</dd>
+                  </div>
+                  <div>
+                    <dt><i data-lucide="shield-check"></i> 今月の獲得Trust</dt>
+                    <dd>+142</dd>
+                  </div>
+                </dl>
+                <div class="contrib-rank">
+                  <i data-lucide="trophy"></i>
+                  <span>今月のギルド貢献 <strong>3位</strong></span>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- おすすめクエスト -->
+      <section class="section rec-quest-section">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">FOR YOU</p>
+              <h2>あなたへのおすすめクエスト</h2>
+              <p class="section-copy">AI開発・BtoB SaaSのスキルに合った、今すぐ応募できる依頼です。</p>
+            </div>
+            <a class="btn btn-outline" href="quests.html"><i data-lucide="search"></i>すべて見る</a>
+          </div>
+          <div class="rec-quest-grid">
+            <article class="rec-quest-card">
+              <div class="rec-quest-top">
+                <span class="category">フィードバック</span>
+                <span class="rec-urgency-badge"><i data-lucide="clock"></i> 締切まで2日</span>
+              </div>
+              <h3>新しいLPのファーストビューに率直な感想がほしい</h3>
+              <p>SaaSのLPを見て、誰向けか・何が得られるかを率直に教えてください。</p>
+              <div class="rec-quest-foot">
+                <span class="rec-reward"><i data-lucide="coins"></i> 10G</span>
+                <span class="rec-trust"><i data-lucide="shield-check"></i> +5 Trust</span>
+                <a class="btn btn-primary btn-sm" href="quests.html">応募する</a>
+              </div>
+            </article>
+            <article class="rec-quest-card">
+              <div class="rec-quest-top">
+                <span class="category">AI</span>
+                <span class="rec-match-badge"><i data-lucide="sparkles"></i> スキルマッチ</span>
+              </div>
+              <h3>AI活用セミナーの告知文を添削してほしい</h3>
+              <p>XとLinkedInに投稿する告知文を、刺さる見出しとCTAに整えたいです。</p>
+              <div class="rec-quest-foot">
+                <span class="rec-reward"><i data-lucide="coins"></i> 15G</span>
+                <span class="rec-trust"><i data-lucide="shield-check"></i> +5 Trust</span>
+                <a class="btn btn-primary btn-sm" href="quests.html">応募する</a>
+              </div>
+            </article>
+            <article class="rec-quest-card">
+              <div class="rec-quest-top">
+                <span class="category">インタビュー</span>
+                <span class="rec-reward-badge"><i data-lucide="star"></i> 高報酬</span>
+              </div>
+              <h3>副業SaaSのユーザーインタビュー30分</h3>
+              <p>個人でSaaSを作っている方に、課題管理と検証方法について30分ヒアリングしたいです。</p>
+              <div class="rec-quest-foot">
+                <span class="rec-reward"><i data-lucide="coins"></i> 50G</span>
+                <span class="rec-trust"><i data-lucide="shield-check"></i> +5 Trust</span>
+                <a class="btn btn-primary btn-sm" href="quests.html">応募する</a>
+              </div>
+            </article>
+          </div>
         </div>
       </section>
 

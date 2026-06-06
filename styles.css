@@ -1609,3 +1609,626 @@ h3 {
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================================
+   GAMIFICATION — Daily Missions
+   ============================================================ */
+.mission-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.mission-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mission-count-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #e2c56d;
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  color: #7b581c;
+  background: #fff9e7;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.mission-list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mission-item {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.62rem 0.78rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #f8fafc;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.mission-item.is-done {
+  background: linear-gradient(135deg, #f0faf4, #e8f7ee);
+  border-color: #a8d8bc;
+}
+
+.mission-btn {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 2px solid #c5ced8;
+  border-radius: 999px;
+  background: #fff;
+  color: #c5ced8;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.mission-btn:hover {
+  border-color: var(--gold);
+  transform: scale(1.08);
+}
+
+.mission-btn [data-lucide] {
+  width: 13px;
+  height: 13px;
+}
+
+.mission-btn[aria-pressed="true"],
+.mission-item.is-done .mission-btn {
+  border-color: var(--success);
+  background: var(--success);
+  color: #fff;
+}
+
+.mission-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.mission-text {
+  font-size: 0.9rem;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.mission-item.is-done .mission-text {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.mission-reward-tag {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.18rem 0.55rem;
+  color: #1a6b4e;
+  background: #d4f3e4;
+  font-size: 0.74rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.mission-progress-area {
+  margin-top: 0.25rem;
+}
+
+.mission-all-done-hint {
+  margin: 0.45rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* ============================================================
+   GAMIFICATION — Streak display in profile panel
+   ============================================================ */
+.streak-display {
+  margin: 0.7rem 0 0;
+  padding: 0.8rem;
+  border: 1px solid #f0d9b0;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #fff8ee, #fff);
+}
+
+.streak-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.55rem;
+}
+
+.streak-icon-wrap {
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.streak-row strong {
+  display: block;
+  color: #b45309;
+  font-size: 1.02rem;
+  font-weight: 900;
+}
+
+.streak-hint-text {
+  display: block;
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1.4;
+}
+
+.streak-days {
+  display: flex;
+  gap: 0.28rem;
+}
+
+.streak-day {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  color: #9aa3b0;
+  background: #e8edf4;
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.streak-day.done {
+  color: #fff;
+  background: linear-gradient(135deg, #50c896, #2f8f6b);
+}
+
+.streak-day.active {
+  background: linear-gradient(135deg, var(--gold-2), var(--gold));
+  color: #4d3914;
+  box-shadow: 0 2px 8px rgba(214, 168, 79, 0.4);
+}
+
+/* ============================================================
+   GAMIFICATION — Weekly Challenge & Incentive cards section
+   ============================================================ */
+.gamification-section {
+  padding: 36px 0;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+
+.gamification-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.weekly-challenge-card {
+  padding: 1.3rem;
+  border: 1px solid #e2c56d;
+  border-radius: 14px;
+  background: linear-gradient(160deg, #fffcf0 0%, #fff 60%);
+  box-shadow: var(--shadow);
+}
+
+.wc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.wc-timer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid rgba(214, 168, 79, 0.4);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  color: #7b3a14;
+  background: #fff3e0;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.wc-timer-badge [data-lucide] {
+  width: 12px;
+  height: 12px;
+}
+
+.wc-desc {
+  margin: 0.2rem 0 0.75rem;
+  color: var(--ink);
+  font-size: 1.02rem;
+}
+
+.wc-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.wc-progress-track {
+  flex: 1;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e8edf4;
+}
+
+.wc-progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--gold-2), var(--gold));
+  transition: width 0.45s ease;
+}
+
+.wc-progress-label {
+  color: #7b581c;
+  font-size: 0.88rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.wc-reward-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.8rem;
+  border: 1px solid #e2c56d;
+  border-radius: 10px;
+  background: #fff9e7;
+  margin-bottom: 0.85rem;
+}
+
+.wc-reward-box [data-lucide] {
+  width: 18px;
+  height: 18px;
+  color: #9a6d20;
+  margin-top: 0.1rem;
+  flex-shrink: 0;
+}
+
+.wc-reward-box > div > span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  display: block;
+  margin-bottom: 0.15rem;
+}
+
+.wc-reward-box strong {
+  color: #7b3a14;
+  font-size: 0.94rem;
+  line-height: 1.45;
+}
+
+.wc-cta {
+  width: 100%;
+  justify-content: center;
+}
+
+.incentive-cards {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.incentive-card {
+  padding: 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.streak-card-big .streak-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.5rem 0;
+}
+
+.streak-fire {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.streak-card-big .streak-stat strong {
+  display: block;
+  font-size: 1.85rem;
+  font-family: "Shippori Mincho", serif;
+  color: #b45309;
+  line-height: 1;
+}
+
+.streak-card-big .streak-stat span {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.streak-hint-msg {
+  margin: 0 0 0.6rem;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.streak-bonus-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  background: #f0f7ff;
+  font-size: 0.84rem;
+  color: var(--ink);
+}
+
+.streak-bonus-info [data-lucide] {
+  width: 14px;
+  height: 14px;
+  color: #3b82f6;
+  flex-shrink: 0;
+  margin-top: 0.12rem;
+}
+
+.contrib-stats {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0.5rem 0;
+}
+
+.contrib-stats div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.contrib-stats dt {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--muted);
+  font-size: 0.83rem;
+  font-weight: 500;
+}
+
+.contrib-stats dt [data-lucide] {
+  width: 13px;
+  height: 13px;
+}
+
+.contrib-stats dd {
+  margin: 0;
+  font-weight: 900;
+  font-size: 1.05rem;
+}
+
+.contrib-rank {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.55rem;
+  padding: 0.58rem 0.78rem;
+  border: 1px solid #e2c56d;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #fff9e7, #fffdf7);
+  font-size: 0.9rem;
+}
+
+.contrib-rank [data-lucide] {
+  width: 15px;
+  height: 15px;
+  color: #9a6d20;
+}
+
+.contrib-rank strong {
+  color: #7b3a14;
+}
+
+/* ============================================================
+   GAMIFICATION — Recommended Quests
+   ============================================================ */
+.rec-quest-section {
+  background: #f4f6fa;
+  border-bottom: 1px solid var(--line);
+}
+
+.rec-quest-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.rec-quest-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.rec-quest-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(214, 168, 79, 0.45);
+}
+
+.rec-quest-top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.rec-urgency-badge,
+.rec-match-badge,
+.rec-reward-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  border-radius: 999px;
+  padding: 0.18rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.rec-urgency-badge {
+  color: #92400e;
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+}
+
+.rec-match-badge {
+  color: #1e40af;
+  background: #dbeafe;
+  border: 1px solid #93c5fd;
+}
+
+.rec-reward-badge {
+  color: #6b21a8;
+  background: #f3e8ff;
+  border: 1px solid #c084fc;
+}
+
+.rec-urgency-badge [data-lucide],
+.rec-match-badge [data-lucide],
+.rec-reward-badge [data-lucide] {
+  width: 11px;
+  height: 11px;
+}
+
+.rec-quest-card h3 {
+  margin-bottom: 0;
+  font-size: 0.96rem;
+  line-height: 1.45;
+}
+
+.rec-quest-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.65;
+  flex: 1;
+}
+
+.rec-quest-foot {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+
+.rec-reward,
+.rec-trust {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  font-size: 0.83rem;
+  font-weight: 900;
+}
+
+.rec-reward {
+  color: #8a641f;
+}
+
+.rec-trust {
+  color: #2f5f8f;
+}
+
+.rec-reward [data-lucide],
+.rec-trust [data-lucide] {
+  width: 13px;
+  height: 13px;
+}
+
+/* ============================================================
+   GAMIFICATION — Urgency activity item & btn-sm
+   ============================================================ */
+.activity-item.urgent-item {
+  border-color: #e2c56d;
+  background: linear-gradient(160deg, #fffcf0, #fff);
+}
+
+.trust-highlight {
+  color: #1a6b4e;
+  font-weight: 900;
+}
+
+.activity-board strong {
+  display: block;
+  font-size: 1.55rem;
+}
+
+.activity-board p {
+  margin: 0.35rem 0;
+}
+
+.btn-sm {
+  min-height: 34px;
+  padding: 0.36rem 0.85rem;
+  font-size: 0.83rem;
+}
+
+/* ============================================================
+   GAMIFICATION — Toast notification
+   ============================================================ */
+.guild-toast {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(calc(100% + 24px));
+  min-width: 260px;
+  max-width: 480px;
+  padding: 0.85rem 1.3rem;
+  border-radius: 12px;
+  color: #fff;
+  background: var(--navy);
+  border: 1px solid rgba(214, 168, 79, 0.38);
+  box-shadow: 0 8px 32px rgba(13, 20, 36, 0.28);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: center;
+  z-index: 200;
+  pointer-events: none;
+  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.38s ease;
+  opacity: 0;
+}
+
+.guild-toast.is-visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* ============================================================
+   RESPONSIVE additions for gamification
+   ============================================================ */
+@media (max-width: 920px) {
+  .gamification-grid,
+  .rec-quest-grid {
+    grid-template-columns: 1fr;
+  }
+}
