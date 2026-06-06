@@ -172,14 +172,14 @@ const state = {
 
 const QUEST_TYPES = {
   recruiting: {
-    label: "公募型",
+    label: "応募型",
     metricLabel: "応募",
     actionLabel: "このクエストに応募",
     closedLabel: "募集停止",
-    guidance: "提案した冒険者とインタビューや面談の日程を約束して進めるクエストです。募集人数に達すると公募を停止します。",
+    guidance: "提案した冒険者とインタビューや面談の日程を約束して進めるクエストです。募集人数に達すると応募受付を停止します。",
   },
   report: {
-    label: "報告型",
+    label: "完了報告型",
     metricLabel: "報告",
     actionLabel: "エビデンス付きで完了報告",
     closedLabel: "クローズ",
@@ -569,7 +569,7 @@ function renderQuestDetail(quest) {
       : `
         <div class="quest-action-panel">
           <strong>${closed ? type.closedLabel : type.actionLabel}</strong>
-          <span>${closed ? "募集人数に達したため、公募は停止されています。" : getQuestActionHint(quest)}</span>
+          <span>${closed ? "募集人数に達したため、応募受付は停止されています。" : getQuestActionHint(quest)}</span>
         </div>
         <button class="btn btn-primary" type="button" data-apply ${closed ? "disabled" : ""}>${closed ? type.closedLabel : type.actionLabel}</button>
       `;
@@ -625,7 +625,7 @@ function renderQuestDetail(quest) {
     }
     quest.applicants += 1;
     updateQuestStatus(quest);
-    showToast(isQuestClosed(quest) ? "募集人数に達したため、公募を停止しました。" : "応募しました。発行者との約束を進めてください。");
+    showToast(isQuestClosed(quest) ? "募集人数に達したため、応募受付を停止しました。" : "応募しました。発行者との約束を進めてください。");
     renderQuestList();
   });
 }
@@ -759,8 +759,8 @@ reviewForm?.addEventListener("submit", (event) => {
   renderQuestList();
   const closeMessage = isQuestClosed(quest)
     ? quest.type === "report"
-      ? "承認数が募集人数に達したため、報告型クエストをクローズしました。"
-      : "募集人数に達している公募型クエストです。"
+      ? "承認数が募集人数に達したため、完了報告型クエストをクローズしました。"
+      : "募集人数に達している応募型クエストです。"
     : "承認待ちを更新しました。";
   reviewNote.textContent = `承認完了。${reward}Gと${gainedTrust} Trustを付与しました。${closeMessage} 現在ランク: ${getRank(state.trust)}`;
 });
