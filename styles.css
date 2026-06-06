@@ -2178,12 +2178,12 @@ h3 {
   font-weight: 900;
 }
 
-.activity-board strong {
+.activity-item.urgent-item strong {
   display: block;
   font-size: 1.55rem;
 }
 
-.activity-board p {
+.activity-item.urgent-item p {
   margin: 0.35rem 0;
 }
 
