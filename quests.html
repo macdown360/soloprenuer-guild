@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>クエスト検索 | ソロプレナーギルド</title>
+    <meta
+      name="description"
+      content="ソロプレナーギルドのクエスト検索ページ。カテゴリ、報酬Gold、締切、キーワードから達成できるクエストを探せます。"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Shippori+Mincho:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  </head>
+  <body class="quests-page">
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a class="logo" href="index.html" aria-label="ソロプレナーギルド">
+          <span class="logo-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" focusable="false">
+              <path d="M16 3.5 26 7.7v7.1c0 6.5-3.9 11.3-10 13.7C9.9 26.1 6 21.3 6 14.8V7.7Z" />
+              <path d="M16 8.3 20.8 10.3v4.1c0 3.3-1.7 5.8-4.8 7.6Z" />
+              <path d="M16 10.7 17.2 13.1l2.7.4-2 1.9.5 2.7-2.4-1.3-2.4 1.3.5-2.7-2-1.9 2.7-.4Z" />
+            </svg>
+          </span>
+          <span>ソロプレナーギルド</span>
+        </a>
+        <nav class="nav-links" aria-label="クエストメニュー">
+          <a href="#quest-board"><i data-lucide="search"></i>探す</a>
+          <a href="#featured"><i data-lucide="flame"></i>注目</a>
+          <a href="dashboard.html#quest-create"><i data-lucide="plus-circle"></i>依頼する</a>
+          <a href="charter.html"><i data-lucide="book-open"></i>憲章</a>
+        </nav>
+        <a class="btn btn-ghost" href="dashboard.html"><i data-lucide="layout-dashboard"></i>ギルド本部</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="quest-search-hero">
+        <div class="container quest-search-grid">
+          <div>
+            <p class="eyebrow">QUEST SEARCH</p>
+            <h1>今日こなせるクエストを探す</h1>
+            <p class="lead">
+              フィードバック、壁打ち、インタビュー、デザイン相談、開発レビュー。
+              スキルと空き時間に合う依頼を選んで、GoldとTrustを積み上げよう。
+            </p>
+          </div>
+          <form class="search-panel" action="#quest-board">
+            <label for="heroKeyword">キーワード</label>
+            <div class="search-input-wrap">
+              <i data-lucide="search"></i>
+              <input id="heroKeyword" type="search" placeholder="LP, AI, インタビュー, 営業資料..." />
+            </div>
+            <div class="hero-filter-grid">
+              <label>
+                カテゴリ
+                <select id="heroCategory">
+                  <option value="all">すべて</option>
+                  <option>フィードバック</option>
+                  <option>インタビュー</option>
+                  <option>デザイン</option>
+                  <option>AI</option>
+                  <option>マーケティング</option>
+                  <option>開発</option>
+                  <option>営業</option>
+                  <option>その他</option>
+                </select>
+              </label>
+              <label>
+                報酬
+                <select>
+                  <option>指定なし</option>
+                  <option>10G以上</option>
+                  <option>30G以上</option>
+                  <option>50G以上</option>
+                  <option>100G以上</option>
+                </select>
+              </label>
+            </div>
+            <button class="btn btn-primary" type="submit"><i data-lucide="search"></i>検索する</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="quest-stats-band">
+        <div class="container quest-stats">
+          <article>
+            <strong>5,300</strong>
+            <span>累計クエスト</span>
+          </article>
+          <article>
+            <strong>128</strong>
+            <span>今月の冒険者</span>
+          </article>
+          <article>
+            <strong>72%</strong>
+            <span>平均完了率</span>
+          </article>
+          <article>
+            <strong>+18</strong>
+            <span>月間Trust増加</span>
+          </article>
+        </div>
+      </section>
+
+      <section id="featured" class="section">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">FEATURED</p>
+              <h2>注目カテゴリ</h2>
+              <p>よく依頼される小さな協力から、すぐに達成できるクエストを探せます。</p>
+            </div>
+          </div>
+          <div class="category-tile-grid">
+            <a href="#quest-board" data-category-link="フィードバック"><i data-lucide="messages-square"></i><strong>フィードバック</strong><span>LP感想、テスト利用</span></a>
+            <a href="#quest-board" data-category-link="インタビュー"><i data-lucide="mic"></i><strong>インタビュー</strong><span>30分相談、顧客理解</span></a>
+            <a href="#quest-board" data-category-link="AI"><i data-lucide="sparkles"></i><strong>AI</strong><span>プロンプト、導入相談</span></a>
+            <a href="#quest-board" data-category-link="開発"><i data-lucide="code-2"></i><strong>開発</strong><span>レビュー、動作確認</span></a>
+            <a href="#quest-board" data-category-link="営業"><i data-lucide="briefcase-business"></i><strong>営業</strong><span>資料レビュー、提案文</span></a>
+          </div>
+        </div>
+      </section>
+
+      <section id="quest-board" class="section section-soft">
+        <div class="container">
+          <div class="quest-board-head">
+            <div>
+              <p class="eyebrow">QUEST BOARD</p>
+              <h2>クエスト一覧</h2>
+              <p>条件で絞り込み、気になるクエストの詳細を確認して応募できます。</p>
+            </div>
+            <a class="btn btn-outline" href="dashboard.html#quest-create"><i data-lucide="plus"></i>クエストを発行</a>
+          </div>
+
+          <div class="quest-search-layout">
+            <aside class="quest-filter-panel">
+              <strong>条件で探す</strong>
+              <div class="filters stacked" role="search">
+                <label>
+                  カテゴリ
+                  <select id="categoryFilter">
+                    <option value="all">すべて</option>
+                    <option>フィードバック</option>
+                    <option>インタビュー</option>
+                    <option>デザイン</option>
+                    <option>AI</option>
+                    <option>マーケティング</option>
+                    <option>開発</option>
+                    <option>営業</option>
+                    <option>その他</option>
+                  </select>
+                </label>
+                <label>
+                  キーワード
+                  <input id="keywordFilter" type="search" placeholder="LP, AI, インタビュー..." />
+                </label>
+                <label>
+                  締切
+                  <select>
+                    <option>指定なし</option>
+                    <option>3日以内</option>
+                    <option>1週間以内</option>
+                    <option>今月中</option>
+                  </select>
+                </label>
+                <label>
+                  応募人数
+                  <select>
+                    <option>指定なし</option>
+                    <option>少ない順</option>
+                    <option>多い順</option>
+                  </select>
+                </label>
+              </div>
+            </aside>
+
+            <section class="quest-results">
+              <div class="quest-tabs" aria-label="並び替え">
+                <button class="is-active" type="button">新着</button>
+                <button type="button">人気</button>
+                <button type="button">高報酬</button>
+                <button type="button">締切間近</button>
+              </div>
+              <div class="quest-layout search-results-layout">
+                <div class="quest-list quest-list-dense" id="questList" aria-label="クエスト一覧"></div>
+                <aside class="quest-detail" id="questDetail" aria-live="polite"></aside>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <span>&copy; 2026 ソロプレナーギルド</span>
+        <nav class="footer-links" aria-label="フッター">
+          <a href="index.html">トップページ</a>
+          <a href="dashboard.html">ギルド本部</a>
+          <a href="charter.html">ギルド憲章</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        if (window.lucide) lucide.createIcons();
+      });
+    </script>
+  </body>
+</html>

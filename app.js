@@ -80,6 +80,8 @@ const questList = document.querySelector("#questList");
 const questDetail = document.querySelector("#questDetail");
 const categoryFilter = document.querySelector("#categoryFilter");
 const keywordFilter = document.querySelector("#keywordFilter");
+const heroCategory = document.querySelector("#heroCategory");
+const heroKeyword = document.querySelector("#heroKeyword");
 const questForm = document.querySelector("#questForm");
 const reviewForm = document.querySelector("#reviewForm");
 
@@ -243,6 +245,28 @@ reviewForm?.addEventListener("submit", (event) => {
 
 categoryFilter?.addEventListener("change", renderQuestList);
 keywordFilter?.addEventListener("input", renderQuestList);
+
+heroCategory?.addEventListener("change", () => {
+  if (categoryFilter) {
+    categoryFilter.value = heroCategory.value;
+    renderQuestList();
+  }
+});
+
+heroKeyword?.closest("form")?.addEventListener("submit", () => {
+  if (keywordFilter && heroKeyword) keywordFilter.value = heroKeyword.value;
+  if (categoryFilter && heroCategory) categoryFilter.value = heroCategory.value;
+  renderQuestList();
+});
+
+document.querySelectorAll("[data-category-link]").forEach((link) => {
+  link.addEventListener("click", () => {
+    if (categoryFilter) {
+      categoryFilter.value = link.dataset.categoryLink;
+      renderQuestList();
+    }
+  });
+});
 
 syncStats();
 renderQuestList();

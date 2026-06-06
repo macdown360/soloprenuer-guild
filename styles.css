@@ -157,6 +157,18 @@ a {
   flex-shrink: 0;
 }
 
+.nav-links [data-lucide],
+.footer-links [data-lucide],
+.wallet [data-lucide],
+.stat-icon-badge [data-lucide],
+.point-card-icon [data-lucide],
+.category-tile-grid [data-lucide],
+.search-input-wrap [data-lucide] {
+  width: 1.05em;
+  height: 1.05em;
+  flex: 0 0 auto;
+}
+
 .btn-primary {
   color: #111827;
   background: linear-gradient(135deg, var(--gold-2), var(--gold));
@@ -749,6 +761,218 @@ h3 {
   background: #f4f6fa;
 }
 
+.quests-page {
+  background: #f4f6fa;
+}
+
+.quest-search-hero {
+  padding: 72px 0 46px;
+  color: #fff;
+  background:
+    linear-gradient(110deg, rgba(13, 20, 36, 0.96), rgba(21, 31, 52, 0.86)),
+    url("assets/guild-hero-business-fantasy-human-ears.png") center / cover;
+}
+
+.quest-search-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 0.72fr);
+  align-items: center;
+  gap: 2rem;
+}
+
+.quest-search-hero h1 {
+  max-width: 720px;
+  font-size: clamp(2.3rem, 5vw, 4.4rem);
+}
+
+.search-panel {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1.15rem;
+  border: 1px solid rgba(214, 168, 79, 0.36);
+  border-radius: 10px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: var(--shadow);
+}
+
+.search-panel label {
+  display: grid;
+  gap: 0.36rem;
+  font-weight: 900;
+}
+
+.search-panel input,
+.search-panel select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.72rem 0.78rem;
+  color: var(--ink);
+  background: #fff;
+}
+
+.search-input-wrap {
+  position: relative;
+}
+
+.search-input-wrap [data-lucide] {
+  position: absolute;
+  top: 50%;
+  left: 0.85rem;
+  color: var(--muted);
+  transform: translateY(-50%);
+}
+
+.search-input-wrap input {
+  padding-left: 2.35rem;
+}
+
+.hero-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.quest-stats-band {
+  padding: 18px 0;
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+}
+
+.quest-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.quest-stats article {
+  padding: 0.8rem 1rem;
+  border-left: 3px solid var(--gold);
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.quest-stats strong {
+  display: block;
+  font-size: 1.45rem;
+}
+
+.quest-stats span {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.category-tile-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.category-tile-grid a {
+  display: grid;
+  gap: 0.35rem;
+  min-height: 142px;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--ink);
+  text-decoration: none;
+  background: #fff;
+  box-shadow: 0 12px 32px rgba(13, 20, 36, 0.08);
+}
+
+.category-tile-grid a:hover {
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
+.category-tile-grid [data-lucide] {
+  color: #9a6d20;
+}
+
+.category-tile-grid span {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.quest-board-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.quest-board-head p {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+.quest-search-layout {
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.quest-filter-panel {
+  position: sticky;
+  top: 92px;
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 12px 32px rgba(13, 20, 36, 0.08);
+}
+
+.filters.stacked {
+  grid-template-columns: 1fr;
+  margin-bottom: 0;
+}
+
+.quest-results {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.quest-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.quest-tabs button {
+  min-height: 36px;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.42rem 0.8rem;
+  color: var(--muted);
+  background: transparent;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.quest-tabs button.is-active {
+  color: #4d3914;
+  background: #fff0c9;
+}
+
+.search-results-layout {
+  grid-template-columns: minmax(0, 1fr) 380px;
+}
+
+.quest-list-dense .quest-card {
+  align-items: center;
+  background: #fff;
+}
+
 .dashboard-hero {
   padding: 34px 0 42px;
   background: linear-gradient(180deg, var(--navy), var(--navy-2));
@@ -1007,15 +1231,26 @@ h3 {
   .split,
   .app-grid,
   .quest-layout,
+  .quest-search-grid,
+  .quest-search-layout,
+  .search-results-layout,
   .ranking-grid,
   .loop-grid,
   .kpi-grid,
+  .quest-stats,
+  .category-tile-grid,
   .point-panels {
     grid-template-columns: 1fr;
   }
 
-  .quest-detail {
+  .quest-detail,
+  .quest-filter-panel {
     position: static;
+  }
+
+  .quest-board-head {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 
@@ -1055,7 +1290,8 @@ h3 {
   }
 
   .form-row,
-  .filters {
+  .filters,
+  .hero-filter-grid {
     grid-template-columns: 1fr;
   }
 

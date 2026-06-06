@@ -33,7 +33,7 @@
         <nav class="nav-links" aria-label="ギルドメニュー">
           <a href="#mypage"><i data-lucide="layout-dashboard"></i>マイページ</a>
           <a href="#quest-create"><i data-lucide="plus-circle"></i>依頼する</a>
-          <a href="#quest-board"><i data-lucide="list-checks"></i>達成する</a>
+          <a href="quests.html"><i data-lucide="list-checks"></i>達成する</a>
           <a href="#completion"><i data-lucide="check-circle"></i>承認する</a>
         </nav>
         <a class="btn btn-ghost" href="index.html">トップへ戻る</a>
@@ -83,7 +83,10 @@
                   1件達成するたびにTrustが増え、ランクが上がる。まず今日の1件を選んで動き出そう。
                 </p>
               </div>
-              <a class="btn btn-primary" href="#quest-create">クエスト発行</a>
+              <div class="header-actions">
+                <a class="btn btn-primary" href="#quest-create">クエスト発行</a>
+                <a class="btn btn-outline" href="quests.html"><i data-lucide="search"></i>クエスト検索</a>
+              </div>
             </div>
             <div class="kpi-grid">
               <article>
@@ -167,42 +170,6 @@
         </div>
       </section>
 
-      <section id="quest-board" class="section section-soft">
-        <div class="container">
-          <div class="section-head">
-            <div>
-              <p class="eyebrow">QUEST BOARD</p>
-              <h2>今すぐ達成できるクエストを探す</h2>
-              <p>1件こなすたびにGoldとTrustが増える。まず今日の1件を選んでみよう。</p>
-            </div>
-          </div>
-          <div class="filters" role="search">
-            <label>
-              カテゴリ
-              <select id="categoryFilter">
-                <option value="all">すべて</option>
-                <option>フィードバック</option>
-                <option>インタビュー</option>
-                <option>デザイン</option>
-                <option>AI</option>
-                <option>マーケティング</option>
-                <option>開発</option>
-                <option>営業</option>
-                <option>その他</option>
-              </select>
-            </label>
-            <label>
-              キーワード
-              <input id="keywordFilter" type="search" placeholder="LP, AI, インタビュー..." />
-            </label>
-          </div>
-          <div class="quest-layout">
-            <div class="quest-list" id="questList" aria-label="クエスト一覧"></div>
-            <aside class="quest-detail" id="questDetail" aria-live="polite"></aside>
-          </div>
-        </div>
-      </section>
-
       <section id="completion" class="section">
         <div class="container split">
           <div>
@@ -210,7 +177,7 @@
             <h2>承認して、お互いの信頼を育てる</h2>
             <p class="section-copy">
               成果が届いたら承認しよう。高い評価をつけるほど達成者のTrustが大きく伸び、
-              ギルド全体の信頼が厕くなる。
+              ギルド全体の信頼が高くなる。
             </p>
             <ul class="rules-list">
               <li>クエスト完了: +5 Trust — 必ず積み上がる</li>
@@ -248,7 +215,7 @@
         <nav class="footer-links" aria-label="フッター">
           <a href="index.html">トップページ</a>
           <a href="#quest-create">クエスト発行</a>
-          <a href="#quest-board">クエスト一覧</a>
+          <a href="quests.html">クエスト検索</a>
           <a href="charter.html">ギルド憲章</a>
         </nav>
       </div>
