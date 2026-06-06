@@ -3,15 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ソロプレナー・ギルド</title>
+    <title>ソロプレナーギルド</title>
     <meta
       name="description"
-      content="起業、事業作り、プロダクト作り、営業、販売、認知獲得を進めるソロプレナー向けギルド。"
+      content="一人起業家、フリーランス、個人開発者、副業家がクエストで助け合い、信頼を積み上げるオンライン冒険者ギルド。"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Shippori+Mincho:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Shippori+Mincho:wght@600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
@@ -19,348 +19,219 @@
   <body>
     <header class="site-header">
       <div class="container nav-wrap">
-        <a class="logo" href="#">
+        <a class="logo" href="index.html" aria-label="ソロプレナーギルド">
           <span class="logo-mark" aria-hidden="true">
             <svg viewBox="0 0 32 32" focusable="false">
-              <path class="crest-shield" d="M16 3.5 26 7.6v7.2c0 6.5-3.9 11.4-10 13.7C9.9 26.2 6 21.3 6 14.8V7.6Z" />
-              <path class="crest-panel" d="M16 6.8 22.8 9.6v5.1c0 4.1-2.4 7.5-6.8 9.6Z" />
-              <path class="crest-star" d="M16 10.1 17.4 13l3.2.5-2.3 2.2.5 3.2-2.8-1.5-2.8 1.5.5-3.2-2.3-2.2 3.2-.5Z" />
+              <path d="M16 3.5 26 7.7v7.1c0 6.5-3.9 11.3-10 13.7C9.9 26.1 6 21.3 6 14.8V7.7Z" />
+              <path d="M16 8.3 20.8 10.3v4.1c0 3.3-1.7 5.8-4.8 7.6Z" />
+              <path d="M16 10.7 17.2 13.1l2.7.4-2 1.9.5 2.7-2.4-1.3-2.4 1.3.5-2.7-2-1.9 2.7-.4Z" />
             </svg>
           </span>
-          <span class="logo-text">ソロプレナー・ギルド</span>
+          <span>ソロプレナーギルド</span>
         </a>
-        <nav class="header-actions" aria-label="メインメニュー">
-          <a class="header-cta header-cta-primary" href="#entry">冒険者登録</a>
-          <a class="header-cta header-cta-secondary" href="dashboard.html">ギルドにログイン</a>
+        <nav class="nav-links" aria-label="メインメニュー">
+          <a href="#quests">クエスト</a>
+          <a href="#trust">信頼</a>
+          <a href="#ranking">ランキング</a>
+          <a href="charter.html">憲章</a>
         </nav>
+        <div class="header-actions">
+          <a class="btn btn-ghost" href="dashboard.html">クエストを見る</a>
+          <a class="btn btn-primary" href="#register">冒険者登録</a>
+        </div>
       </div>
     </header>
 
     <main>
-      <section class="hero hero-illustrated section-tone">
-        <div class="container hero-inner">
-          <p class="eyebrow">SOLOPRENEUR GUILD</p>
-          <h1>
-            ひとりで戦う者たちの、<br />
-            <span>拠点</span>がここにある。
-          </h1>
+      <section class="hero">
+        <div class="hero-bg" aria-hidden="true"></div>
+        <div class="container hero-content">
+          <p class="eyebrow">ONLINE ADVENTURERS' GUILD FOR SOLOPRENEURS</p>
+          <h1>一人で戦わない。<br />ソロプレナーのための冒険者ギルド。</h1>
           <p class="lead">
-            組織に属さず、自らの力で道を切り拓く起業家のためのギルド。<br />
-            仲間と知恵と依頼が、あなたを次のランクへ連れていく。
+            壁打ち、フィードバック、インタビュー、レビュー、小さな開発相談。
+            冒険者同士がクエストを出し合い、達成し、信頼を積み上げるコミュニティです。
           </p>
-          <div class="hero-cta">
-            <a class="btn btn-solid" href="#entry">無料で冒険者登録する</a>
-            <a class="btn btn-outline" href="dashboard.html">ギルドにログイン</a>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#register">冒険者登録</a>
+            <a class="btn btn-secondary" href="dashboard.html">クエストを見る</a>
           </div>
-          <div class="stats">
+          <div class="hero-metrics" aria-label="MVPの循環">
             <article>
-              <strong>成長</strong>
-              <span>事業活動を前進</span>
+              <strong>100G</strong>
+              <span>新規登録時に配布</span>
             </article>
             <article>
-              <strong>7領域</strong>
-              <span>事業成長クエスト</span>
+              <strong>+5 Trust</strong>
+              <span>クエスト完了で蓄積</span>
             </article>
             <article>
-              <strong>+10 XP</strong>
-              <span>冒険記録</span>
-            </article>
-            <article>
-              <strong>Coming</strong>
-              <span>小部屋コミュニティ</span>
+              <strong>8カテゴリ</strong>
+              <span>小さな依頼を投稿</span>
             </article>
           </div>
         </div>
       </section>
 
-      <section id="daily" class="section section-light">
+      <section id="quests" class="section">
         <div class="container">
-          <p class="eyebrow">BUSINESS GROWTH LOOP</p>
-          <h2>起業と事業作りを、行動に変える</h2>
-          <p class="section-copy">
-            迷って止まる時間を減らすために、現在地を見える化し、次に取り組むクエストを選び、学びを資産として残します。小さな事業活動の積み重ねが、次のランクへつながります。
-          </p>
-          <div class="cards daily-grid">
-            <article class="card">
-              <div class="card-head">
-                <span class="icon">1</span>
-                <span class="chip">現在地</span>
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">LATEST QUESTS</p>
+              <h2>最新クエスト</h2>
+              <p>ソロプレナーが今ほしい協力を、小さな依頼として掲示します。</p>
+            </div>
+            <a class="btn btn-outline" href="dashboard.html#quest-create">クエストを発行</a>
+          </div>
+          <div class="quest-list compact">
+            <article class="quest-card">
+              <div class="quest-main">
+                <span class="category">フィードバック</span>
+                <h3>新しいLPのファーストビューに率直な感想がほしい</h3>
+                <p>発行者: リナ / 締切: 6月12日 / 応募: 4名</p>
               </div>
-              <h3>事業の現在地を知る</h3>
-              <p>現在XP、進行中のクエスト、次ランクまでの距離を確認する。</p>
+              <strong class="gold">10G</strong>
             </article>
-            <article class="card">
-              <div class="card-head">
-                <span class="icon">2</span>
-                <span class="chip">クエスト</span>
+            <article class="quest-card">
+              <div class="quest-main">
+                <span class="category">インタビュー</span>
+                <h3>副業SaaSのユーザーインタビュー30分</h3>
+                <p>発行者: カイト / 締切: 6月15日 / 応募: 2名</p>
               </div>
-              <h3>事業を前に進める</h3>
-              <p>起業準備、プロダクト、営業、販売、認知獲得から次の一手を選ぶ。</p>
+              <strong class="gold">50G</strong>
             </article>
-            <article class="card">
-              <div class="card-head">
-                <span class="icon">3</span>
-                <span class="chip">記録</span>
+            <article class="quest-card">
+              <div class="quest-main">
+                <span class="category">開発</span>
+                <h3>予約フォームの初回テスト利用と改善コメント</h3>
+                <p>発行者: ミオ / 締切: 6月18日 / 応募: 6名</p>
               </div>
-              <h3>実践ログを残す</h3>
-              <p>学び、失敗、検証結果、次の打ち手をブログやSNSのように残してXPを得る。</p>
+              <strong class="gold">50G</strong>
             </article>
           </div>
         </div>
       </section>
 
-      <section id="quest" class="section section-light">
-        <div class="container">
-          <p class="eyebrow">QUEST BOARD</p>
-          <h2>事業を育てるクエスト</h2>
-          <p class="section-copy">
-            クエストは「学んだ気になる」ためではなく、事業の前進を生むための行動単位です。起業から認知獲得まで、実践しやすいテーマに分解します。
-          </p>
-          <div class="cards quest-grid">
-            <article class="card">
-              <div class="card-head">
-                <span class="icon">起</span>
-                <span class="chip">起業準備</span>
-              </div>
-              <h3>顧客と課題を定義する</h3>
-              <p>誰のどんな痛みを解くのかを1枚にまとめ、仮説を冒険記録に残す。</p>
-              <div class="tag-row">
-                <span class="tag">顧客仮説</span>
-                <span class="tag">課題整理</span>
-                <span class="tag">+20 XP</span>
-              </div>
-            </article>
-            <article class="card">
-              <div class="card-head">
-                <span class="icon">事</span>
-                <span class="chip">事業作り</span>
-              </div>
-              <h3>収益モデルを組む</h3>
-              <p>価格、提供範囲、初回導線、継続導線を決め、検証すべき数字を置く。</p>
-              <div class="tag-row">
-                <span class="tag">価格設計</span>
-                <span class="tag">導線設計</span>
-                <span class="tag">+30 XP</span>
-              </div>
-            </article>
-            <article class="card">
-              <div class="card-head">
-                <span class="icon">作</span>
-                <span class="chip">プロダクト</span>
-              </div>
-              <h3>MVPを作って公開する</h3>
-              <p>最小の機能、LP、申込導線を用意し、実際に触れる状態まで進める。</p>
-              <div class="tag-row">
-                <span class="tag">MVP</span>
-                <span class="tag">リリース</span>
-                <span class="tag">+40 XP</span>
-              </div>
-            </article>
-            <article class="card">
-              <div class="card-head">
-                <span class="icon">営</span>
-                <span class="chip">営業</span>
-              </div>
-              <h3>見込み客に提案する</h3>
-              <p>10件の候補を洗い出し、相手ごとに提案文を作って送信する。</p>
-              <div class="tag-row">
-                <span class="tag">リスト作成</span>
-                <span class="tag">提案文</span>
-                <span class="tag">+30 XP</span>
-              </div>
-            </article>
-            <article class="card">
-              <div class="card-head">
-                <span class="icon">売</span>
-                <span class="chip">販売</span>
-              </div>
-              <h3>初回購入までの導線を磨く</h3>
-              <p>オファー、FAQ、申込フォーム、決済前の不安を点検して改善する。</p>
-              <div class="tag-row">
-                <span class="tag">オファー</span>
-                <span class="tag">CV改善</span>
-                <span class="tag">+25 XP</span>
-              </div>
-            </article>
-            <article class="card">
-              <div class="card-head">
-                <span class="icon">認</span>
-                <span class="chip">周知・認知</span>
-              </div>
-              <h3>発信を資産化する</h3>
-              <p>SNS、ブログ、note、ニュースレターに転用できる学びを1本公開する。</p>
-              <div class="tag-row">
-                <span class="tag">SNS</span>
-                <span class="tag">ブログ</span>
-                <span class="tag">+20 XP</span>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section id="log" class="section section-tone">
-        <div class="container dashboard-two">
+      <section id="trust" class="section section-dark">
+        <div class="container trust-grid">
           <div>
-            <p class="eyebrow">ADVENTURE LOG</p>
-            <h2>冒険記録で、実践を資産にする</h2>
+            <p class="eyebrow">GOLD AND TRUST</p>
+            <h2>Goldは増減し、Trustは蓄積する</h2>
             <p class="section-copy">
-              冒険記録は、ソロプレナー版のブログ兼SNSです。取り組んだこと、得た学び、失敗、次に試す仮説を残すことで、経験が資産になります。
+              Goldはクエストを発行するための通貨です。Trustは譲渡も売買もできない信用スコアで、
+              冒険者ランクと評価に反映されます。
             </p>
           </div>
-          <div class="card log-preview">
-            <span class="chip">実践ログ</span>
-            <h3>見込み客ヒアリングを3件送った</h3>
-            <p>反応がよかった問いは「今いちばん時間を奪っている作業は何ですか？」だった。明日の営業クエストに転用する。</p>
-            <div class="tag-row">
-              <span class="tag">営業</span>
-              <span class="tag">学び</span>
-              <span class="tag">+10 XP</span>
+          <div class="point-panels">
+            <article class="point-card">
+              <span>Gold</span>
+              <strong>依頼を出すための通貨</strong>
+              <p>新規登録で100G。達成、ログイン、イベント参加で獲得。クエスト発行で消費。</p>
+            </article>
+            <article class="point-card silver">
+              <span>Trust</span>
+              <strong>譲渡不可の信用スコア</strong>
+              <p>クエスト完了で+5。5段階評価に応じて最大+10。ランク判定に使われます。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="ranking" class="section">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">GUILD RANKING</p>
+              <h2>ランキング</h2>
+              <p>信頼と達成数が見えることで、頼みやすい相手が見つかります。</p>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section id="rank" class="section section-tone">
-        <div class="container">
-          <p class="eyebrow">ADVENTURER RANK</p>
-          <h2>冒険者ランク制度</h2>
-          <p class="section-copy">登録からSランクまで。あなたの成長が目に見える形で刻まれる。</p>
-          <ol class="rank-list">
-            <li>
-              <span class="rank-circle">F</span>
-              <div>
-                <h3>見習い冒険者</h3>
-                <p>ギルド登録完了。最初の一歩を踏み出した者。</p>
-              </div>
-              <span class="xp">登録直後</span>
-            </li>
-            <li>
-              <span class="rank-circle">E</span>
-              <div>
-                <h3>実践を始めた者</h3>
-                <p>事業活動のクエストに取り組み、冒険記録を3本以上残した者。</p>
-              </div>
-              <span class="xp">100 XP</span>
-            </li>
-            <li>
-              <span class="rank-circle">D</span>
-              <div>
-                <h3>事業仮説の探索者</h3>
-                <p>顧客、課題、収益モデルのクエストを完了した者。</p>
-              </div>
-              <span class="xp">300 XP</span>
-            </li>
-            <li>
-              <span class="rank-circle">C</span>
-              <div>
-                <h3>プロダクト公開者</h3>
-                <p>MVP、LP、申込導線を作り、最初の公開まで進めた者。</p>
-              </div>
-              <span class="xp">600 XP</span>
-            </li>
-            <li>
-              <span class="rank-circle">B</span>
-              <div>
-                <h3>営業実践者</h3>
-                <p>見込み客への提案、販売改善、認知獲得を継続している者。</p>
-              </div>
-              <span class="xp">1,200 XP</span>
-            </li>
-            <li>
-              <span class="rank-circle">A-S</span>
-              <div>
-                <h3>熟練ソロプレナー</h3>
-                <p>記録と実行を積み上げ、再現性のある事業成長を作った者。</p>
-              </div>
-              <span class="xp">3,000 XP</span>
-            </li>
-          </ol>
-        </div>
-      </section>
-
-      <section id="benefits" class="section section-light">
-        <div class="container">
-          <p class="eyebrow">GUILD BENEFITS</p>
-          <h2>事業を前に進めるためのギルド装備</h2>
-          <p class="section-copy">起業の一歩目から、プロダクト作り、営業、販売、認知獲得まで。ソロプレナーが迷わず動き出し、学びを積み上げられる仕組みを用意しています。</p>
-          <div class="cards benefit-grid">
-            <article class="card">
-              <h3>事業成長クエスト</h3>
-              <p>起業、事業作り、プロダクト、営業、販売、認知獲得を具体的な行動に分解する。</p>
+          <div class="ranking-grid">
+            <article class="leaderboard">
+              <h3>信頼ランキング</h3>
+              <ol>
+                <li><span>1</span><strong>アキラ</strong><em>1,860 Trust</em></li>
+                <li><span>2</span><strong>リナ</strong><em>1,420 Trust</em></li>
+                <li><span>3</span><strong>カイト</strong><em>980 Trust</em></li>
+              </ol>
             </article>
-            <article class="card">
-              <h3>冒険記録</h3>
-              <p>ブログやSNSのように実践ログを書き、学びと進捗を蓄積してXPを得る。</p>
-            </article>
-            <article class="card">
-              <h3>小部屋コミュニティ</h3>
-              <p>Coming Soon。地域やテーマごとに冒険者が集まり、学びと相談が生まれる予定。</p>
-            </article>
-            <article class="card">
-              <h3>依頼掲示板</h3>
-              <p>フィードバック、トライアル利用、モニター、SNS拡散などを依頼できる。協力した側もXPを得られる。</p>
+            <article class="leaderboard">
+              <h3>クエスト達成ランキング</h3>
+              <ol>
+                <li><span>1</span><strong>ミオ</strong><em>74件</em></li>
+                <li><span>2</span><strong>ユウ</strong><em>51件</em></li>
+                <li><span>3</span><strong>ナオ</strong><em>43件</em></li>
+              </ol>
             </article>
           </div>
         </div>
       </section>
 
-      <section id="voice" class="section section-tone">
+      <section class="section section-soft">
         <div class="container">
-          <p class="eyebrow">ADVENTURERS' VOICE</p>
-          <h2>先輩冒険者の記録</h2>
-          <div class="cards voice-grid">
-            <article class="card quote">
-              <p>
-                「起業した最初、何から手をつけるべきか分からず立ち尽くした。ギルドで学んだ戦略のおかげです。」
-              </p>
-              <footer>YK / Webコンサル</footer>
+          <p class="eyebrow">HOW IT WORKS</p>
+          <h2>最初に成立させる循環</h2>
+          <div class="loop-grid">
+            <article>
+              <span>1</span>
+              <h3>クエスト投稿</h3>
+              <p>依頼者がGoldを報酬として設定し、カテゴリ、締切、詳細を掲示します。</p>
             </article>
-            <article class="card quote">
-              <p>
-                「ひとりで抱えていた不安が、仲間ができてから激減。今の集客が日常になった。」
-              </p>
-              <footer>SM / コンテンツ販売</footer>
+            <article>
+              <span>2</span>
+              <h3>応募と達成</h3>
+              <p>冒険者が応募し、フィードバックや相談などの成果を提出します。</p>
             </article>
-            <article class="card quote">
-              <p>
-                「AIを武器に使うならまず作業棚卸し。導線を組んだら初月から継続案件が増えた。」
-              </p>
-              <footer>TN / SaaS支援</footer>
-            </article>
-            <article class="card quote">
-              <p>
-                「ランク制度があることで自分の成長が見える。だから続けられる。」
-              </p>
-              <footer>AH / EC運営</footer>
+            <article>
+              <span>3</span>
+              <h3>承認と評価</h3>
+              <p>発行者が完了を承認し、Gold報酬とTrust、相互評価が反映されます。</p>
             </article>
           </div>
         </div>
       </section>
 
-      <section id="entry" class="section section-light final-cta">
-        <div class="container">
-          <p class="eyebrow">JOIN THE GUILD</p>
-          <h2>さぁ、冒険に出かけよう</h2>
-          <p class="section-copy">まずは登録して、ギルド本部へ。起業や事業作りのクエストに取り組み、学びを冒険記録として残す。それが最初のレベルアップです。</p>
-          <form class="cta-form" action="dashboard.html" method="get">
-            <label class="sr-only" for="email">メールアドレス</label>
-            <input id="email" name="email" type="email" placeholder="メールアドレスを入力" required />
-            <button class="btn btn-solid" type="submit">冒険者登録</button>
+      <section id="register" class="section register-section">
+        <div class="container register-grid">
+          <div>
+            <p class="eyebrow">JOIN THE GUILD</p>
+            <h2>冒険者として登録する</h2>
+            <p class="section-copy">
+              MVPでは登録、プロフィール、クエスト投稿、完了承認、評価の流れを最優先にします。
+              登録後は100Gを受け取り、最初の依頼をすぐに発行できます。
+            </p>
+          </div>
+          <form class="guild-form" action="dashboard.html" method="get">
+            <label for="name">冒険者名</label>
+            <input id="name" name="name" type="text" placeholder="例: アキラ" required />
+            <label for="email">メールアドレス</label>
+            <input id="email" name="email" type="email" placeholder="you@example.com" required />
+            <label for="password">パスワード</label>
+            <input id="password" name="password" type="password" placeholder="8文字以上" required />
+            <div class="form-row">
+              <label>
+                職業
+                <input name="job" type="text" placeholder="個人開発者" />
+              </label>
+              <label>
+                スキル
+                <input name="skills" type="text" placeholder="AI, 開発, マーケ" />
+              </label>
+            </div>
+            <button class="btn btn-primary" type="submit">100Gを受け取って登録</button>
           </form>
-          <small>登録無料</small>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
       <div class="container footer-inner">
-        <span class="copyright">&copy; 2026 ソロプレナー・ギルド. All rights reserved.</span>
-        <div class="footer-links">
+        <span>&copy; 2026 ソロプレナーギルド</span>
+        <nav class="footer-links" aria-label="フッター">
+          <a href="dashboard.html">ギルド本部</a>
           <a href="charter.html">ギルド憲章</a>
-          <a href="#">プライバシー</a>
-          <a href="#">お問い合わせ</a>
-        </div>
+          <a href="#register">冒険者登録</a>
+        </nav>
       </div>
     </footer>
   </body>

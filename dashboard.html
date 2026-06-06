@@ -3,15 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ギルド本部 | ソロプレナー・ギルド</title>
+    <title>ギルド本部 | ソロプレナーギルド</title>
     <meta
       name="description"
-      content="ソロプレナー・ギルドの本部画面。事業成長クエスト、レベルアップ、冒険記録を管理する。"
+      content="ソロプレナーギルドのMVP画面。マイページ、クエスト作成、一覧、詳細、完了承認、評価を扱う。"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Shippori+Mincho:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Shippori+Mincho:wght@600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
@@ -22,482 +22,219 @@
         <a class="logo" href="index.html">
           <span class="logo-mark" aria-hidden="true">
             <svg viewBox="0 0 32 32" focusable="false">
-              <path class="crest-shield" d="M16 3.5 26 7.6v7.2c0 6.5-3.9 11.4-10 13.7C9.9 26.2 6 21.3 6 14.8V7.6Z" />
-              <path class="crest-panel" d="M16 6.8 22.8 9.6v5.1c0 4.1-2.4 7.5-6.8 9.6Z" />
-              <path class="crest-star" d="M16 10.1 17.4 13l3.2.5-2.3 2.2.5 3.2-2.8-1.5-2.8 1.5.5-3.2-2.3-2.2 3.2-.5Z" />
+              <path d="M16 3.5 26 7.7v7.1c0 6.5-3.9 11.3-10 13.7C9.9 26.1 6 21.3 6 14.8V7.7Z" />
+              <path d="M16 8.3 20.8 10.3v4.1c0 3.3-1.7 5.8-4.8 7.6Z" />
+              <path d="M16 10.7 17.2 13.1l2.7.4-2 1.9.5 2.7-2.4-1.3-2.4 1.3.5-2.7-2-1.9 2.7-.4Z" />
             </svg>
           </span>
-          <span class="logo-text">ソロプレナー・ギルド</span>
+          <span>ソロプレナーギルド</span>
         </a>
         <nav class="nav-links" aria-label="ギルドメニュー">
-          <a href="#today">本日の推進</a>
-          <a href="#quests">クエスト</a>
-          <a href="#rank">ランク</a>
-          <a href="#logs">冒険記録</a>
-          <a href="#requests">協力依頼</a>
+          <a href="#mypage">マイページ</a>
+          <a href="#quest-create">発行</a>
+          <a href="#quest-board">一覧</a>
+          <a href="#completion">完了</a>
         </nav>
-        <a class="btn btn-ghost" href="index.html">LPへ戻る</a>
+        <a class="btn btn-ghost" href="index.html">トップへ戻る</a>
       </div>
     </header>
 
     <main>
-      <section id="today" class="dashboard-hero section-tone">
-        <div class="container dashboard-grid">
-          <div class="guild-status workout-status">
-            <div class="status-head">
+      <section id="mypage" class="dashboard-hero">
+        <div class="container app-grid">
+          <aside class="profile-panel">
+            <div class="avatar" aria-hidden="true">A</div>
+            <p class="eyebrow">MY PAGE</p>
+            <h1>アキラ</h1>
+            <p>個人開発者 / AIツール開発 / BtoB SaaS</p>
+            <div class="rank-display">
+              <span>一人前冒険者</span>
+              <strong data-rank>Trust 325</strong>
+            </div>
+            <div class="wallet">
+              <article>
+                <span>Gold</span>
+                <strong><span data-gold>100</span>G</strong>
+              </article>
+              <article>
+                <span>Trust</span>
+                <strong><span data-trust>325</span></strong>
+              </article>
+            </div>
+            <dl class="profile-stats">
+              <div><dt>完了クエスト数</dt><dd data-completed-count>18</dd></div>
+              <div><dt>発行クエスト数</dt><dd data-issued-count>7</dd></div>
+              <div><dt>継続利用日数</dt><dd>23日</dd></div>
+            </dl>
+            <div class="badge-row" aria-label="獲得バッジ">
+              <span>初陣</span>
+              <span>助っ人</span>
+              <span>10件達成</span>
+            </div>
+          </aside>
+
+          <section class="command-panel" aria-label="ギルド概要">
+            <div class="command-head">
               <div>
-                <span class="caption">BUSINESS PROGRESS STATUS</span>
-                <strong>Rank C / 収益冒険者</strong>
-                <small>次のRank Bまで 680 XP / 取引完了あと2件</small>
+                <p class="eyebrow">QUEST LOOP</p>
+                <h2>投稿、達成、信頼獲得の循環を回す</h2>
+                <p>
+                  クエストの投稿から承認までを、迷わず進められるように設計しています。
+                  発行者が承認すると、達成者へ報酬GoldとTrustが反映されます。
+                </p>
               </div>
-              <span class="rank-badge" aria-label="現在ランクC">C</span>
+              <a class="btn btn-primary" href="#quest-create">クエスト発行</a>
             </div>
-            <div class="level-meter">
-              <div class="level-row">
-                <span>Rank C</span>
-                <strong>820 / 1,500 XP</strong>
-                <span>Rank B</span>
-              </div>
-              <div class="progress-track" aria-label="次のランクまでの進捗">
-                <span style="width: 55%"></span>
-              </div>
+            <div class="kpi-grid">
+              <article><span>投稿数</span><strong data-total-quests>5</strong><small>今月のクエスト</small></article>
+              <article><span>完了率</span><strong>72%</strong><small>承認済み / 応募済み</small></article>
+              <article><span>アクティブ冒険者</span><strong>128</strong><small>今月ギルドに参加中</small></article>
+              <article><span>平均Trust増加</span><strong>+18</strong><small>月間 / 冒険者</small></article>
             </div>
-            <div class="rank-ladder" aria-label="冒険者ランク">
-              <span class="is-cleared">F</span>
-              <span class="is-cleared">E</span>
-              <span class="is-cleared">D</span>
-              <span class="is-current">C</span>
-              <span>B</span>
-              <span>A</span>
-              <span>S</span>
+            <div class="rank-track" aria-label="ランク条件">
+              <span class="done">見習い</span>
+              <span class="done">駆け出し</span>
+              <span class="current">一人前</span>
+              <span>熟練</span>
+              <span>上級</span>
+              <span>マスター</span>
+              <span>伝説</span>
             </div>
-            <div class="status-grid">
-              <article>
-                <span>累計XP</span>
-                <strong>820</strong>
-              </article>
-              <article>
-                <span>継続日数</span>
-                <strong>7日</strong>
-              </article>
-              <article>
-                <span>今週達成</span>
-                <strong>68%</strong>
-              </article>
-            </div>
-            <div class="achievement-row" aria-label="獲得バッジ">
-              <span>7日継続</span>
-              <span>初相談募集</span>
-              <span>助かった10件</span>
-              <span>営業3件</span>
-            </div>
-            <div class="xp-limits">
-              <article>
-                <span>通常XP</span>
-                <strong>30 / 50</strong>
-              </article>
-              <article>
-                <span>貢献XP</span>
-                <strong>25 / 80</strong>
-              </article>
-              <article>
-                <span>営業・取引XP</span>
-                <strong>上限なし</strong>
-              </article>
-            </div>
-            <div class="next-action">
-              <span>次の一手</span>
-              <strong>見込み客を1人リストアップし、相談募集文を1つ下書きする。</strong>
-            </div>
-          </div>
-
-          <div class="daily-quest card workout-card">
-            <div class="workout-head">
-              <div>
-                <p class="eyebrow">TODAY'S 3 QUESTS</p>
-                <h1>本日の事業推進クエスト</h1>
-              </div>
-              <span class="workout-type">営業推進日</span>
-            </div>
-            <div class="daily-reward">
-              <span>本日の見込み報酬</span>
-              <strong>+45 XP</strong>
-              <span>7日継続 / XP 1.2倍</span>
-            </div>
-            <div class="workout-calendar" aria-label="今週の事業推進記録">
-              <span class="is-done">月</span>
-              <span class="is-done">火</span>
-              <span class="is-done">水</span>
-              <span class="is-done">木</span>
-              <span class="is-today">金</span>
-              <span>土</span>
-              <span class="is-rest">保</span>
-            </div>
-            <div class="workout-quests" aria-label="今日の3クエスト">
-              <article class="workout-item is-complete">
-                <span class="check">✓</span>
-                <div>
-                  <div class="task-meta">
-                    <span class="pill">軽い行動 / 5分 / 発信領域</span>
-                    <span class="difficulty">+10 XP</span>
-                  </div>
-                  <h3>昨日の作業を冒険記録に残す</h3>
-                  <p>小さな行動も記録し、事業ログとして積み上げる。</p>
-                </div>
-              </article>
-              <article class="workout-item">
-                <span class="check">2</span>
-                <div>
-                  <div class="task-meta">
-                    <span class="pill">事業前進 / 15分 / 営業領域</span>
-                    <span class="difficulty">+25 XP</span>
-                  </div>
-                  <h3>見込み客を1人リストアップする</h3>
-                  <p>相手の課題仮説、送る一文、次のアクションまで書く。</p>
-                </div>
-              </article>
-              <article class="workout-item">
-                <span class="check">3</span>
-                <div>
-                  <div class="task-meta">
-                    <span class="pill">信頼貢献 / 5分 / 信頼領域</span>
-                    <span class="difficulty">+10 XP</span>
-                  </div>
-                  <h3>他の冒険者の相談に1件コメントする</h3>
-                  <p>相手の次の一歩が明確になるように、具体的な観点を返す。</p>
-                </div>
-              </article>
-            </div>
-            <div class="recovery-note">
-              <strong>継続保護ルール</strong>
-              <span>月2回まで継続保護日を使えます。XPボーナスは付きませんが、継続日数は途切れません。</span>
-            </div>
-          </div>
+          </section>
         </div>
       </section>
 
-      <section id="quests" class="section section-light">
-        <div class="container">
-          <div class="section-head">
-            <div>
-              <p class="eyebrow">QUEST MANAGEMENT</p>
-              <h2>事業推進クエストを記録・管理する</h2>
-              <p>クエストは一度きりの達成項目ではなく、起業と事業作りを前に進める日々の行動単位です。</p>
-            </div>
-            <a class="btn btn-outline" href="#logs">今日の記録を書く</a>
-          </div>
-
-          <div class="workout-summary">
-            <article class="card">
-              <span class="chip">今週</span>
-              <strong>17</strong>
-              <p>完了クエスト</p>
-            </article>
-            <article class="card">
-              <span class="chip">月間</span>
-              <strong>330 XP</strong>
-              <p>獲得XP</p>
-            </article>
-            <article class="card">
-              <span class="chip">営業</span>
-              <strong>4件</strong>
-              <p>ヒアリング・応募</p>
-            </article>
-            <article class="card">
-              <span class="chip">信頼</span>
-              <strong>12</strong>
-              <p>助かった・コメント</p>
-            </article>
-          </div>
-
-          <div class="training-grid" aria-label="事業推進の5領域">
-            <article class="training-card card">
-              <div class="training-head">
-                <span class="icon">発</span>
-                <strong>発信領域</strong>
-                <small>今週 5回</small>
-              </div>
-              <p>SNS投稿、note、冒険記録、事例紹介、失敗談共有。</p>
-              <div class="mini-progress"><span style="width: 72%"></span></div>
-            </article>
-            <article class="training-card card">
-              <div class="training-head">
-                <span class="icon">商</span>
-                <strong>商品化領域</strong>
-                <small>今週 3回</small>
-              </div>
-              <p>提供メニュー、価格設定、サービス説明文、FAQ作成。</p>
-              <div class="mini-progress"><span style="width: 58%"></span></div>
-            </article>
-            <article class="training-card card is-focus">
-              <div class="training-head">
-                <span class="icon">営</span>
-                <strong>営業領域</strong>
-                <small>重点</small>
-              </div>
-              <p>見込み客リスト、ヒアリング、相談募集、提案文、依頼応募。</p>
-              <div class="mini-progress"><span style="width: 46%"></span></div>
-            </article>
-            <article class="training-card card">
-              <div class="training-head">
-                <span class="icon">信</span>
-                <strong>信頼領域</strong>
-                <small>今週 6回</small>
-              </div>
-              <p>コメント、助かった獲得、レビュー、実績報告、他者紹介。</p>
-              <div class="mini-progress"><span style="width: 66%"></span></div>
-            </article>
-            <article class="training-card card">
-              <div class="training-head">
-                <span class="icon">運</span>
-                <strong>運営領域</strong>
-                <small>今週 2回</small>
-              </div>
-              <p>タスク整理、収支確認、顧客管理、テンプレート化、振り返り。</p>
-              <div class="mini-progress"><span style="width: 34%"></span></div>
-            </article>
-          </div>
-
-          <div class="quest-library">
-            <article class="card quest-column">
-              <span class="chip">DAILY / 5-20分</span>
-              <h3>デイリークエスト</h3>
-              <ul class="quest-menu">
-                <li><span>発信</span>冒険記録を1件書く <strong>+10 XP</strong></li>
-                <li><span>商品化</span>商品説明を1文だけ改善する <strong>+10 XP</strong></li>
-                <li><span>営業</span>見込み客を1人リストアップする <strong>+10 XP</strong></li>
-                <li><span>信頼</span>他の冒険者にコメントする <strong>+5 XP</strong></li>
-              </ul>
-            </article>
-            <article class="card quest-column">
-              <span class="chip">WEEKLY / 週単位</span>
-              <h3>ウィークリークエスト</h3>
-              <ul class="quest-menu">
-                <li><span>商品化</span>提供メニューを1つ作る <strong>+30 XP</strong></li>
-                <li><span>営業</span>相談募集を1回出す <strong>+40 XP</strong></li>
-                <li><span>営業</span>見込み客3人にヒアリングする <strong>+50 XP</strong></li>
-                <li><span>運営</span>週次振り返りを書く <strong>+50 XP</strong></li>
-              </ul>
-            </article>
-            <article class="card quest-column">
-              <span class="chip">CHALLENGE</span>
-              <h3>チャレンジクエスト</h3>
-              <ul class="quest-menu">
-                <li><span>7日間</span>プロフィール改善チャレンジ <strong>+150 XP</strong></li>
-                <li><span>14日間</span>発信チャレンジ <strong>+150 XP</strong></li>
-                <li><span>30日間</span>初売上チャレンジ <strong>+300 XP</strong></li>
-                <li><span>集中</span>営業DM改善チャレンジ <strong>+150 XP</strong></li>
-              </ul>
-            </article>
-            <article class="card quest-column">
-              <span class="chip">MILESTONE</span>
-              <h3>マイルストーン</h3>
-              <ul class="quest-menu">
-                <li><span>収益</span>初めて有料相談を販売する <strong>+200 XP</strong></li>
-                <li><span>取引</span>初めて依頼を受注する <strong>+200 XP</strong></li>
-                <li><span>成長</span>月商10万円を達成する <strong>+500 XP</strong></li>
-                <li><span>貢献</span>勉強会を主催する <strong>+300 XP</strong></li>
-              </ul>
-            </article>
-          </div>
-
-          <div class="load-levels card">
-            <div>
-              <p class="eyebrow">ACTION STEP</p>
-              <h3>行動の段階はランクに合わせて上がる</h3>
-              <p>営業が怖い行為にならないよう、書く、公開する、対話する、提案する、改善するの順に階段を作ります。</p>
-            </div>
-            <ol>
-              <li><strong>Lv.1 着手</strong><span>商品アイデアを1行で書く</span></li>
-              <li><strong>Lv.2 公開</strong><span>相談募集をギルド内に投稿する</span></li>
-              <li><strong>Lv.3 対話</strong><span>見込み客にヒアリングする</span></li>
-              <li><strong>Lv.4 提案</strong><span>依頼掲示板に応募する</span></li>
-              <li><strong>Lv.5 成約・改善</strong><span>初回相談後に提案文を改善する</span></li>
-            </ol>
-          </div>
-        </div>
-      </section>
-
-      <section id="rank" class="section section-tone">
-        <div class="container">
-          <div class="section-head">
-            <div>
-              <p class="eyebrow">RANK PROGRAM</p>
-              <h2>ランクは実力の変化で上がる</h2>
-              <p>累計XPだけでなく、冒険記録、営業行動、取引、レビュー、貢献実績を組み合わせて昇格します。</p>
-            </div>
-            <a class="btn btn-outline" href="#quests">クエストを見る</a>
-          </div>
-          <div class="rank-program">
-            <article class="rank-card card is-cleared">
-              <span class="rank-circle">F</span>
-              <h3>見習い冒険者</h3>
-              <p>登録直後。プロフィール入力、投稿閲覧、冒険記録、コメント、デイリー参加が可能。</p>
-              <strong>条件: 会員登録 / 基本プロフィール入力</strong>
-            </article>
-            <article class="rank-card card is-cleared">
-              <span class="rank-circle">E</span>
-              <h3>発信者</h3>
-              <p>自分のことを外に出し始めた状態。依頼掲示板の閲覧と発信チャレンジが開放。</p>
-              <strong>条件: 100 XP / 冒険記録3件 / プロフィール80%</strong>
-            </article>
-            <article class="rank-card card is-cleared">
-              <span class="rank-circle">D</span>
-              <h3>実践者</h3>
-              <p>商品化と営業行動を開始。依頼への応募、小さな相談依頼、作業会参加が開放。</p>
-              <strong>条件: 300 XP / 提供メニュー1つ / 営業系3件</strong>
-            </article>
-            <article class="rank-card card is-current">
-              <span class="rank-circle">C</span>
-              <h3>収益冒険者</h3>
-              <p>初収益または初案件に到達。依頼投稿の優先表示、成功事例掲載候補、有料相談メニュー掲載が開放。</p>
-              <strong>条件: 700 XP / 初収益または依頼成立 / 助かった10件 / 7日継続</strong>
-            </article>
-            <article class="rank-card card">
-              <span class="rank-circle">B</span>
-              <h3>熟練ソロプレナー</h3>
-              <p>継続的に仕事を受けられる状態。メンター申請、勉強会主催、プロフィール強調表示が開放。</p>
-              <strong>条件: 1,500 XP / 取引完了3件 / レビュー2件 / 月商10万円または継続契約</strong>
-            </article>
-            <article class="rank-card card">
-              <span class="rank-circle">A</span>
-              <h3>貢献者</h3>
-              <p>自分だけでなく他者の成長にも貢献。ギルドリーダー申請、公式ナレッジ掲載が開放。</p>
-              <strong>条件: 3,500 XP / メンタリング5回 / 助かった50件 / 安定受注実績</strong>
-            </article>
-            <article class="rank-card card">
-              <span class="rank-circle">S</span>
-              <h3>ギルドマスター級</h3>
-              <p>ギルド全体に大きく貢献する象徴的メンバー。公式メンター、共同企画、パートナー連携が開放。</p>
-              <strong>条件: 7,000 XP / 後進支援 / 推薦 / 運営審査 / 高い取引評価</strong>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section id="logs" class="section section-tone">
-        <div class="container dashboard-two">
+      <section id="quest-create" class="section">
+        <div class="container split">
           <div>
-            <p class="eyebrow">ADVENTURE LOG</p>
-            <h2>冒険記録を書く</h2>
-            <p class="section-copy">事業活動の実践をブログやSNSのように残す。成功、失敗、仮説、学び、次の一手が積み上がるほど、自分だけの事業ログになる。</p>
-            <div class="board-list">
-              <article class="post">
-                <span class="category success">最新</span>
-                <div>
-                  <h3>見込み客候補を5件リストアップした</h3>
-                  <p><span class="mini-rank">12</span> 営業クエスト / +30 XP</p>
-                </div>
-              </article>
-              <article class="post">
-                <span class="category fail">前回</span>
-                <div>
-                  <h3>LPの申込ボタン文言を3案試した</h3>
-                  <p><span class="mini-rank">11</span> 販売クエスト / +25 XP</p>
-                </div>
-              </article>
+            <p class="eyebrow">CREATE QUEST</p>
+            <h2>クエストを発行する</h2>
+            <p class="section-copy">
+              報酬Goldは発行時に確保されます。達成が承認されると、達成者へ100%支払われます。
+            </p>
+            <div class="reward-examples">
+              <span>LP感想 10G</span>
+              <span>壁打ち 20G</span>
+              <span>Zoom相談 30G</span>
+              <span>Web診断 100G</span>
             </div>
           </div>
-          <form class="guild-form log-form card" action="#" method="post">
-            <p class="eyebrow">WRITE LOG</p>
-            <h3>事業活動の記録</h3>
-            <label for="log-title">記録タイトル</label>
-            <input id="log-title" name="log-title" type="text" value="見込み客ヒアリングを3件送った" />
-            <label for="log-kind">種類</label>
-            <select id="log-kind" name="log-kind">
-              <option>取り組んだこと</option>
-              <option>学び</option>
-              <option>失敗・詰まり</option>
-              <option>次に試す仮説</option>
-              <option>外部発信に転用したいメモ</option>
-            </select>
-            <label for="log-body">学び</label>
-            <textarea id="log-body" name="log-body" rows="5">反応がよかった問いは「今いちばん時間を奪っている作業は何ですか？」だった。明日のクエストに転用する。</textarea>
-            <button class="btn btn-solid" type="submit">記録して +10 XP</button>
+          <form class="guild-form" id="questForm">
+            <label for="questTitle">タイトル</label>
+            <input id="questTitle" name="title" type="text" value="AIメモアプリの初回体験にコメントがほしい" required />
+            <label for="questDescription">詳細説明</label>
+            <textarea id="questDescription" name="description" rows="5" required>URLを共有するので、登録から最初のメモ作成まで試して、分かりにくい点を3つ教えてください。</textarea>
+            <div class="form-row">
+              <label>
+                報酬Gold
+                <input id="questReward" name="reward" type="number" min="1" max="300" value="20" required />
+              </label>
+              <label>
+                カテゴリ
+                <select id="questCategory" name="category">
+                  <option>フィードバック</option>
+                  <option>インタビュー</option>
+                  <option>デザイン</option>
+                  <option>AI</option>
+                  <option>マーケティング</option>
+                  <option>開発</option>
+                  <option>営業</option>
+                  <option>その他</option>
+                </select>
+              </label>
+            </div>
+            <label for="questDeadline">締切</label>
+            <input id="questDeadline" name="deadline" type="date" value="2026-06-20" required />
+            <button class="btn btn-primary" type="submit">Goldを確保して発行</button>
+            <p class="form-note" data-form-note>現在の残高: 100G</p>
           </form>
         </div>
       </section>
 
-      <section id="requests" class="section section-light">
-        <div class="container dashboard-two">
-          <div>
-            <p class="eyebrow">LIGHT REQUEST BOARD</p>
-            <h2>協力依頼を出す</h2>
-            <p class="section-copy">利用フィードバック、トライアル利用、モニター募集、SNSでの拡散など、お金のやり取りが発生しない小さな協力を依頼できます。対応した冒険者もXPを獲得できます。</p>
-            <div class="board-list">
-              <article class="post">
-                <span class="category tool">+15 XP</span>
-                <div>
-                  <h3>新しいLPのファーストビューに感想がほしい</h3>
-                  <p><span class="mini-rank">9</span> 利用フィードバック / 所要10分</p>
-                  <a class="text-link" href="#">対応して +15 XP</a>
-                </div>
-              </article>
-              <article class="post">
-                <span class="category success">+20 XP</span>
-                <div>
-                  <h3>β版の予約フォームを試してくれるモニター募集</h3>
-                  <p><span class="mini-rank">14</span> トライアル利用 / 所要15分</p>
-                  <a class="text-link" href="#">対応して +20 XP</a>
-                </div>
-              </article>
-              <article class="post">
-                <span class="category job">+10 XP</span>
-                <div>
-                  <h3>告知ポストの拡散に協力してほしい</h3>
-                  <p><span class="mini-rank">7</span> SNS拡散 / 所要3分</p>
-                  <a class="text-link" href="#">対応して +10 XP</a>
-                </div>
-              </article>
+      <section id="quest-board" class="section section-soft">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">QUEST BOARD</p>
+              <h2>クエスト一覧</h2>
+              <p>カテゴリとキーワードで、今すぐ手伝える依頼を探します。</p>
             </div>
           </div>
-          <form class="guild-form light-request-form card" action="#" method="post">
-            <p class="eyebrow">POST LIGHT REQUEST</p>
-            <h3>協力依頼を掲示する</h3>
-            <label for="light-request-title">依頼タイトル</label>
-            <input id="light-request-title" name="light-request-title" type="text" placeholder="例: LPを見て率直な感想がほしい" />
-            <label for="light-request-kind">依頼の種類</label>
-            <select id="light-request-kind" name="light-request-kind">
-              <option>利用フィードバック</option>
-              <option>トライアル利用</option>
-              <option>モニター募集</option>
-              <option>SNSでの拡散</option>
-              <option>軽いレビュー</option>
-              <option>アンケート回答</option>
-            </select>
-            <label for="light-request-body">依頼内容</label>
-            <textarea id="light-request-body" name="light-request-body" rows="5" placeholder="見てほしいURL、所要時間、協力してほしいことを書いてください。"></textarea>
-            <button class="btn btn-solid" type="submit">依頼を掲示する</button>
-          </form>
+          <div class="filters" role="search">
+            <label>
+              カテゴリ
+              <select id="categoryFilter">
+                <option value="all">すべて</option>
+                <option>フィードバック</option>
+                <option>インタビュー</option>
+                <option>デザイン</option>
+                <option>AI</option>
+                <option>マーケティング</option>
+                <option>開発</option>
+                <option>営業</option>
+                <option>その他</option>
+              </select>
+            </label>
+            <label>
+              キーワード
+              <input id="keywordFilter" type="search" placeholder="LP, AI, インタビュー..." />
+            </label>
+          </div>
+          <div class="quest-layout">
+            <div class="quest-list" id="questList" aria-label="クエスト一覧"></div>
+            <aside class="quest-detail" id="questDetail" aria-live="polite"></aside>
+          </div>
         </div>
       </section>
 
-      <section id="coming-soon" class="section section-light">
-        <div class="container">
-          <p class="eyebrow">COMING SOON</p>
-          <h2>これから開放されるギルド機能</h2>
-          <p class="section-copy">クエスト、冒険記録、ライト依頼の先には、同じ道を進むソロプレナーとより深くつながるギルド機能が待っています。</p>
-          <div class="cards">
-            <article class="card locked-card">
-              <span class="lock">準備中</span>
-              <h3>ギルドコミュニティ</h3>
-              <p>起業準備、プロダクト開発、営業、地域など、テーマ別に相談・共有できる部屋を開放予定。</p>
-            </article>
+      <section id="completion" class="section">
+        <div class="container split">
+          <div>
+            <p class="eyebrow">COMPLETE AND REVIEW</p>
+            <h2>完了承認と相互評価</h2>
+            <p class="section-copy">
+              発行者が成果を確認して承認します。承認後、達成者へGoldとTrustが付与され、
+              5段階評価に応じて追加Trustが反映されます。
+            </p>
+            <ul class="rules-list">
+              <li>クエスト完了: +5 Trust</li>
+              <li>5つ星: +10 Trust / 4つ星: +8 Trust / 3つ星: +5 Trust</li>
+              <li>信頼ポイントは譲渡不可、売買不可、自己評価禁止</li>
+            </ul>
           </div>
+          <form class="guild-form" id="reviewForm">
+            <label for="completedQuest">承認するクエスト</label>
+            <select id="completedQuest">
+              <option value="50">副業SaaSのユーザーインタビュー30分 / 50G</option>
+              <option value="10">LPファーストビューの感想 / 10G</option>
+              <option value="100">営業資料レビュー / 100G</option>
+            </select>
+            <label for="rating">評価</label>
+            <select id="rating">
+              <option value="10">★★★★★ とても助かった / +10 Trust</option>
+              <option value="8">★★★★ 助かった / +8 Trust</option>
+              <option value="5">★★★ 問題なし / +5 Trust</option>
+              <option value="2">★★ 改善が必要 / +2 Trust</option>
+              <option value="0">★ 承認のみ / +0 Trust</option>
+            </select>
+            <label for="reviewComment">コメント</label>
+            <textarea id="reviewComment" rows="5">質問設計が具体的で、次に改善する画面が明確になりました。</textarea>
+            <button class="btn btn-primary" type="submit">承認して報酬を付与</button>
+            <p class="form-note" data-review-note>未承認の完了報告が3件あります。</p>
+          </form>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
       <div class="container footer-inner">
-        <span class="copyright">&copy; 2026 ソロプレナー・ギルド. All rights reserved.</span>
-        <div class="footer-links">
+        <span>&copy; 2026 ソロプレナーギルド</span>
+        <nav class="footer-links" aria-label="フッター">
           <a href="index.html">トップページ</a>
-          <a href="#quests">クエスト</a>
-          <a href="#logs">冒険記録</a>
-          <a href="#requests">協力依頼</a>
+          <a href="#quest-create">クエスト発行</a>
+          <a href="#quest-board">クエスト一覧</a>
           <a href="charter.html">ギルド憲章</a>
-        </div>
+        </nav>
       </div>
     </footer>
 

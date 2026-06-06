@@ -3,15 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ギルド憲章 | ソロプレナー・ギルド</title>
+    <title>ギルド憲章 | ソロプレナーギルド</title>
     <meta
       name="description"
-      content="ソロプレナー・ギルドの利用規約にあたるギルド憲章。参加条件、冒険記録、クエスト、ライト依頼、XP、禁止事項、運営方針を定めます。"
+      content="ソロプレナーギルドの憲章。クエスト、Gold、Trust、評価、不正対策、運営方針を定めます。"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Shippori+Mincho:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Shippori+Mincho:wght@600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
@@ -22,223 +22,137 @@
         <a class="logo" href="index.html">
           <span class="logo-mark" aria-hidden="true">
             <svg viewBox="0 0 32 32" focusable="false">
-              <path class="crest-shield" d="M16 3.5 26 7.6v7.2c0 6.5-3.9 11.4-10 13.7C9.9 26.2 6 21.3 6 14.8V7.6Z" />
-              <path class="crest-panel" d="M16 6.8 22.8 9.6v5.1c0 4.1-2.4 7.5-6.8 9.6Z" />
-              <path class="crest-star" d="M16 10.1 17.4 13l3.2.5-2.3 2.2.5 3.2-2.8-1.5-2.8 1.5.5-3.2-2.3-2.2 3.2-.5Z" />
+              <path d="M16 3.5 26 7.7v7.1c0 6.5-3.9 11.3-10 13.7C9.9 26.1 6 21.3 6 14.8V7.7Z" />
+              <path d="M16 8.3 20.8 10.3v4.1c0 3.3-1.7 5.8-4.8 7.6Z" />
+              <path d="M16 10.7 17.2 13.1l2.7.4-2 1.9.5 2.7-2.4-1.3-2.4 1.3.5-2.7-2-1.9 2.7-.4Z" />
             </svg>
           </span>
-          <span class="logo-text">ソロプレナー・ギルド</span>
+          <span>ソロプレナーギルド</span>
         </a>
         <nav class="nav-links" aria-label="ギルド憲章メニュー">
           <a href="#purpose">目的</a>
-          <a href="#membership">参加</a>
-          <a href="#activity">活動</a>
-          <a href="#requests">ライト依頼</a>
-          <a href="#rules">禁止事項</a>
+          <a href="#points">ポイント</a>
+          <a href="#rank">ランク</a>
+          <a href="#fraud">不正対策</a>
         </nav>
         <a class="btn btn-ghost" href="dashboard.html">ギルド本部</a>
       </div>
     </header>
 
     <main>
-      <section class="charter-hero section-tone">
-        <div class="container charter-hero-inner">
+      <section class="section section-dark">
+        <div class="container">
           <p class="eyebrow">GUILD CHARTER</p>
           <h1>ギルド憲章</h1>
           <p class="lead">
-            この憲章は、ソロプレナー・ギルドを安心して使うための約束です。起業、事業作り、プロダクト作り、営業、販売、認知獲得を前に進めるために、参加者と運営が守る基本方針を定めます。
+            この憲章は、ソロプレナーギルドを信頼できる相互支援の場として運営するための基本ルールです。
+            クエスト、Gold、Trust、評価の循環を守ることを最優先にします。
           </p>
-          <div class="charter-meta">
-            <span>制定日: 2026年6月5日</span>
-            <span>対象: ソロプレナー・ギルドの利用者</span>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container loop-grid">
+          <article id="purpose">
+            <span>1</span>
+            <h3>目的</h3>
+            <p>一人起業家、フリーランス、個人開発者、副業家が、小さな依頼を通じて助け合い、孤独を減らし、信頼できる人脈と実績を作ることを目的とします。</p>
+          </article>
+          <article>
+            <span>2</span>
+            <h3>参加条件</h3>
+            <p>冒険者は、冒険者名、メールアドレス、パスワードを登録し、他者を尊重して誠実にやり取りします。なりすまし、虚偽実績、秘密情報の無断公開は禁止です。</p>
+          </article>
+          <article>
+            <span>3</span>
+            <h3>クエスト</h3>
+            <p>クエストは、フィードバック、インタビュー、デザイン、AI、マーケティング、開発、営業などの小さな協力依頼です。案件マッチングではなく相互支援を主目的にします。</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="points" class="section section-soft">
+        <div class="container trust-grid">
+          <div>
+            <p class="eyebrow">POINT POLICY</p>
+            <h2>GoldとTrustを分離する</h2>
+            <p class="section-copy">
+              Goldは増減する通貨、Trustは蓄積する信用スコアです。この2つを混同しないことがMVPの最重要ルールです。
+            </p>
+          </div>
+          <div class="point-panels">
+            <article class="point-card">
+              <span>Gold</span>
+              <strong>クエスト発行に使う</strong>
+              <p>新規登録で100G。達成、ログイン、イベント参加で獲得します。発行時に報酬分が確保され、承認後に達成者へ付与されます。</p>
+            </article>
+            <article class="point-card silver">
+              <span>Trust</span>
+              <strong>譲渡不可の信用</strong>
+              <p>クエスト完了で+5、評価に応じて最大+10。売買、譲渡、換金はできません。冒険者ランクと信頼度表示に使います。</p>
+            </article>
           </div>
         </div>
       </section>
 
-      <section class="section section-light">
-        <div class="container charter-layout">
-          <aside class="charter-toc card" aria-label="目次">
-            <p class="eyebrow">CONTENTS</p>
-            <a href="#purpose">第1条 目的</a>
-            <a href="#membership">第2条 参加資格</a>
-            <a href="#account">第3条 アカウント</a>
-            <a href="#activity">第4条 冒険記録とクエスト</a>
-            <a href="#requests">第5条 ライト依頼</a>
-            <a href="#xp">第6条 XP・ランク</a>
-            <a href="#conduct">第7条 投稿と発信</a>
-            <a href="#rules">第8条 禁止事項</a>
-            <a href="#operation">第9条 運営対応</a>
-            <a href="#liability">第10条 免責</a>
-            <a href="#revision">第11条 改定</a>
-          </aside>
+      <section id="rank" class="section">
+        <div class="container">
+          <p class="eyebrow">RANK AND BADGES</p>
+          <h2>冒険者ランク</h2>
+          <div class="ranking-grid">
+            <article class="leaderboard">
+              <h3>Trust条件</h3>
+              <ol>
+                <li><span>1</span><strong>見習い冒険者</strong><em>0-99</em></li>
+                <li><span>2</span><strong>駆け出し冒険者</strong><em>100-299</em></li>
+                <li><span>3</span><strong>一人前冒険者</strong><em>300-699</em></li>
+                <li><span>4</span><strong>熟練冒険者</strong><em>700-1499</em></li>
+              </ol>
+            </article>
+            <article class="leaderboard">
+              <h3>上位ランクとバッジ</h3>
+              <ol>
+                <li><span>5</span><strong>上級冒険者</strong><em>1500-2999</em></li>
+                <li><span>6</span><strong>マスター冒険者</strong><em>3000-4999</em></li>
+                <li><span>7</span><strong>伝説の冒険者</strong><em>5000+</em></li>
+                <li><span>B</span><strong>初陣 / 助っ人 / 英雄</strong><em>達成数</em></li>
+              </ol>
+            </article>
+          </div>
+        </div>
+      </section>
 
-          <article class="charter-body">
-            <section id="purpose" class="charter-section card">
-              <span class="rank-circle">1</span>
-              <div>
-                <h2>目的</h2>
-                <p>
-                  ソロプレナー・ギルドは、ひとりで事業を進める起業家が、実践を記録し、学びを蓄積し、必要な協力を得ながら、事業活動を前に進めるための場です。
-                </p>
-                <p>
-                  ギルドは、単なる掲示板や学習サービスではなく、相談、行動、記録、信用、依頼、実績が循環する相互支援の拠点を目指します。
-                </p>
-              </div>
-            </section>
-
-            <section id="membership" class="charter-section card">
-              <span class="rank-circle">2</span>
-              <div>
-                <h2>参加資格</h2>
-                <p>
-                  本サービスは、独立準備中、副業段階、独立済みを問わず、自分の事業を作り、育てようとする個人または小規模事業者が利用できます。
-                </p>
-                <ul>
-                  <li>起業、事業作り、営業、販売、発信などを前に進める意思があること。</li>
-                  <li>他の冒険者を尊重し、誠実なやり取りを行うこと。</li>
-                  <li>投稿、依頼、プロフィールに虚偽または著しく誤解を招く内容を記載しないこと。</li>
-                </ul>
-              </div>
-            </section>
-
-            <section id="account" class="charter-section card">
-              <span class="rank-circle">3</span>
-              <div>
-                <h2>アカウントとプロフィール</h2>
-                <p>
-                  冒険者は、自身の責任でアカウント情報を管理します。プロフィールには、提供サービス、得意領域、相談したいこと、外部リンクなど、信頼形成に必要な情報を正確に記載してください。
-                </p>
-                <p>
-                  アカウントの貸与、譲渡、なりすましは禁止します。運営が不適切と判断した場合、表示内容の修正依頼、公開範囲の変更、利用制限を行うことがあります。
-                </p>
-              </div>
-            </section>
-
-            <section id="activity" class="charter-section card">
-              <span class="rank-circle">4</span>
-              <div>
-                <h2>冒険記録とクエスト</h2>
-                <p>
-                  冒険記録は、取り組んだこと、学び、失敗、詰まり、次に試す仮説を残すための実践ログです。クエストは、事業活動を具体的な行動へ分解するための任務です。
-                </p>
-                <ul>
-                  <li>他者の秘密情報、個人情報、契約上公開できない情報を投稿しないでください。</li>
-                  <li>成果の誇張、実績の捏造、第三者のコンテンツの無断転載を行わないでください。</li>
-                  <li>助言を受けた場合でも、最終的な事業判断は冒険者自身の責任で行います。</li>
-                </ul>
-              </div>
-            </section>
-
-            <section id="requests" class="charter-section card">
-              <span class="rank-circle">5</span>
-              <div>
-                <h2>ライト依頼</h2>
-                <p>
-                  ライト依頼は、利用フィードバック、トライアル利用、モニター募集、SNSでの拡散、軽いレビュー、アンケート回答など、小さな協力を依頼する機能です。
-                </p>
-                <p>
-                  MVP段階のライト依頼では、原則として金銭のやり取り、納品責任の重い制作依頼、長期稼働を前提にした業務委託、契約交渉を必要とする依頼を扱いません。将来、有償依頼機能を提供する場合は、別途条件を定めます。
-                </p>
-              </div>
-            </section>
-
-            <section id="xp" class="charter-section card">
-              <span class="rank-circle">6</span>
-              <div>
-                <h2>XP・ランク・バッジ</h2>
-                <p>
-                  XP、ランク、バッジは、冒険者の行動、学び、貢献、実績を見える化するための指標です。金銭的価値、換金性、権利性を持つものではありません。
-                </p>
-                <p>
-                  運営は、低品質な投稿、機械的な投稿、自己申告の不備、不正なリアクション、その他不適切な活動に対して、XPの修正、取り消し、ランクの調整を行うことがあります。
-                </p>
-              </div>
-            </section>
-
-            <section id="conduct" class="charter-section card">
-              <span class="rank-circle">7</span>
-              <div>
-                <h2>投稿とコミュニケーション</h2>
-                <p>
-                  ギルド内の投稿、コメント、依頼、リアクションは、他の冒険者の事業活動を前に進めるために使います。批判を行う場合も、人格ではなく事業上の論点に向けてください。
-                </p>
-                <ul>
-                  <li>売り込み、宣伝、募集は、指定された場所とルールに沿って行ってください。</li>
-                  <li>専門的な助言を投稿する場合は、断定しすぎず、前提条件や不確実性を明示してください。</li>
-                  <li>外部サービスへの誘導を行う場合は、関係性、報酬、利益相反があるときに明示してください。</li>
-                </ul>
-              </div>
-            </section>
-
-            <section id="rules" class="charter-section card">
-              <span class="rank-circle">8</span>
-              <div>
-                <h2>禁止事項</h2>
-                <p>冒険者は、以下の行為を行ってはなりません。</p>
-                <ul>
-                  <li>法令、公序良俗、契約、第三者の権利に反する行為。</li>
-                  <li>誹謗中傷、差別、脅迫、嫌がらせ、過度な攻撃的表現。</li>
-                  <li>詐欺的な勧誘、虚偽の実績表示、リスクを隠した投資・副業勧誘。</li>
-                  <li>スパム、過度な宣伝、外部コミュニティへの無断勧誘。</li>
-                  <li>他者の個人情報、秘密情報、未公開情報の無断公開。</li>
-                  <li>不正アクセス、サービス運営を妨げる行為、自動投稿などの濫用。</li>
-                  <li>運営がギルドの信頼や安全を損なうと判断する行為。</li>
-                </ul>
-              </div>
-            </section>
-
-            <section id="operation" class="charter-section card">
-              <span class="rank-circle">9</span>
-              <div>
-                <h2>運営対応</h2>
-                <p>
-                  運営は、ギルドの安全、品質、信頼を守るため、投稿の非表示、修正依頼、XPの調整、依頼の取り下げ、警告、利用制限、退会処理などの対応を行うことがあります。
-                </p>
-                <p>
-                  通報や相談があった場合、運営は必要な範囲で投稿内容、依頼内容、アカウント情報を確認します。対応内容の詳細をすべて開示できない場合があります。
-                </p>
-              </div>
-            </section>
-
-            <section id="liability" class="charter-section card">
-              <span class="rank-circle">10</span>
-              <div>
-                <h2>免責</h2>
-                <p>
-                  ギルド内の情報、助言、フィードバック、依頼への対応は、冒険者自身の判断と責任で利用してください。運営は、事業成果、売上、案件獲得、外部サービスの利用結果を保証しません。
-                </p>
-                <p>
-                  冒険者同士または第三者との間で生じたトラブルは、原則として当事者間で解決するものとします。ただし、ギルドの安全に関わる場合、運営は必要な範囲で対応します。
-                </p>
-              </div>
-            </section>
-
-            <section id="revision" class="charter-section card">
-              <span class="rank-circle">11</span>
-              <div>
-                <h2>憲章の改定</h2>
-                <p>
-                  運営は、サービス内容、法令、運用方針の変更に応じて、この憲章を改定することがあります。重要な変更がある場合は、サービス上で告知します。
-                </p>
-                <p>
-                  改定後にサービスを利用した場合、冒険者は改定後の憲章に同意したものとみなします。
-                </p>
-              </div>
-            </section>
-          </article>
+      <section id="fraud" class="section section-dark">
+        <div class="container split">
+          <div>
+            <p class="eyebrow">SAFETY RULES</p>
+            <h2>不正対策</h2>
+            <p class="section-copy">
+              Trustの価値は、評価の信頼性で決まります。自己評価、評価連打、相互評価の異常な偏りは制限対象です。
+            </p>
+          </div>
+          <div class="point-card">
+            <strong>禁止される行為</strong>
+            <ul class="rules-list">
+              <li>自己評価、複数アカウントによる評価操作</li>
+              <li>同一ユーザー間の評価連打</li>
+              <li>虚偽の完了報告、成果物の捏造</li>
+              <li>GoldやTrustの売買、譲渡、換金の約束</li>
+              <li>誹謗中傷、秘密情報の公開、過度な外部誘導</li>
+            </ul>
+          </div>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
       <div class="container footer-inner">
-        <span class="copyright">&copy; 2026 ソロプレナー・ギルド. All rights reserved.</span>
-        <div class="footer-links">
+        <span>&copy; 2026 ソロプレナーギルド</span>
+        <nav class="footer-links" aria-label="フッター">
           <a href="index.html">トップページ</a>
           <a href="dashboard.html">ギルド本部</a>
           <a href="charter.html">ギルド憲章</a>
-          <a href="#">お問い合わせ</a>
-        </div>
+        </nav>
       </div>
     </footer>
   </body>
