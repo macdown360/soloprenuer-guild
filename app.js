@@ -5,8 +5,6 @@ const state = {
     headline: "個人開発者 / AIツール開発 / BtoB SaaS",
     summary: "AIプロダクトの初期検証、BtoB SaaSのオンボーディング改善、開発者向けUXレビューが得意です。",
     businessStage: "MVP検証中",
-    workStyle: "平日夜・週末に対応",
-    responseTime: "24時間以内",
     strengths: ["AI実装", "UXレビュー", "BtoB SaaS", "オンボーディング", "技術検証"],
     interests: ["生成AI", "業務効率化", "開発者体験", "顧客理解", "プロダクト改善"],
     preferredCategories: ["AI", "フィードバック", "開発", "インタビュー"],
@@ -39,7 +37,6 @@ const state = {
       trust: 420,
       completed: 24,
       issued: 12,
-      responseTime: "12時間以内",
       skills: ["UXレビュー", "情報設計", "BtoB SaaS"],
       interests: ["オンボーディング", "導線改善", "MVP検証"],
     },
@@ -50,7 +47,6 @@ const state = {
       trust: 360,
       completed: 19,
       issued: 9,
-      responseTime: "24時間以内",
       skills: ["顧客理解", "BtoB SaaS", "インタビュー"],
       interests: ["課題検証", "MVP検証", "価格設計"],
     },
@@ -61,7 +57,6 @@ const state = {
       trust: 510,
       completed: 31,
       issued: 15,
-      responseTime: "半日以内",
       skills: ["動作確認", "UXレビュー", "フォーム改善"],
       interests: ["スマホUX", "自動返信", "運用改善"],
     },
@@ -72,7 +67,6 @@ const state = {
       trust: 285,
       completed: 16,
       issued: 8,
-      responseTime: "24時間以内",
       skills: ["営業資料", "提案文", "BtoB SaaS"],
       interests: ["商談準備", "導入事例", "価格設計"],
     },
@@ -83,7 +77,6 @@ const state = {
       trust: 335,
       completed: 21,
       issued: 10,
-      responseTime: "18時間以内",
       skills: ["生成AI", "告知文", "SNS"],
       interests: ["AI導入", "コピー", "リード獲得"],
     },
@@ -223,7 +216,6 @@ function getIssuerProfile(name) {
       trust: state.trust,
       completed: state.completed,
       issued: state.issued,
-      responseTime: state.account.responseTime,
       skills: state.account.strengths,
       interests: state.account.interests,
     };
@@ -261,8 +253,6 @@ function renderAccountProfile() {
   if (profileMetaEl) {
     profileMetaEl.innerHTML = `
       <div><dt>事業フェーズ</dt><dd>${account.businessStage}</dd></div>
-      <div><dt>対応時間</dt><dd>${account.workStyle}</dd></div>
-      <div><dt>返信目安</dt><dd>${account.responseTime}</dd></div>
     `;
   }
 
@@ -505,7 +495,6 @@ function renderIssuerProfile(name) {
         <div><dt>Trust</dt><dd>${profile.trust}</dd></div>
         <div><dt>完了</dt><dd>${profile.completed}</dd></div>
         <div><dt>発行</dt><dd>${profile.issued}</dd></div>
-        <div><dt>返信</dt><dd>${profile.responseTime}</dd></div>
       </dl>
       <div class="profile-chip-block">
         <strong>得意なこと</strong>
