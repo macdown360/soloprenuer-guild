@@ -1,4 +1,27 @@
 const state = {
+  account: {
+    name: "アキラ",
+    initials: "A",
+    headline: "個人開発者 / AIツール開発 / BtoB SaaS",
+    summary: "AIプロダクトの初期検証、BtoB SaaSのオンボーディング改善、開発者向けUXレビューが得意です。",
+    businessStage: "MVP検証中",
+    workStyle: "平日夜・週末に対応",
+    responseTime: "24時間以内",
+    strengths: ["AI実装", "UXレビュー", "BtoB SaaS", "オンボーディング", "技術検証"],
+    interests: ["生成AI", "業務効率化", "開発者体験", "顧客理解", "プロダクト改善"],
+    preferredCategories: ["AI", "フィードバック", "開発", "インタビュー"],
+    preferredTags: ["AI", "BtoB SaaS", "UXレビュー", "オンボーディング", "MVP検証", "開発者体験"],
+  },
+  questTaxonomy: {
+    フィードバック: ["UXレビュー", "オンボーディング", "導線改善", "MVP検証", "初回体験"],
+    インタビュー: ["顧客理解", "課題検証", "ユーザー調査", "BtoB SaaS"],
+    デザイン: ["UI改善", "情報設計", "ワイヤーフレーム", "ブランド"],
+    AI: ["生成AI", "プロンプト", "AI導入", "自動化", "AIツール"],
+    マーケティング: ["告知文", "SNS", "コピー", "リード獲得"],
+    開発: ["動作確認", "技術レビュー", "API", "開発者体験"],
+    営業: ["営業資料", "提案文", "価格設計", "商談準備"],
+    その他: ["壁打ち", "リサーチ", "運用相談"],
+  },
   gold: 100,
   trust: 325,
   completed: 18,
@@ -10,13 +33,15 @@ const state = {
   quests: [
     {
       id: 1,
-      title: "新しいLPのファーストビューに率直な感想がほしい",
+      title: "新しいオンボーディング画面に率直な感想がほしい",
       issuer: "リナ",
       reward: 10,
       category: "フィードバック",
+      tags: ["UXレビュー", "オンボーディング", "BtoB SaaS", "MVP検証"],
+      skills: ["UXレビュー", "顧客理解"],
       deadline: "2026-06-12",
       applicants: 4,
-      description: "SaaSのLPを見て、誰向けか、何が得られるか、申込したくなるかを率直に教えてください。",
+      description: "SaaSの初回利用画面を見て、誰向けか、何が得られるか、次の操作に進みたくなるかを率直に教えてください。",
       comments: ["冒頭コピーが少し抽象的かもしれません。", "料金の目安があると判断しやすいです。"],
     },
     {
@@ -25,6 +50,8 @@ const state = {
       issuer: "カイト",
       reward: 50,
       category: "インタビュー",
+      tags: ["BtoB SaaS", "顧客理解", "課題検証", "MVP検証"],
+      skills: ["顧客理解", "BtoB SaaS"],
       deadline: "2026-06-15",
       applicants: 2,
       description: "個人でSaaSを作っている方に、課題管理と検証方法について30分ヒアリングしたいです。",
@@ -36,6 +63,8 @@ const state = {
       issuer: "ミオ",
       reward: 50,
       category: "開発",
+      tags: ["動作確認", "UXレビュー", "フォーム改善"],
+      skills: ["技術検証", "UXレビュー"],
       deadline: "2026-06-18",
       applicants: 6,
       description: "予約、確認メール、キャンセル導線まで試して、詰まった点を共有してください。",
@@ -47,6 +76,8 @@ const state = {
       issuer: "ユウ",
       reward: 100,
       category: "営業",
+      tags: ["営業資料", "BtoB SaaS", "提案文"],
+      skills: ["BtoB SaaS", "顧客理解"],
       deadline: "2026-06-22",
       applicants: 1,
       description: "BtoB向け営業資料10ページを見て、導入事例と価格ページの説得力をレビューしてください。",
@@ -58,6 +89,8 @@ const state = {
       issuer: "ナオ",
       reward: 15,
       category: "AI",
+      tags: ["生成AI", "告知文", "SNS", "AI導入"],
+      skills: ["AI実装", "コピー"],
       deadline: "2026-06-19",
       applicants: 3,
       description: "XとLinkedInに投稿する告知文を、刺さる見出しとCTAに整えたいです。",
@@ -87,6 +120,41 @@ const heroCategory = document.querySelector("#heroCategory");
 const heroKeyword = document.querySelector("#heroKeyword");
 const questForm = document.querySelector("#questForm");
 const reviewForm = document.querySelector("#reviewForm");
+const recommendedQuestsEl = document.querySelector("#recommendedQuests");
+const accountInitialsEl = document.querySelector("[data-account-initials]");
+const accountNameEl = document.querySelector("[data-account-name]");
+const accountHeadlineEl = document.querySelector("[data-account-headline]");
+const profileSummaryEl = document.querySelector("[data-profile-summary]");
+const profileMetaEl = document.querySelector("[data-profile-meta]");
+const profileSkillsEl = document.querySelector("[data-profile-skills]");
+const profileInterestsEl = document.querySelector("[data-profile-interests]");
+const profileCategoriesEl = document.querySelector("[data-profile-categories]");
+const matchSignalsEl = document.querySelector("[data-match-signals]");
+const categoryMatrixEl = document.querySelector("[data-category-matrix]");
+
+function normalizeList(values) {
+  if (!values) return [];
+  if (Array.isArray(values)) return values.map((value) => String(value).trim()).filter(Boolean);
+  return String(values)
+    .split(/[、,]/)
+    .map((value) => value.trim())
+    .filter(Boolean);
+}
+
+function unique(values) {
+  return [...new Set(normalizeList(values))];
+}
+
+function overlap(left, right) {
+  const rightSet = new Set(normalizeList(right));
+  return normalizeList(left).filter((value) => rightSet.has(value));
+}
+
+function createChips(values, modifier = "") {
+  return normalizeList(values)
+    .map((value) => `<span class="tag-chip${modifier ? ` ${modifier}` : ""}">${value}</span>`)
+    .join("");
+}
 
 function getRank(trust) {
   if (trust >= 5000) return "伝説の冒険者";
@@ -102,6 +170,105 @@ function formatDate(value) {
   return formatter.format(new Date(`${value}T00:00:00`));
 }
 
+function renderAccountProfile() {
+  const account = state.account;
+
+  if (accountInitialsEl) accountInitialsEl.textContent = account.initials;
+  if (accountNameEl) accountNameEl.textContent = account.name;
+  if (accountHeadlineEl) accountHeadlineEl.textContent = account.headline;
+  if (profileSummaryEl) profileSummaryEl.textContent = account.summary;
+
+  if (profileMetaEl) {
+    profileMetaEl.innerHTML = `
+      <div><dt>事業フェーズ</dt><dd>${account.businessStage}</dd></div>
+      <div><dt>対応時間</dt><dd>${account.workStyle}</dd></div>
+      <div><dt>返信目安</dt><dd>${account.responseTime}</dd></div>
+    `;
+  }
+
+  if (profileSkillsEl) profileSkillsEl.innerHTML = createChips(account.strengths, "is-skill");
+  if (profileInterestsEl) profileInterestsEl.innerHTML = createChips(account.interests);
+  if (profileCategoriesEl) profileCategoriesEl.innerHTML = createChips(account.preferredCategories, "is-category");
+
+  if (matchSignalsEl) {
+    matchSignalsEl.innerHTML = [
+      ["優先カテゴリ", account.preferredCategories.join(" / ")],
+      ["強いタグ", account.preferredTags.slice(0, 4).join(" / ")],
+      ["受けやすい依頼", "レビュー・検証・30分ヒアリング"],
+    ]
+      .map(([label, value]) => `<article><span>${label}</span><strong>${value}</strong></article>`)
+      .join("");
+  }
+
+  if (categoryMatrixEl) {
+    categoryMatrixEl.innerHTML = Object.entries(state.questTaxonomy)
+      .map(([category, tags]) => {
+        const isPreferred = account.preferredCategories.includes(category);
+        const matchedTags = overlap(tags, account.preferredTags);
+        return `
+          <article class="${isPreferred ? "is-preferred" : ""}">
+            <strong>${category}</strong>
+            <span>${isPreferred ? "優先" : "通常"} / ${matchedTags.length}タグ一致</span>
+          </article>
+        `;
+      })
+      .join("");
+  }
+}
+
+function scoreQuest(quest) {
+  const account = state.account;
+  const tagMatches = overlap(quest.tags, account.preferredTags);
+  const skillMatches = overlap(quest.skills, account.strengths);
+  const categoryScore = account.preferredCategories.includes(quest.category) ? 36 : 0;
+  const tagScore = Math.min(tagMatches.length * 12, 36);
+  const skillScore = Math.min(skillMatches.length * 14, 28);
+  const rewardScore = quest.reward >= 50 ? 8 : quest.reward >= 20 ? 5 : 2;
+  const score = Math.min(100, categoryScore + tagScore + skillScore + rewardScore);
+
+  return {
+    score,
+    tagMatches,
+    skillMatches,
+    reasons: unique([quest.category, ...tagMatches, ...skillMatches]).slice(0, 4),
+  };
+}
+
+function renderRecommendedQuests() {
+  if (!recommendedQuestsEl) return;
+
+  const recommended = state.quests
+    .map((quest) => ({ quest, match: scoreQuest(quest) }))
+    .sort((a, b) => b.match.score - a.match.score || b.quest.reward - a.quest.reward)
+    .slice(0, 3);
+
+  recommendedQuestsEl.innerHTML = recommended
+    .map(({ quest, match }) => {
+      const tags = createChips(quest.tags.slice(0, 4));
+      const reason = match.reasons.length ? match.reasons.join(" / ") : "カテゴリと依頼内容";
+      return `
+        <article class="rec-quest-card">
+          <div class="rec-quest-top">
+            <span class="category">${quest.category}</span>
+            <span class="rec-match-badge"><i data-lucide="sparkles"></i> ${match.score}% match</span>
+          </div>
+          <h3>${quest.title}</h3>
+          <p>${quest.description}</p>
+          <div class="rec-tags">${tags}</div>
+          <div class="match-reason"><span>一致理由</span><strong>${reason}</strong></div>
+          <div class="rec-quest-foot">
+            <span class="rec-reward"><i data-lucide="coins"></i> ${quest.reward}G</span>
+            <span class="rec-trust"><i data-lucide="shield-check"></i> +5 Trust</span>
+            <a class="btn btn-primary btn-sm" href="quests.html">詳細へ</a>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  if (window.lucide) lucide.createIcons();
+}
+
 function syncStats() {
   if (goldEl) goldEl.textContent = state.gold;
   if (trustEl) trustEl.textContent = state.trust;
@@ -110,6 +277,7 @@ function syncStats() {
   if (issuedEl) issuedEl.textContent = state.issued;
   if (totalQuestsEl) totalQuestsEl.textContent = state.quests.length;
   if (formNote) formNote.textContent = `現在の残高: ${state.gold}G / 現在ランク: ${getRank(state.trust)}`;
+  renderRecommendedQuests();
 }
 
 function filteredQuests() {
@@ -118,7 +286,7 @@ function filteredQuests() {
 
   return state.quests.filter((quest) => {
     const categoryMatch = category === "all" || quest.category === category;
-    const keywordText = `${quest.title} ${quest.issuer} ${quest.description}`.toLowerCase();
+    const keywordText = `${quest.title} ${quest.issuer} ${quest.description} ${(quest.tags || []).join(" ")} ${(quest.skills || []).join(" ")}`.toLowerCase();
     return categoryMatch && (!keyword || keywordText.includes(keyword));
   });
 }
@@ -148,6 +316,7 @@ function renderQuestList() {
         <span class="category">${quest.category}</span>
         <h3>${quest.title}</h3>
         <p>発行者: ${quest.issuer} / 締切: ${formatDate(quest.deadline)} / 応募: ${quest.applicants}名</p>
+        <div class="quest-tags">${createChips(quest.tags || [])}</div>
       </div>
       <strong class="gold">${quest.reward}G</strong>
     `;
@@ -180,6 +349,7 @@ function renderQuestDetail(quest) {
     <span class="category">${quest.category}</span>
     <h2>${quest.title}</h2>
     <p>${quest.description}</p>
+    <div class="quest-tags">${createChips(quest.tags || [])}</div>
     <div class="detail-meta">
       <div><strong>発行者</strong><br />${quest.issuer}</div>
       <div><strong>報酬</strong><br />${quest.reward}G</div>
@@ -214,12 +384,16 @@ questForm?.addEventListener("submit", (event) => {
 
   state.gold -= reward;
   state.issued += 1;
+  const selectedCategory = data.get("category");
+  const tags = unique([...(state.questTaxonomy[selectedCategory] || []).slice(0, 2), ...normalizeList(data.get("tags"))]);
   const quest = {
     id: Date.now(),
     title: data.get("title"),
-    issuer: "アキラ",
+    issuer: state.account.name,
     reward,
-    category: data.get("category"),
+    category: selectedCategory,
+    tags,
+    skills: overlap(tags, state.account.strengths),
     deadline: data.get("deadline"),
     applicants: 0,
     description: data.get("description"),
@@ -230,6 +404,7 @@ questForm?.addEventListener("submit", (event) => {
   state.selectedQuestId = quest.id;
   syncStats();
   renderQuestList();
+  renderAccountProfile();
   formNote.textContent = `${reward}Gを確保してクエストを発行しました。`;
 });
 
@@ -298,7 +473,7 @@ function toggleMission(index) {
   syncStats();
 
   if (allDone) {
-    showToast("🎉 全ミッション達成！ボーナスTrust +5 獲得！");
+    showToast("全ミッション達成。ボーナスTrust +5を獲得しました。");
   } else {
     showToast(`ミッション達成！ ${reward.label} 獲得`);
   }
@@ -318,7 +493,7 @@ function updateWeeklyChallenge() {
   if (count) count.textContent = state.weeklyProgress;
 
   if (state.weeklyProgress >= 3) {
-    showToast("🏆 週次チャレンジ達成！Gold +30・Trust +25・限定称号を獲得！");
+    showToast("週次チャレンジ達成。Gold +30・Trust +25・限定称号を獲得しました。");
     state.gold += 30;
     state.trust += 25;
     state.weeklyProgress = 0;
@@ -365,6 +540,7 @@ document.querySelectorAll("[data-category-link]").forEach((link) => {
   });
 });
 
+renderAccountProfile();
 syncStats();
 renderQuestList();
 updateMissionUI();

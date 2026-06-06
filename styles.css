@@ -1001,7 +1001,7 @@ h3 {
 }
 
 .app-grid {
-  grid-template-columns: 320px minmax(0, 1fr);
+  grid-template-columns: 360px minmax(0, 1fr);
   align-items: stretch;
 }
 
@@ -1034,6 +1034,20 @@ h3 {
   color: var(--ink);
   font-family: "Noto Sans JP", sans-serif;
   font-size: 1.65rem;
+}
+
+.profile-headline {
+  margin-bottom: 0.55rem;
+  color: var(--ink);
+  font-weight: 800;
+  line-height: 1.55;
+}
+
+.profile-summary {
+  margin-bottom: 0.9rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
 }
 
 .rank-display {
@@ -1104,6 +1118,79 @@ h3 {
 
 .profile-stats dd {
   font-weight: 900;
+}
+
+.profile-meta {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0.8rem 0;
+}
+
+.profile-meta div {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 0.55rem;
+  align-items: center;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.profile-meta dt,
+.profile-meta dd {
+  margin: 0;
+}
+
+.profile-meta dt {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.profile-meta dd {
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.profile-chip-block {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 0.85rem;
+}
+
+.chip-list,
+.quest-tags,
+.rec-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.38rem;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  border: 1px solid #d7deea;
+  border-radius: 999px;
+  padding: 0.16rem 0.52rem;
+  color: #475467;
+  background: #f8fafc;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.tag-chip.is-skill {
+  color: #1e4f73;
+  border-color: #b8d8ee;
+  background: #eef8ff;
+}
+
+.tag-chip.is-category {
+  color: #6f4d14;
+  border-color: #e2c56d;
+  background: #fff9e7;
 }
 
 .reward-examples,
@@ -1259,6 +1346,80 @@ h3 {
   background: linear-gradient(135deg, var(--gold-2), var(--gold));
   font-weight: 900;
   letter-spacing: -0.01em;
+}
+
+.match-panel {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 12px 32px rgba(13, 20, 36, 0.08);
+}
+
+.panel-head-inline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.panel-head-inline h3,
+.panel-head-inline .panel-label {
+  margin-bottom: 0;
+}
+
+.match-signal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.match-signal-grid article {
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.match-signal-grid span,
+.category-matrix span,
+.match-reason span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.match-signal-grid strong {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.category-matrix {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.category-matrix article {
+  padding: 0.58rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.category-matrix article.is-preferred {
+  border-color: #e2c56d;
+  background: #fff9e7;
+}
+
+.category-matrix strong {
+  display: block;
+  font-size: 0.85rem;
 }
 
 .dashboard-panels {
@@ -1505,8 +1666,13 @@ h3 {
   .dashboard-panels,
   .activity-board,
   .dashboard-workspace,
+  .match-signal-grid,
   .point-panels {
     grid-template-columns: 1fr;
+  }
+
+  .category-matrix {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .title-grid-wide {
@@ -1574,6 +1740,7 @@ h3 {
 
   .form-row,
   .filters,
+  .profile-meta div,
   .hero-filter-grid {
     grid-template-columns: 1fr;
   }
@@ -1603,6 +1770,7 @@ h3 {
 @media (max-width: 420px) {
   .hero-metrics,
   .wallet,
+  .category-matrix,
   .title-grid,
   .title-grid-wide,
   .detail-meta {
@@ -2132,6 +2300,21 @@ h3 {
   font-size: 0.86rem;
   line-height: 1.65;
   flex: 1;
+}
+
+.match-reason {
+  padding: 0.58rem 0.68rem;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  background: #f0f7ff;
+}
+
+.match-reason strong {
+  display: block;
+  margin-top: 0.12rem;
+  color: #1e40af;
+  font-size: 0.84rem;
+  line-height: 1.45;
 }
 
 .rec-quest-foot {

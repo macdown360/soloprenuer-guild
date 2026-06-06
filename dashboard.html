@@ -55,10 +55,13 @@
         </div>
         <div class="container app-grid">
           <aside class="profile-panel">
-            <div class="avatar" aria-hidden="true">A</div>
+            <div class="avatar" aria-hidden="true" data-account-initials>A</div>
             <p class="eyebrow">ACCOUNT</p>
-            <h1>アキラ</h1>
-            <p>個人開発者 / AIツール開発 / BtoB SaaS</p>
+            <h1 data-account-name>アキラ</h1>
+            <p class="profile-headline" data-account-headline>個人開発者 / AIツール開発 / BtoB SaaS</p>
+            <p class="profile-summary" data-profile-summary>
+              AIプロダクトの初期検証、BtoB SaaSのオンボーディング改善、開発者向けUXレビューが得意です。
+            </p>
             <div class="rank-display">
               <span>一人前冒険者</span>
               <strong data-rank>Trust 325</strong>
@@ -78,6 +81,19 @@
               <div><dt>発行クエスト数</dt><dd data-issued-count>7</dd></div>
               <div><dt>継続利用日数</dt><dd>23日</dd></div>
             </dl>
+            <dl class="profile-meta" data-profile-meta></dl>
+            <div class="profile-chip-block">
+              <span class="panel-label">SKILLS</span>
+              <div class="chip-list" data-profile-skills></div>
+            </div>
+            <div class="profile-chip-block">
+              <span class="panel-label">INTERESTS</span>
+              <div class="chip-list" data-profile-interests></div>
+            </div>
+            <div class="profile-chip-block">
+              <span class="panel-label">PREFERRED QUESTS</span>
+              <div class="chip-list" data-profile-categories></div>
+            </div>
             <div class="streak-display">
               <p class="panel-label">STREAK</p>
               <div class="streak-row">
@@ -144,6 +160,17 @@
               <span>マスター</span>
               <span>伝説</span>
             </div>
+            <article class="match-panel">
+              <div class="panel-head-inline">
+                <div>
+                  <span class="panel-label">MATCHING PROFILE</span>
+                  <h3>おすすめ判定に使う情報</h3>
+                </div>
+                <span class="status-pill">更新済み</span>
+              </div>
+              <div class="match-signal-grid" data-match-signals></div>
+              <div class="category-matrix" data-category-matrix></div>
+            </article>
             <div class="dashboard-panels">
               <article class="next-rank-panel">
                 <div>
@@ -300,47 +327,7 @@
             </div>
             <a class="btn btn-outline" href="quests.html"><i data-lucide="search"></i>すべて見る</a>
           </div>
-          <div class="rec-quest-grid">
-            <article class="rec-quest-card">
-              <div class="rec-quest-top">
-                <span class="category">フィードバック</span>
-                <span class="rec-urgency-badge"><i data-lucide="clock"></i> 締切まで2日</span>
-              </div>
-              <h3>新しいオンボーディング画面に率直な感想がほしい</h3>
-              <p>SaaSの初回利用画面を見て、誰向けか・何が得られるかを率直に教えてください。</p>
-              <div class="rec-quest-foot">
-                <span class="rec-reward"><i data-lucide="coins"></i> 10G</span>
-                <span class="rec-trust"><i data-lucide="shield-check"></i> +5 Trust</span>
-                <a class="btn btn-primary btn-sm" href="quests.html">応募する</a>
-              </div>
-            </article>
-            <article class="rec-quest-card">
-              <div class="rec-quest-top">
-                <span class="category">AI</span>
-                <span class="rec-match-badge"><i data-lucide="sparkles"></i> スキルマッチ</span>
-              </div>
-              <h3>AI活用セミナーの告知文を添削してほしい</h3>
-              <p>XとLinkedInに投稿する告知文を、刺さる見出しとCTAに整えたいです。</p>
-              <div class="rec-quest-foot">
-                <span class="rec-reward"><i data-lucide="coins"></i> 15G</span>
-                <span class="rec-trust"><i data-lucide="shield-check"></i> +5 Trust</span>
-                <a class="btn btn-primary btn-sm" href="quests.html">応募する</a>
-              </div>
-            </article>
-            <article class="rec-quest-card">
-              <div class="rec-quest-top">
-                <span class="category">インタビュー</span>
-                <span class="rec-reward-badge"><i data-lucide="star"></i> 高報酬</span>
-              </div>
-              <h3>副業SaaSのユーザーインタビュー30分</h3>
-              <p>個人でSaaSを作っている方に、課題管理と検証方法について30分ヒアリングしたいです。</p>
-              <div class="rec-quest-foot">
-                <span class="rec-reward"><i data-lucide="coins"></i> 50G</span>
-                <span class="rec-trust"><i data-lucide="shield-check"></i> +5 Trust</span>
-                <a class="btn btn-primary btn-sm" href="quests.html">応募する</a>
-              </div>
-            </article>
-          </div>
+          <div class="rec-quest-grid" id="recommendedQuests" aria-label="おすすめクエスト"></div>
         </div>
       </section>
 
@@ -486,6 +473,8 @@
                   </select>
                 </label>
               </div>
+              <label for="questTags">タグ</label>
+              <input id="questTags" name="tags" type="text" value="AI, UXレビュー, オンボーディング" placeholder="例: AI, UXレビュー, BtoB SaaS" />
               <label for="questDeadline">締切</label>
               <input id="questDeadline" name="deadline" type="date" value="2026-06-20" required />
               <button class="btn btn-primary" type="submit"><i data-lucide="send"></i>発行する</button>
