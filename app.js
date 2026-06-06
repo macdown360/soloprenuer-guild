@@ -27,9 +27,67 @@ const state = {
   completed: 18,
   issued: 7,
   selectedQuestId: 1,
+  selectedIssuer: null,
   missions: [false, false, false],
   streak: 5,
   weeklyProgress: 1,
+  issuerProfiles: {
+    リナ: {
+      initials: "R",
+      headline: "BtoB SaaS / UX改善 / オンボーディング",
+      summary: "SaaSの初回体験改善に取り組んでいます。ユーザーが迷う導線や、言葉の分かりにくさを早く見つけたいです。",
+      trust: 420,
+      completed: 24,
+      issued: 12,
+      responseTime: "12時間以内",
+      skills: ["UXレビュー", "情報設計", "BtoB SaaS"],
+      interests: ["オンボーディング", "導線改善", "MVP検証"],
+    },
+    カイト: {
+      initials: "K",
+      headline: "個人SaaS開発 / 顧客理解 / 課題検証",
+      summary: "副業でSaaSを作りながら、ユーザーインタビューと検証設計を重視しています。率直な課題共有を歓迎します。",
+      trust: 360,
+      completed: 19,
+      issued: 9,
+      responseTime: "24時間以内",
+      skills: ["顧客理解", "BtoB SaaS", "インタビュー"],
+      interests: ["課題検証", "MVP検証", "価格設計"],
+    },
+    ミオ: {
+      initials: "M",
+      headline: "予約サービス運営 / フォーム改善 / 動作確認",
+      summary: "小規模事業者向けの予約導線を改善しています。スマホでの使いやすさと確認メール周りを特に見ています。",
+      trust: 510,
+      completed: 31,
+      issued: 15,
+      responseTime: "半日以内",
+      skills: ["動作確認", "UXレビュー", "フォーム改善"],
+      interests: ["スマホUX", "自動返信", "運用改善"],
+    },
+    ユウ: {
+      initials: "Y",
+      headline: "BtoB営業 / 提案資料 / 価格設計",
+      summary: "営業資料と提案文の改善が主な関心です。導入前の不安を減らす構成づくりを試しています。",
+      trust: 285,
+      completed: 16,
+      issued: 8,
+      responseTime: "24時間以内",
+      skills: ["営業資料", "提案文", "BtoB SaaS"],
+      interests: ["商談準備", "導入事例", "価格設計"],
+    },
+    ナオ: {
+      initials: "N",
+      headline: "生成AI活用 / 告知文 / セミナー運営",
+      summary: "AI活用の学習コンテンツを作っています。告知文、LP、セミナー導線の改善に協力してくれる方を探しています。",
+      trust: 335,
+      completed: 21,
+      issued: 10,
+      responseTime: "18時間以内",
+      skills: ["生成AI", "告知文", "SNS"],
+      interests: ["AI導入", "コピー", "リード獲得"],
+    },
+  },
   quests: [
     {
       id: 1,
@@ -154,6 +212,28 @@ function createChips(values, modifier = "") {
   return normalizeList(values)
     .map((value) => `<span class="tag-chip${modifier ? ` ${modifier}` : ""}">${value}</span>`)
     .join("");
+}
+
+function getIssuerProfile(name) {
+  if (name === state.account.name) {
+    return {
+      initials: state.account.initials,
+      headline: state.account.headline,
+      summary: state.account.summary,
+      trust: state.trust,
+      completed: state.completed,
+      issued: state.issued,
+      responseTime: state.account.responseTime,
+      skills: state.account.strengths,
+      interests: state.account.interests,
+    };
+  }
+
+  return state.issuerProfiles[name] || null;
+}
+
+function renderIssuerButton(name) {
+  return `<button class="issuer-link" type="button" data-issuer="${name}" aria-label="${name}のプロフィールを表示">${name}</button>`;
 }
 
 function getRank(trust) {
@@ -315,11 +395,19 @@ function renderQuestList() {
       <div class="quest-main">
         <span class="category">${quest.category}</span>
         <h3>${quest.title}</h3>
-        <p>発行者: ${quest.issuer} / 締切: ${formatDate(quest.deadline)} / 応募: ${quest.applicants}名</p>
+        <p>発行者: ${renderIssuerButton(quest.issuer)} / 締切: ${formatDate(quest.deadline)} / 応募: ${quest.applicants}名</p>
         <div class="quest-tags">${createChips(quest.tags || [])}</div>
       </div>
       <strong class="gold">${quest.reward}G</strong>
     `;
+    const issuerButton = card.querySelector("[data-issuer]");
+    issuerButton?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      showIssuerProfile(quest.issuer, quest.id);
+    });
+    issuerButton?.addEventListener("keydown", (event) => {
+      event.stopPropagation();
+    });
     card.addEventListener("click", () => selectQuest(quest.id));
     card.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
@@ -344,6 +432,7 @@ function renderQuestDetail(quest) {
   const comments = quest.comments.length
     ? quest.comments.map((comment) => `<div class="comment">${comment}</div>`).join("")
     : '<div class="comment">まだコメントはありません。</div>';
+  const issuerProfile = state.selectedIssuer === quest.issuer ? renderIssuerProfile(quest.issuer) : "";
 
   questDetail.innerHTML = `
     <span class="category">${quest.category}</span>
@@ -351,16 +440,20 @@ function renderQuestDetail(quest) {
     <p>${quest.description}</p>
     <div class="quest-tags">${createChips(quest.tags || [])}</div>
     <div class="detail-meta">
-      <div><strong>発行者</strong><br />${quest.issuer}</div>
+      <div><strong>発行者</strong><br />${renderIssuerButton(quest.issuer)}</div>
       <div><strong>報酬</strong><br />${quest.reward}G</div>
       <div><strong>締切</strong><br />${formatDate(quest.deadline)}</div>
       <div><strong>応募人数</strong><br /><span data-applicants>${quest.applicants}</span>名</div>
     </div>
+    ${issuerProfile}
     <button class="btn btn-primary" type="button" data-apply>このクエストに応募</button>
     <h3>コメント</h3>
     ${comments}
   `;
 
+  questDetail.querySelector("[data-issuer]")?.addEventListener("click", () => {
+    showIssuerProfile(quest.issuer, quest.id);
+  });
   questDetail.querySelector("[data-apply]")?.addEventListener("click", () => {
     quest.applicants += 1;
     renderQuestList();
@@ -369,7 +462,61 @@ function renderQuestDetail(quest) {
 
 function selectQuest(id) {
   state.selectedQuestId = id;
+  state.selectedIssuer = null;
   renderQuestList();
+}
+
+function showIssuerProfile(name, questId = state.selectedQuestId) {
+  state.selectedQuestId = questId;
+  state.selectedIssuer = name;
+  renderQuestList();
+}
+
+function renderIssuerProfile(name) {
+  const profile = getIssuerProfile(name);
+
+  if (!profile) {
+    return `
+      <section class="issuer-profile-card">
+        <div class="issuer-profile-head">
+          <div class="issuer-avatar">${name.slice(0, 1)}</div>
+          <div>
+            <span class="eyebrow">Issuer Profile</span>
+            <h3>${name}</h3>
+          </div>
+        </div>
+        <p>この発行者のプロフィール情報はまだ登録されていません。</p>
+      </section>
+    `;
+  }
+
+  return `
+    <section class="issuer-profile-card">
+      <div class="issuer-profile-head">
+        <div class="issuer-avatar">${profile.initials}</div>
+        <div>
+          <span class="eyebrow">Issuer Profile</span>
+          <h3>${name}</h3>
+          <p>${profile.headline}</p>
+        </div>
+      </div>
+      <p>${profile.summary}</p>
+      <dl class="issuer-profile-stats">
+        <div><dt>Trust</dt><dd>${profile.trust}</dd></div>
+        <div><dt>完了</dt><dd>${profile.completed}</dd></div>
+        <div><dt>発行</dt><dd>${profile.issued}</dd></div>
+        <div><dt>返信</dt><dd>${profile.responseTime}</dd></div>
+      </dl>
+      <div class="profile-chip-block">
+        <strong>得意なこと</strong>
+        <div class="chip-list">${createChips(profile.skills, "is-skill")}</div>
+      </div>
+      <div class="profile-chip-block">
+        <strong>関心領域</strong>
+        <div class="chip-list">${createChips(profile.interests)}</div>
+      </div>
+    </section>
+  `;
 }
 
 questForm?.addEventListener("submit", (event) => {
@@ -402,6 +549,7 @@ questForm?.addEventListener("submit", (event) => {
 
   state.quests.unshift(quest);
   state.selectedQuestId = quest.id;
+  state.selectedIssuer = null;
   syncStats();
   renderQuestList();
   renderAccountProfile();
