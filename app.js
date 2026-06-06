@@ -594,10 +594,22 @@ function renderQuestDetail(quest) {
       <div class="quest-progress-track"><span style="width: ${progressPercent}%"></span></div>
     </div>
     <div class="detail-meta">
-      <div><strong>発行者</strong><br />${renderIssuerButton(quest.issuer)}</div>
-      <div><strong>報酬</strong><br />${quest.reward}G</div>
-      <div><strong>締切</strong><br />${formatDate(quest.deadline)}</div>
-      <div><strong>進め方</strong><br />${getQuestActionHint(quest)}</div>
+      <div>
+        <span>発行者</span>
+        <strong>${renderIssuerButton(quest.issuer)}</strong>
+      </div>
+      <div>
+        <span>報酬</span>
+        <strong>${quest.reward}G</strong>
+      </div>
+      <div>
+        <span>締切</span>
+        <strong>${formatDate(quest.deadline)}</strong>
+      </div>
+      <div>
+        <span>進め方</span>
+        <strong>${getQuestActionHint(quest)}</strong>
+      </div>
     </div>
     <div class="quest-flow-note">${type.guidance}</div>
     ${issuerProfile}
