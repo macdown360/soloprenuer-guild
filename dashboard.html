@@ -67,20 +67,15 @@
               <div><dt>発行クエスト数</dt><dd data-issued-count>7</dd></div>
               <div><dt>継続利用日数</dt><dd>23日</dd></div>
             </dl>
-            <div class="badge-row" aria-label="獲得バッジ">
-              <span>初陣</span>
-              <span>助っ人</span>
-              <span>10件達成</span>
-            </div>
           </aside>
 
           <section class="command-panel" aria-label="ギルド概要">
             <div class="command-head">
               <div>
-                <p class="eyebrow">QUEST LOOP</p>
-                <h2>今日もクエストをこなして、Trustを積み上げよう</h2>
+                <p class="eyebrow">DASHBOARD</p>
+                <h2>現在地と次の一手</h2>
                 <p>
-                  1件達成するたびにTrustが増え、ランクが上がる。まず今日の1件を選んで動き出そう。
+                  Gold、Trust、発行中の依頼、承認待ちをここで確認します。今日やることを1つ選んで、クエストの循環を止めないようにします。
                 </p>
               </div>
               <div class="header-actions">
@@ -119,7 +114,153 @@
               <span>マスター</span>
               <span>伝説</span>
             </div>
+            <div class="dashboard-panels">
+              <article class="next-rank-panel">
+                <div>
+                  <span class="panel-label">NEXT RANK</span>
+                  <h3>熟練冒険者まであと375 Trust</h3>
+                </div>
+                <div class="progress-track" aria-label="熟練冒険者までの進捗">
+                  <span style="width: 46%"></span>
+                </div>
+                <p>完了クエストあと8件、または5つ星評価あと25件が目安です。</p>
+              </article>
+              <article class="action-panel">
+                <span class="panel-label">TODAY</span>
+                <h3>今日のおすすめ行動</h3>
+                <ul>
+                  <li><i data-lucide="search"></i><span>20G以上のフィードバック系クエストを1件探す</span></li>
+                  <li><i data-lucide="check-circle"></i><span>未承認の完了報告を1件確認する</span></li>
+                  <li><i data-lucide="plus-circle"></i><span>今週ほしい協力を1件クエスト化する</span></li>
+                </ul>
+              </article>
+            </div>
+            <div class="activity-board" aria-label="進行中の状況">
+              <article>
+                <span class="panel-label">発行中</span>
+                <strong>3件</strong>
+                <p>応募待ち 1件 / 進行中 2件</p>
+              </article>
+              <article>
+                <span class="panel-label">応募中</span>
+                <strong>2件</strong>
+                <p>フィードバック 1件 / AI 1件</p>
+              </article>
+              <article>
+                <span class="panel-label">承認待ち</span>
+                <strong>3件</strong>
+                <p>評価を付けるとTrustが反映されます</p>
+              </article>
+            </div>
           </section>
+        </div>
+      </section>
+
+      <section class="section section-soft">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">TITLE COLLECTION</p>
+              <h2>称号コレクション</h2>
+              <p>クエスト達成、発行、継続、評価で称号が増えていきます。未獲得の称号は次の目標として表示します。</p>
+            </div>
+            <div class="collection-progress">
+              <strong>6 / 18</strong>
+              <span>獲得済み</span>
+            </div>
+          </div>
+          <div class="title-grid title-grid-wide">
+            <article class="title-badge is-earned">
+              <i data-lucide="swords"></i>
+              <strong>初陣</strong>
+              <span>初クエスト達成</span>
+            </article>
+            <article class="title-badge is-earned">
+              <i data-lucide="handshake"></i>
+              <strong>助っ人</strong>
+              <span>10件達成</span>
+            </article>
+            <article class="title-badge is-earned">
+              <i data-lucide="medal"></i>
+              <strong>常連冒険者</strong>
+              <span>7日継続</span>
+            </article>
+            <article class="title-badge is-earned">
+              <i data-lucide="message-square-heart"></i>
+              <strong>壁打ち名人</strong>
+              <span>相談回答5件</span>
+            </article>
+            <article class="title-badge is-earned">
+              <i data-lucide="star"></i>
+              <strong>五つ星の協力者</strong>
+              <span>5つ星評価3件</span>
+            </article>
+            <article class="title-badge is-earned">
+              <i data-lucide="scroll-text"></i>
+              <strong>依頼上手</strong>
+              <span>クエスト発行5件</span>
+            </article>
+            <article class="title-badge is-locked">
+              <i data-lucide="lock"></i>
+              <strong>ベテラン</strong>
+              <span>50件達成で獲得</span>
+            </article>
+            <article class="title-badge is-locked">
+              <i data-lucide="lock"></i>
+              <strong>レビュー職人</strong>
+              <span>レビュー20件で獲得</span>
+            </article>
+            <article class="title-badge is-locked">
+              <i data-lucide="lock"></i>
+              <strong>インタビュー達人</strong>
+              <span>インタビュー10件で獲得</span>
+            </article>
+            <article class="title-badge is-locked">
+              <i data-lucide="lock"></i>
+              <strong>AI探究者</strong>
+              <span>AIカテゴリ15件で獲得</span>
+            </article>
+            <article class="title-badge is-locked">
+              <i data-lucide="lock"></i>
+              <strong>ギルドの支柱</strong>
+              <span>Trust 1500で獲得</span>
+            </article>
+            <article class="title-badge is-locked">
+              <i data-lucide="lock"></i>
+              <strong>英雄</strong>
+              <span>100件達成で獲得</span>
+            </article>
+            <article class="title-badge is-locked">
+              <i data-lucide="lock"></i>
+              <strong>マスター冒険者</strong>
+              <span>Trust 3000で獲得</span>
+            </article>
+            <article class="title-badge is-locked">
+              <i data-lucide="lock"></i>
+              <strong>伝説の協力者</strong>
+              <span>Trust 5000で獲得</span>
+            </article>
+            <article class="title-badge is-locked">
+              <i data-lucide="lock"></i>
+              <strong>月間MVP</strong>
+              <span>月間表彰で獲得</span>
+            </article>
+            <article class="title-badge is-locked">
+              <i data-lucide="lock"></i>
+              <strong>信頼の発行者</strong>
+              <span>発行クエスト30件で獲得</span>
+            </article>
+            <article class="title-badge is-locked">
+              <i data-lucide="lock"></i>
+              <strong>連続ログイン30日</strong>
+              <span>30日継続で獲得</span>
+            </article>
+            <article class="title-badge is-locked">
+              <i data-lucide="lock"></i>
+              <strong>ギルドの伝説</strong>
+              <span>全称号獲得で解放</span>
+            </article>
+          </div>
         </div>
       </section>
 
