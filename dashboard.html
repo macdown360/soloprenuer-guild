@@ -6,7 +6,7 @@
     <title>ギルド本部 | ソロプレナーギルド</title>
     <meta
       name="description"
-      content="ソロプレナーギルドのMVP画面。マイページ、クエスト作成、一覧、詳細、完了承認、評価を扱う。"
+      content="クエストを発行・達成・評価する場所。Goldを稼いで、Trustを積み上げて、ランクを上げよう。"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -31,9 +31,9 @@
         </a>
         <nav class="nav-links" aria-label="ギルドメニュー">
           <a href="#mypage">マイページ</a>
-          <a href="#quest-create">発行</a>
-          <a href="#quest-board">一覧</a>
-          <a href="#completion">完了</a>
+          <a href="#quest-create">依頼する</a>
+          <a href="#quest-board">達成する</a>
+          <a href="#completion">承認する</a>
         </nav>
         <a class="btn btn-ghost" href="index.html">トップへ戻る</a>
       </div>
@@ -77,18 +77,17 @@
             <div class="command-head">
               <div>
                 <p class="eyebrow">QUEST LOOP</p>
-                <h2>投稿、達成、信頼獲得の循環を回す</h2>
+                <h2>今日もクエストをこなして、Trustを積み上げよう</h2>
                 <p>
-                  クエストの投稿から承認までを、迷わず進められるように設計しています。
-                  発行者が承認すると、達成者へ報酬GoldとTrustが反映されます。
+                  1件達成するたびにTrustが増え、ランクが上がる。まず今日の1件を選んで動き出そう。
                 </p>
               </div>
               <a class="btn btn-primary" href="#quest-create">クエスト発行</a>
             </div>
             <div class="kpi-grid">
-              <article><span>投稿数</span><strong data-total-quests>5</strong><small>今月のクエスト</small></article>
-              <article><span>完了率</span><strong>72%</strong><small>承認済み / 応募済み</small></article>
-              <article><span>アクティブ冒険者</span><strong>128</strong><small>今月ギルドに参加中</small></article>
+              <article><span>今月の発行</span><strong data-total-quests>5</strong><small>あなたのクエスト</small></article>
+              <article><span>達成率</span><strong>72%</strong><small>承認済み / 応募済み</small></article>
+              <article><span>今月の冒険者</span><strong>128</strong><small>同じギルドの仲間</small></article>
               <article><span>平均Trust増加</span><strong>+18</strong><small>月間 / 冒険者</small></article>
             </div>
             <div class="rank-track" aria-label="ランク条件">
@@ -108,9 +107,9 @@
         <div class="container split">
           <div>
             <p class="eyebrow">CREATE QUEST</p>
-            <h2>クエストを発行する</h2>
+            <h2>困っていることを、今すぐ依頼に変える</h2>
             <p class="section-copy">
-              報酬Goldは発行時に確保されます。達成が承認されると、達成者へ100%支払われます。
+              ほしい協力をクエストにするだけでいい。報酬金Goldは発行時に確保され、承認された瞬間に達成者へ届く。
             </p>
             <div class="reward-examples">
               <span>LP感想 10G</span>
@@ -156,8 +155,8 @@
           <div class="section-head">
             <div>
               <p class="eyebrow">QUEST BOARD</p>
-              <h2>クエスト一覧</h2>
-              <p>カテゴリとキーワードで、今すぐ手伝える依頼を探します。</p>
+              <h2>今すぐ達成できるクエストを探す</h2>
+              <p>1件こなすたびにGoldとTrustが増える。まず今日の1件を選んでみよう。</p>
             </div>
           </div>
           <div class="filters" role="search">
@@ -191,15 +190,15 @@
         <div class="container split">
           <div>
             <p class="eyebrow">COMPLETE AND REVIEW</p>
-            <h2>完了承認と相互評価</h2>
+            <h2>承認して、お互いの信頼を育てる</h2>
             <p class="section-copy">
-              発行者が成果を確認して承認します。承認後、達成者へGoldとTrustが付与され、
-              5段階評価に応じて追加Trustが反映されます。
+              成果が届いたら承認しよう。高い評価をつけるほど達成者のTrustが大きく伸び、
+              ギルド全体の信頼が厕くなる。
             </p>
             <ul class="rules-list">
-              <li>クエスト完了: +5 Trust</li>
+              <li>クエスト完了: +5 Trust — 必ず積み上がる</li>
               <li>5つ星: +10 Trust / 4つ星: +8 Trust / 3つ星: +5 Trust</li>
-              <li>信頼ポイントは譲渡不可、売買不可、自己評価禁止</li>
+              <li>Trustは実績だけで積み上がる。売買も譲渡も、自己評価もできない本物の信頼</li>
             </ul>
           </div>
           <form class="guild-form" id="reviewForm">
@@ -219,7 +218,7 @@
             </select>
             <label for="reviewComment">コメント</label>
             <textarea id="reviewComment" rows="5">質問設計が具体的で、次に改善する画面が明確になりました。</textarea>
-            <button class="btn btn-primary" type="submit">承認して報酬を付与</button>
+            <button class="btn btn-primary" type="submit">承認して、Trustを届ける</button>
             <p class="form-note" data-review-note>未承認の完了報告が3件あります。</p>
           </form>
         </div>
