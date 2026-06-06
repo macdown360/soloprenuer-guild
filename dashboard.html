@@ -15,6 +15,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
   </head>
   <body class="dashboard-page">
     <header class="site-header">
@@ -30,10 +31,10 @@
           <span>ソロプレナーギルド</span>
         </a>
         <nav class="nav-links" aria-label="ギルドメニュー">
-          <a href="#mypage">マイページ</a>
-          <a href="#quest-create">依頼する</a>
-          <a href="#quest-board">達成する</a>
-          <a href="#completion">承認する</a>
+          <a href="#mypage"><i data-lucide="layout-dashboard"></i>マイページ</a>
+          <a href="#quest-create"><i data-lucide="plus-circle"></i>依頼する</a>
+          <a href="#quest-board"><i data-lucide="list-checks"></i>達成する</a>
+          <a href="#completion"><i data-lucide="check-circle"></i>承認する</a>
         </nav>
         <a class="btn btn-ghost" href="index.html">トップへ戻る</a>
       </div>
@@ -53,11 +54,11 @@
             </div>
             <div class="wallet">
               <article>
-                <span>Gold</span>
+                <span><i data-lucide="coins"></i> Gold</span>
                 <strong><span data-gold>100</span>G</strong>
               </article>
               <article>
-                <span>Trust</span>
+                <span><i data-lucide="shield-check"></i> Trust</span>
                 <strong><span data-trust>325</span></strong>
               </article>
             </div>
@@ -85,10 +86,26 @@
               <a class="btn btn-primary" href="#quest-create">クエスト発行</a>
             </div>
             <div class="kpi-grid">
-              <article><span>今月の発行</span><strong data-total-quests>5</strong><small>あなたのクエスト</small></article>
-              <article><span>達成率</span><strong>72%</strong><small>承認済み / 応募済み</small></article>
-              <article><span>今月の冒険者</span><strong>128</strong><small>同じギルドの仲間</small></article>
-              <article><span>平均Trust増加</span><strong>+18</strong><small>月間 / 冒険者</small></article>
+              <article>
+                <span>今月の発行</span>
+                <strong data-total-quests>5</strong>
+                <small>あなたのクエスト</small>
+              </article>
+              <article>
+                <span>達成率</span>
+                <strong>72%</strong>
+                <small>承認済み / 応募済み</small>
+              </article>
+              <article>
+                <span>今月の冒険者</span>
+                <strong>128</strong>
+                <small>同じギルドの仲間</small>
+              </article>
+              <article>
+                <span>平均Trust増加</span>
+                <strong>+18</strong>
+                <small>月間 / 冒険者</small>
+              </article>
             </div>
             <div class="rank-track" aria-label="ランク条件">
               <span class="done">見習い</span>
@@ -144,7 +161,7 @@
             </div>
             <label for="questDeadline">締切</label>
             <input id="questDeadline" name="deadline" type="date" value="2026-06-20" required />
-            <button class="btn btn-primary" type="submit">Goldを確保して発行</button>
+            <button class="btn btn-primary" type="submit"><i data-lucide="send"></i>Goldを確保して発行</button>
             <p class="form-note" data-form-note>現在の残高: 100G</p>
           </form>
         </div>
@@ -218,7 +235,7 @@
             </select>
             <label for="reviewComment">コメント</label>
             <textarea id="reviewComment" rows="5">質問設計が具体的で、次に改善する画面が明確になりました。</textarea>
-            <button class="btn btn-primary" type="submit">承認して、Trustを届ける</button>
+            <button class="btn btn-primary" type="submit"><i data-lucide="badge-check"></i>承認して、Trustを届ける</button>
             <p class="form-note" data-review-note>未承認の完了報告が3件あります。</p>
           </form>
         </div>
@@ -238,5 +255,6 @@
     </footer>
 
     <script src="app.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function () { if (window.lucide) lucide.createIcons(); });</script>
   </body>
 </html>

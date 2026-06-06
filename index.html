@@ -15,6 +15,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
   </head>
   <body>
     <header class="site-header">
@@ -30,14 +31,14 @@
           <span>ソロプレナーギルド</span>
         </a>
         <nav class="nav-links" aria-label="メインメニュー">
-          <a href="#quests">クエスト</a>
-          <a href="#trust">信頼</a>
-          <a href="#ranking">ランキング</a>
-          <a href="charter.html">憲章</a>
+          <a href="#quests"><i data-lucide="scroll-text"></i>クエスト</a>
+          <a href="#trust"><i data-lucide="shield-check"></i>信頼</a>
+          <a href="#ranking"><i data-lucide="trophy"></i>ランキング</a>
+          <a href="charter.html"><i data-lucide="book-open"></i>憲章</a>
         </nav>
         <div class="header-actions">
-          <a class="btn btn-ghost" href="dashboard.html">クエストを見る</a>
-          <a class="btn btn-primary" href="#register">冒険者登録</a>
+          <a class="btn btn-ghost" href="dashboard.html"><i data-lucide="layout-list"></i>クエストを見る</a>
+          <a class="btn btn-primary" href="#register"><i data-lucide="user-plus"></i>冒険者登録</a>
         </div>
       </div>
     </header>
@@ -53,19 +54,22 @@
             そんな声をクエストにすれば、仲間が動く。達成するたびにGoldとTrustが積み上がる。
           </p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#register">冒険者登録</a>
-            <a class="btn btn-secondary" href="dashboard.html">クエストを見る</a>
+            <a class="btn btn-primary" href="#register"><i data-lucide="user-plus"></i>冒険者登録</a>
+            <a class="btn btn-secondary" href="dashboard.html"><i data-lucide="arrow-right"></i>クエストを見る</a>
           </div>
           <div class="hero-metrics" aria-label="ギルドの数字">
             <article>
+              <div class="stat-icon-badge"><i data-lucide="coins"></i></div>
               <strong>100G</strong>
               <span>登録すると即受け取れる</span>
             </article>
             <article>
+              <div class="stat-icon-badge"><i data-lucide="shield-check"></i></div>
               <strong>+5 Trust</strong>
               <span>達成するたびに積み上がる</span>
             </article>
             <article>
+              <div class="stat-icon-badge"><i data-lucide="grid-3x3"></i></div>
               <strong>8カテゴリ</strong>
               <span>今日から依頼できる</span>
             </article>
@@ -81,7 +85,7 @@
               <h2>最新クエスト</h2>
               <p>あなたのスキルを待っている依頼がある。達成するたびにGoldとTrustが増える。</p>
             </div>
-            <a class="btn btn-outline" href="dashboard.html#quest-create">クエストを発行</a>
+            <a class="btn btn-outline" href="dashboard.html#quest-create"><i data-lucide="plus"></i>クエストを発行</a>
           </div>
           <div class="quest-list compact">
             <article class="quest-card">
@@ -124,11 +128,13 @@
           </div>
           <div class="point-panels">
             <article class="point-card">
+              <div class="point-card-icon"><i data-lucide="coins"></i></div>
               <span>Gold</span>
               <strong>依頼を出す燃料</strong>
-              <p>登録で100G即付与。達成・ログイン・イベントで増える。使うほど仲間が動き出す。</p>
+              <p>登録で100G即付与。達成・ログイン・イベント参加で増える。使うほど仲間が動き出す。</p>
             </article>
             <article class="point-card silver">
+              <div class="point-card-icon"><i data-lucide="shield-check"></i></div>
               <span>Trust</span>
               <strong>本物の実績だけが刻まれる</strong>
               <p>1件達成するごとに+5。高評価で最大+10。積み上がるほどランクが上がり、依頼が集まる冒険者になる。</p>
@@ -218,7 +224,7 @@
                 <input name="skills" type="text" placeholder="AI, 開発, マーケ" />
               </label>
             </div>
-            <button class="btn btn-primary" type="submit">100Gを受け取って登録</button>
+            <button class="btn btn-primary" type="submit"><i data-lucide="user-plus"></i>100Gを受け取って登録</button>
           </form>
         </div>
       </section>
@@ -234,5 +240,6 @@
         </nav>
       </div>
     </footer>
+    <script>document.addEventListener('DOMContentLoaded', function () { lucide.createIcons(); });</script>
   </body>
 </html>

@@ -15,6 +15,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
   </head>
   <body>
     <header class="site-header">
@@ -30,10 +31,10 @@
           <span>ソロプレナーギルド</span>
         </a>
         <nav class="nav-links" aria-label="ギルド憲章メニュー">
-          <a href="#purpose">目的</a>
-          <a href="#points">ポイント</a>
-          <a href="#rank">ランク</a>
-          <a href="#fraud">不正対策</a>
+          <a href="#purpose"><i data-lucide="target"></i>目的</a>
+          <a href="#points"><i data-lucide="coins"></i>ポイント</a>
+          <a href="#rank"><i data-lucide="trophy"></i>ランク</a>
+          <a href="#fraud"><i data-lucide="shield"></i>不正対策</a>
         </nav>
         <a class="btn btn-ghost" href="dashboard.html">ギルド本部</a>
       </div>
@@ -53,17 +54,17 @@
       <section class="section">
         <div class="container loop-grid">
           <article id="purpose">
-            <span>1</span>
+            <span><i data-lucide="target"></i></span>
             <h3>目的</h3>
             <p>一人でやっていると、試せる相手も、頼れる仲間も少ない。ソロプレナーギルドは、その壁を小さなクエストで越える場所だ。助け合い、実績を積み、信頼できる人脈を育てる。</p>
           </article>
           <article>
-            <span>2</span>
+            <span><i data-lucide="users"></i></span>
             <h3>参加条件</h3>
-            <p>冒険者は、冒険者名、メールアドレス、パスワードを登録し、他者を尊重して誠実にやり取りします。なりすまし、虚偽実績、秘密情報の無断公開は禁止です。</p>
+            <p>冒険者は、冒険者名、メールアドレス、パスワードを登録し、他者を尊重して誠実にやり取ります。なりすまし、虚偽実績、秘密情報の無断公開は禁止です。</p>
           </article>
           <article>
-            <span>3</span>
+            <span><i data-lucide="scroll-text"></i></span>
             <h3>クエスト</h3>
             <p>クエストは、フィードバック、インタビュー、デザイン、AI、マーケティング、開発、営業などの小さな協力依頼です。案件マッチングではなく相互支援を主目的にします。</p>
           </article>
@@ -81,11 +82,13 @@
           </div>
           <div class="point-panels">
             <article class="point-card">
+              <div class="point-card-icon"><i data-lucide="coins"></i></div>
               <span>Gold</span>
               <strong>依頼を出す燃料</strong>
-              <p>登録で100G即付与。達成・ログイン・イベントで増える。発行時に報酬分が確保され、承認後に達成者へ届く。</p>
+              <p>登録で100G即付与。達成・ログイン・イベント参加で増える。発行時に報酬分が確保され、承認後に達成者へ届く。</p>
             </article>
             <article class="point-card silver">
+              <div class="point-card-icon"><i data-lucide="shield-check"></i></div>
               <span>Trust</span>
               <strong>本物の信頼だけが積み上がる</strong>
               <p>完了で+5、好評価で最大+10。積み上がるほどランクが上がり、依頼を受けやすい冒険者になる。売買も譲渡もできない、あなただけの実績。</p>
@@ -154,5 +157,6 @@
         </nav>
       </div>
     </footer>
+    <script>document.addEventListener('DOMContentLoaded', function () { lucide.createIcons(); });</script>
   </body>
 </html>
