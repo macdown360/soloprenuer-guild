@@ -116,6 +116,11 @@ a {
   flex-wrap: wrap;
 }
 
+.nav-links {
+  margin-left: auto;
+  justify-content: flex-end;
+}
+
 .menu-toggle {
   width: 44px;
   height: 44px;
@@ -2348,7 +2353,6 @@ h3 {
 }
 
 @media (max-width: 920px) {
-  .nav-wrap,
   .section-head,
   .command-head,
   .dashboard-toolbar,
