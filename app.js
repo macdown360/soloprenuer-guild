@@ -757,6 +757,11 @@ function resetQuestForm() {
   setQuestFormMode(null);
 }
 
+function navigateToQuestForm() {
+  questForm?.closest(".workspace-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  questForm?.elements.title?.focus({ preventScroll: true });
+}
+
 function populateQuestForm(quest) {
   if (!questForm || !quest) return;
   questForm.elements.title.value = quest.title || "";
@@ -769,7 +774,7 @@ function populateQuestForm(quest) {
   questForm.elements.tags.value = normalizeList(quest.tags).join(", ");
   questForm.elements.deadline_days.value = getDeadlineDaysValue(quest.deadline);
   setQuestFormMode(quest);
-  document.querySelector("#quest-create")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  navigateToQuestForm();
 }
 
 function renderAccountProfile() {
