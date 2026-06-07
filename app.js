@@ -572,7 +572,8 @@ function getQuestActionHint(quest) {
 }
 
 function getIssuerProfile(name) {
-  if (name === state.account.name) {
+  const issuerName = name || "冒険者";
+  if (issuerName === state.account.name) {
     return {
       initials: state.account.initials,
       headline: state.account.headline,
@@ -585,11 +586,11 @@ function getIssuerProfile(name) {
     };
   }
 
-  return state.issuerProfiles[name] || null;
+  return state.issuerProfiles[issuerName] || null;
 }
 
 function renderIssuerButton(name) {
-  return `<span class="issuer-name">${name}</span>`;
+  return `<span class="issuer-name">${name || "冒険者"}</span>`;
 }
 
 function getQuestDetailUrl(id) {
@@ -617,6 +618,31 @@ function getRank(trust) {
   if (trust >= 300) return "一人前冒険者";
   if (trust >= 100) return "駆け出し冒険者";
   return "見習い冒険者";
+}
+
+function getTrustRankFrame(trust) {
+  if (trust >= 5000) return "trust-rank-legend";
+  if (trust >= 3000) return "trust-rank-master";
+  if (trust >= 1500) return "trust-rank-advanced";
+  if (trust >= 700) return "trust-rank-veteran";
+  if (trust >= 300) return "trust-rank-pro";
+  if (trust >= 100) return "trust-rank-rookie";
+  return "trust-rank-apprentice";
+}
+
+function setTrustAvatarFrame(el, trust) {
+  if (!el) return;
+  el.classList.remove(
+    "trust-rank-apprentice",
+    "trust-rank-rookie",
+    "trust-rank-pro",
+    "trust-rank-veteran",
+    "trust-rank-advanced",
+    "trust-rank-master",
+    "trust-rank-legend",
+  );
+  el.classList.add("trust-avatar", getTrustRankFrame(trust));
+  el.setAttribute("title", getRank(trust));
 }
 
 function getNextRankInfo(trust) {
@@ -666,10 +692,12 @@ function renderAccountProfile() {
   const accountEmail = remote.user?.email || "デモアカウント";
 
   if (accountInitialsEl) accountInitialsEl.textContent = account.initials;
+  setTrustAvatarFrame(accountInitialsEl, state.trust);
   if (accountNameEl) accountNameEl.textContent = account.name;
   if (accountHeadlineEl) accountHeadlineEl.textContent = account.headline;
   if (profileSummaryEl) profileSummaryEl.textContent = account.summary;
   if (authAccountInitialsEl) authAccountInitialsEl.textContent = account.initials;
+  setTrustAvatarFrame(authAccountInitialsEl, state.trust);
   if (authAccountNameEl) authAccountNameEl.textContent = account.name;
   if (authAccountHeadlineEl) authAccountHeadlineEl.textContent = account.headline;
   if (authAccountEmailEl) authAccountEmailEl.textContent = accountEmail;
@@ -860,6 +888,8 @@ function syncStats() {
   renderLatestQuestSlider();
   renderRecommendedQuests();
   renderReviewOptions();
+  setTrustAvatarFrame(accountInitialsEl, state.trust);
+  setTrustAvatarFrame(authAccountInitialsEl, state.trust);
 }
 
 function syncDashboardSummary() {
@@ -1092,6 +1122,7 @@ function renderQuestDetail(quest) {
         </div>
         <button class="btn btn-primary" type="button" data-apply ${closed ? "disabled" : ""}>${closed ? type.closedLabel : type.actionLabel}</button>
       `;
+  const issuerProfileMarkup = renderIssuerProfile(quest.issuer);
 
   questDetail.innerHTML = `
     <div class="quest-detail-head">
@@ -1136,11 +1167,14 @@ function renderQuestDetail(quest) {
     ${actionArea}
     <h3>コメント</h3>
     ${comments}
+    <section class="quest-detail-issuer-profile" aria-label="発行者プロフィール">
+      ${issuerProfileMarkup}
+    </section>
   `;
 
   if (issuerProfileEl) {
-    issuerProfileEl.hidden = false;
-    issuerProfileEl.innerHTML = renderIssuerProfile(quest.issuer);
+    issuerProfileEl.hidden = true;
+    issuerProfileEl.innerHTML = "";
   }
 
   questDetail.querySelector("[data-apply]")?.addEventListener("click", async () => {
@@ -1220,7 +1254,9 @@ function selectQuest(id) {
 function renderQuestDetailPage() {
   if (!questDetail) return;
   const questId = new URLSearchParams(window.location.search).get("id");
-  const quest = state.quests.find((item) => String(item.id) === String(questId));
+  const quest =
+    state.quests.find((item) => String(item.id) === String(questId)) ||
+    (!questId ? state.quests.find((item) => item.id === state.selectedQuestId) || state.quests[0] : null);
   if (quest) {
     state.selectedQuestId = quest.id;
     document.title = `${quest.title} | ソロプレナー・ギルド`;
@@ -1229,16 +1265,17 @@ function renderQuestDetailPage() {
 }
 
 function renderIssuerProfile(name) {
-  const profile = getIssuerProfile(name);
+  const issuerName = name || "冒険者";
+  const profile = getIssuerProfile(issuerName);
 
   if (!profile) {
     return `
       <section class="issuer-profile-card">
         <div class="issuer-profile-head">
-          <div class="issuer-avatar">${name.slice(0, 1)}</div>
+          <div class="issuer-avatar trust-avatar trust-rank-apprentice" title="見習い冒険者">${issuerName.slice(0, 1)}</div>
           <div>
             <span class="eyebrow">Issuer Profile</span>
-            <h3>${name}</h3>
+            <h3>${issuerName}</h3>
           </div>
         </div>
         <p>この発行者のプロフィール情報はまだ登録されていません。</p>
@@ -1249,10 +1286,10 @@ function renderIssuerProfile(name) {
   return `
     <section class="issuer-profile-card">
       <div class="issuer-profile-head">
-        <div class="issuer-avatar">${profile.initials}</div>
+        <div class="issuer-avatar trust-avatar ${getTrustRankFrame(profile.trust)}" title="${getRank(profile.trust)}">${profile.initials}</div>
         <div>
           <span class="eyebrow">Issuer Profile</span>
-          <h3>${name}</h3>
+          <h3>${issuerName}</h3>
           <p>${profile.headline}</p>
         </div>
       </div>
