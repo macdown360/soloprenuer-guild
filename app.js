@@ -1092,7 +1092,7 @@ function renderIssuedQuests() {
             </div>
           </div>
           <div class="issued-quest-actions">
-            <a class="btn btn-outline btn-sm" href="${getQuestDetailUrl(quest.id)}"><i data-lucide="external-link"></i>詳細</a>
+            <a class="btn btn-outline btn-sm" href="${getQuestDetailUrl(quest.id)}" target="_blank" rel="noopener"><i data-lucide="external-link"></i>詳細</a>
             <button class="btn btn-outline btn-sm" type="button" data-edit-issued="${quest.id}"><i data-lucide="pencil"></i>編集</button>
             <button class="btn btn-danger btn-sm" type="button" data-delete-issued="${quest.id}"><i data-lucide="trash-2"></i>削除</button>
           </div>
