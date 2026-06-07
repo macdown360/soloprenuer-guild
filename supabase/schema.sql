@@ -241,6 +241,8 @@ begin
 end;
 $$;
 
+drop function if exists public.update_quest(uuid, text, text, integer, text, text, integer, date, text[], text, text);
+
 create or replace function public.update_quest(
   p_quest_id uuid,
   p_title text,
