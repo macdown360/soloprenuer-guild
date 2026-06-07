@@ -26,12 +26,24 @@ html {
   scroll-behavior: smooth;
 }
 
+html,
+body {
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   color: var(--ink);
   background: var(--paper);
   font-family: "Noto Sans JP", sans-serif;
   line-height: 1.7;
+}
+
+img,
+svg,
+canvas,
+video {
+  max-width: 100%;
 }
 
 button,
@@ -170,6 +182,9 @@ a {
   font-size: 0.94rem;
   line-height: 1.15;
   letter-spacing: 0.01em;
+  min-width: 0;
+  text-align: center;
+  overflow-wrap: anywhere;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
@@ -3300,6 +3315,61 @@ h3 {
   .quest-detail {
     padding: 1rem;
   }
+
+  .policy-summary,
+  .policy-article,
+  .weekly-challenge-card,
+  .incentive-card,
+  .rec-quest-card,
+  .command-panel,
+  .profile-panel,
+  .guild-form {
+    padding: 1rem;
+  }
+
+  .policy-summary-list span,
+  .rec-urgency-badge,
+  .rec-match-badge,
+  .rec-reward-badge,
+  .wc-timer-badge,
+  .mission-reward-tag {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .footer-links {
+    width: 100%;
+    gap: 0.45rem 0.9rem;
+  }
+
+  .footer-links a {
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+
+  .wc-head,
+  .wc-progress-wrap,
+  .rec-quest-foot,
+  .contrib-rank {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .wc-progress-wrap {
+    gap: 0.45rem;
+  }
+
+  .wc-progress-track {
+    width: 100%;
+  }
+
+  .guild-toast {
+    width: calc(100% - 28px);
+    min-width: 0;
+    max-width: none;
+    bottom: 1rem;
+    padding: 0.78rem 1rem;
+  }
 }
 
 @media (max-width: 420px) {
@@ -3329,6 +3399,20 @@ h3 {
     align-items: flex-start;
     flex-direction: column;
     gap: 0.15rem;
+  }
+
+  .footer-links {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .rank-guide-list,
+  .category-matrix {
+    grid-template-columns: 1fr;
+  }
+
+  .streak-days {
+    flex-wrap: wrap;
   }
 }
 
@@ -3967,5 +4051,46 @@ h3 {
   .gamification-grid,
   .rec-quest-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .weekly-challenge-card,
+  .incentive-card,
+  .rec-quest-card {
+    padding: 1rem;
+  }
+
+  .rec-urgency-badge,
+  .rec-match-badge,
+  .rec-reward-badge,
+  .wc-timer-badge,
+  .mission-reward-tag {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .wc-head,
+  .wc-progress-wrap,
+  .rec-quest-foot,
+  .contrib-rank {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .wc-progress-wrap {
+    gap: 0.45rem;
+  }
+
+  .wc-progress-track {
+    width: 100%;
+  }
+
+  .guild-toast {
+    width: calc(100% - 28px);
+    min-width: 0;
+    max-width: none;
+    bottom: 1rem;
+    padding: 0.78rem 1rem;
   }
 }
