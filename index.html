@@ -123,6 +123,107 @@
         </div>
       </section>
 
+      <section id="mypage-demo" class="section mypage-demo-section">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">MY PAGE DEMO</p>
+              <h2>登録後のマイページ</h2>
+              <p>Gold、Trust、今日やること、プロフィールをまとめて確認できます。</p>
+            </div>
+            <a class="btn btn-outline" href="dashboard.html"><i data-lucide="layout-dashboard"></i>デモを開く</a>
+          </div>
+          <div class="mypage-demo-frame">
+            <div class="dashboard-toolbar mypage-demo-toolbar">
+              <div>
+                <p class="eyebrow">MY PAGE</p>
+                <h3>マイページ</h3>
+                <p>アカウント状況、進行中クエスト、承認待ちを確認します。</p>
+              </div>
+              <div class="header-actions">
+                <a class="btn btn-outline" href="quests.html"><i data-lucide="search"></i>探す</a>
+                <a class="btn btn-primary" href="dashboard.html#quest-create"><i data-lucide="plus-circle"></i>発行</a>
+              </div>
+            </div>
+            <div class="app-grid dashboard-overview mypage-demo-grid">
+              <section class="command-panel focus-panel" aria-label="サンプルの今日やること">
+                <div class="command-head">
+                  <div>
+                    <p class="eyebrow">TODAY</p>
+                    <h3>今日やること</h3>
+                    <p>未対応の承認と、次に進めるクエストだけを確認します。</p>
+                  </div>
+                </div>
+                <div class="priority-list" aria-label="サンプル優先タスク">
+                  <article class="priority-item is-urgent">
+                    <div class="priority-icon"><i data-lucide="badge-check"></i></div>
+                    <div>
+                      <span>最優先</span>
+                      <h3>LPレビューの完了報告を承認</h3>
+                      <p>提出内容を確認して、GoldとTrustを反映します。</p>
+                    </div>
+                    <a class="btn btn-primary btn-sm" href="dashboard.html#completion">対応</a>
+                  </article>
+                  <article class="priority-item">
+                    <div class="priority-icon"><i data-lucide="send"></i></div>
+                    <div>
+                      <span>発行中</span>
+                      <h3>発行中 3件</h3>
+                      <p>応募が来ているクエストから次の相手を選べます。</p>
+                    </div>
+                    <a class="btn btn-outline btn-sm" href="dashboard.html#quest-create">発行</a>
+                  </article>
+                </div>
+                <div class="kpi-grid simple-kpis">
+                  <article>
+                    <span>Gold</span>
+                    <strong>420G</strong>
+                  </article>
+                  <article>
+                    <span>Trust</span>
+                    <strong>Trust 185</strong>
+                  </article>
+                  <article>
+                    <span>完了</span>
+                    <strong>18</strong>
+                  </article>
+                  <article>
+                    <span>発行</span>
+                    <strong>7</strong>
+                  </article>
+                </div>
+              </section>
+
+              <aside class="profile-panel compact-profile">
+                <div class="profile-top">
+                  <div class="avatar" aria-hidden="true">A</div>
+                  <div>
+                    <p class="eyebrow">ACCOUNT</p>
+                    <h3>アキラ</h3>
+                    <p class="profile-headline">個人開発者 / AIツール開発 / BtoB SaaS</p>
+                  </div>
+                </div>
+                <p class="profile-summary">
+                  AIプロダクトの初期検証、BtoB SaaSのオンボーディング改善、開発者向けUXレビューが得意です。
+                </p>
+                <div class="rank-display">
+                  <span>現在のランク</span>
+                  <strong>駆け出し冒険者</strong>
+                </div>
+                <div class="profile-chip-block">
+                  <span class="panel-label">得意な領域</span>
+                  <div class="chip-list">
+                    <span class="tag-chip is-skill">AI</span>
+                    <span class="tag-chip is-skill">開発</span>
+                    <span class="tag-chip is-skill">UXレビュー</span>
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="ranking" class="section">
         <div class="container">
           <div class="section-head">
@@ -210,19 +311,6 @@
             <button class="btn btn-primary" type="submit"><i data-lucide="user-plus"></i>100Gを受け取って登録</button>
             <p class="form-note" data-auth-note></p>
           </form>
-          <article class="guild-form register-signed-in" data-auth-required hidden>
-            <div>
-              <p class="eyebrow">SIGNED IN</p>
-              <h3>冒険者登録は完了しています</h3>
-              <p data-register-signed-in-copy>マイページでGold、Trust、進行中クエストを確認できます。</p>
-            </div>
-            <div class="register-next-actions">
-              <a class="btn btn-primary" href="dashboard.html"><i data-lucide="layout-dashboard"></i>マイページへ</a>
-              <a class="btn btn-outline" href="dashboard.html#quest-create"><i data-lucide="plus-circle"></i>クエストを発行</a>
-              <a class="btn btn-outline" href="quests.html"><i data-lucide="search"></i>クエストを見る</a>
-            </div>
-            <p class="form-note" data-auth-note></p>
-          </article>
         </div>
       </section>
     </main>
