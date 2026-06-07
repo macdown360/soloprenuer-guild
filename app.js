@@ -274,7 +274,7 @@ menuToggle?.addEventListener("click", () => {
   setMobileMenu(!document.body.classList.contains("menu-open"));
 });
 
-globalNav?.querySelectorAll("a").forEach((link) => {
+document.querySelectorAll("#global-nav a, .site-header .header-actions a").forEach((link) => {
   link.addEventListener("click", () => setMobileMenu(false));
 });
 

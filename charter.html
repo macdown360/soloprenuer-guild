@@ -41,7 +41,10 @@
           <a href="charter.html"><i data-lucide="book-open"></i>ギルド憲章</a>
         </nav>
         <div class="header-actions">
-          <a class="btn btn-primary" href="dashboard.html#quest-create"><i data-lucide="plus-circle"></i>クエスト発行</a>
+          <a class="btn btn-primary" href="index.html#register" data-guest-only><i data-lucide="user-plus"></i>冒険者登録</a>
+          <a class="btn btn-outline" href="dashboard.html#authForm" data-guest-only><i data-lucide="log-in"></i>ログイン</a>
+          <a class="btn btn-primary" href="dashboard.html#quest-create" data-auth-required hidden><i data-lucide="plus-circle"></i>クエスト発行</a>
+          <a class="btn btn-outline" href="dashboard.html#quest-review" data-auth-required hidden><i data-lucide="badge-check"></i>クエスト承認</a>
         </div>
       </div>
     </header>
@@ -164,6 +167,8 @@
         </nav>
       </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-env.js"></script>
     <script src="app.js"></script>
     <script>document.addEventListener('DOMContentLoaded', function () { if (window.lucide) lucide.createIcons(); });</script>
   </body>

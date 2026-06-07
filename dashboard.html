@@ -40,7 +40,12 @@
           <a href="dashboard.html"><i data-lucide="layout-dashboard"></i>マイページ</a>
           <a href="charter.html"><i data-lucide="book-open"></i>ギルド憲章</a>
         </nav>
-        <a class="btn btn-primary" href="#quest-create" data-auth-required hidden><i data-lucide="plus-circle"></i>クエスト発行</a>
+        <div class="header-actions">
+          <a class="btn btn-primary" href="index.html#register" data-guest-only><i data-lucide="user-plus"></i>冒険者登録</a>
+          <a class="btn btn-outline" href="#authForm" data-guest-only><i data-lucide="log-in"></i>ログイン</a>
+          <a class="btn btn-primary" href="#quest-create" data-auth-required hidden><i data-lucide="plus-circle"></i>クエスト発行</a>
+          <a class="btn btn-outline" href="#quest-review" data-auth-required hidden><i data-lucide="badge-check"></i>クエスト承認</a>
+        </div>
       </div>
     </header>
 
@@ -325,7 +330,7 @@
             </form>
           </article>
 
-          <article class="workspace-panel" id="completion">
+          <article class="workspace-panel" id="quest-review">
             <div class="panel-head">
               <div>
                 <p class="eyebrow">APPROVAL</p>
