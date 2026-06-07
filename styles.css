@@ -231,6 +231,16 @@ a {
   background: #fff;
 }
 
+.btn-danger {
+  color: #8a2f2f;
+  border-color: rgba(173, 77, 77, 0.42);
+  background: #fff5f5;
+}
+
+.btn-danger:hover {
+  box-shadow: 0 8px 20px rgba(173, 77, 77, 0.16);
+}
+
 .btn-outline.light {
   color: var(--gold-2);
   border-color: rgba(242, 211, 138, 0.54);
@@ -2579,6 +2589,67 @@ h3 {
   box-shadow: none;
 }
 
+.issued-quests-panel {
+  grid-column: 1 / -1;
+}
+
+.issued-quest-list {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1rem;
+}
+
+.issued-quest-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.issued-quest-card h3,
+.issued-quest-card p {
+  margin-bottom: 0;
+}
+
+.issued-quest-card h3 {
+  margin-top: 0.45rem;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.issued-quest-card p {
+  margin-top: 0.2rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.issued-quest-actions,
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.empty-state {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem;
+  border: 1px dashed #cfd6e2;
+  border-radius: 10px;
+  color: var(--muted);
+  background: #f8fafc;
+}
+
+.empty-state h3,
+.empty-state p {
+  margin-bottom: 0;
+}
+
 .reward-examples {
   margin-top: 1rem;
 }
@@ -3078,6 +3149,18 @@ h3 {
   .priority-item .btn {
     grid-column: 1 / -1;
     width: 100%;
+  }
+
+  .issued-quest-card {
+    grid-template-columns: 1fr;
+  }
+
+  .issued-quest-actions {
+    justify-content: stretch;
+  }
+
+  .issued-quest-actions .btn {
+    flex: 1 1 120px;
   }
 
   .simple-kpis {

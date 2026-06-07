@@ -268,17 +268,48 @@
 
       <section id="quest-create" class="section" data-auth-required hidden>
         <div class="container dashboard-workspace">
+          <article class="workspace-panel issued-quests-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">ISSUED</p>
+                <h2>発行中クエスト</h2>
+              </div>
+              <span class="status-pill" data-issued-list-count>0件</span>
+            </div>
+            <div class="issued-quest-list" id="issuedQuests">
+              <article class="empty-state">
+                <h3>発行中のクエストはありません</h3>
+                <p>新しくクエストを発行すると、ここから編集や削除ができます。</p>
+              </article>
+            </div>
+          </article>
+
           <article class="workspace-panel">
             <div class="panel-head">
               <div>
                 <p class="eyebrow">CREATE</p>
-                <h2>クエスト発行</h2>
+                <h2 data-quest-form-title>クエスト発行</h2>
               </div>
-              <span class="status-pill">発行可能</span>
+              <span class="status-pill" data-quest-form-status>発行可能</span>
             </div>
             <form class="guild-form" id="questForm">
               <label for="questTitle">タイトル</label>
               <input id="questTitle" name="title" type="text" placeholder="例: 初回体験に率直なコメントがほしい" required />
+              <label>
+                カテゴリ
+                <select id="questCategory" name="category">
+                  <option>フィードバックが欲しい</option>
+                  <option>ダウンロードして欲しい</option>
+                  <option>ユーザー登録して欲しい</option>
+                  <option>SNS等で拡散して欲しい</option>
+                  <option>インタビューさせて欲しい</option>
+                  <option>壁打ちさせて欲しい</option>
+                  <option>テストをして欲しい</option>
+                  <option>良いね・レビューを入れて欲しい</option>
+                  <option>めっためたに批判が欲しい</option>
+                  <option>とにかく褒めちぎって欲しい</option>
+                </select>
+              </label>
               <label for="questDescription">詳細説明</label>
               <textarea id="questDescription" name="description" rows="5" placeholder="依頼したい内容、確認してほしい観点、提出してほしいものを書いてください。" required></textarea>
               <label for="questUrl">参考URL</label>
@@ -314,21 +345,6 @@
                     <option value="50">50G</option>
                   </select>
                 </label>
-                <label>
-                  カテゴリ
-                  <select id="questCategory" name="category">
-                    <option>フィードバックが欲しい</option>
-                    <option>ダウンロードして欲しい</option>
-                    <option>ユーザー登録して欲しい</option>
-                    <option>SNS等で拡散して欲しい</option>
-                    <option>インタビューさせて欲しい</option>
-                    <option>壁打ちさせて欲しい</option>
-                    <option>テストをして欲しい</option>
-                    <option>良いね・レビューを入れて欲しい</option>
-                    <option>めっためたに批判が欲しい</option>
-                    <option>とにかく褒めちぎって欲しい</option>
-                  </select>
-                </label>
               </div>
               <label for="questTags">タグ</label>
               <input id="questTags" name="tags" type="text" placeholder="例: AI, UXレビュー, BtoB SaaS" />
@@ -341,7 +357,10 @@
                 <option value="20">20日後</option>
                 <option value="30">30日後</option>
               </select>
-              <button class="btn btn-primary" type="submit"><i data-lucide="send"></i>発行する</button>
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit" data-quest-submit><i data-lucide="send"></i>発行する</button>
+                <button class="btn btn-outline" type="button" data-quest-edit-cancel hidden><i data-lucide="x"></i>編集をやめる</button>
+              </div>
               <p class="form-note" data-form-note>現在の残高: 100G</p>
             </form>
           </article>

@@ -27,6 +27,7 @@ const state = {
   completed: 18,
   issued: 7,
   selectedQuestId: 1,
+  editingQuestId: null,
   missions: [false, false, false],
   streak: 5,
   weeklyProgress: 1,
@@ -225,6 +226,12 @@ const keywordFilter = document.querySelector("#keywordFilter");
 const heroCategory = document.querySelector("#heroCategory");
 const heroKeyword = document.querySelector("#heroKeyword");
 const questForm = document.querySelector("#questForm");
+const issuedQuestsEl = document.querySelector("#issuedQuests");
+const issuedListCountEl = document.querySelector("[data-issued-list-count]");
+const questFormTitleEl = document.querySelector("[data-quest-form-title]");
+const questFormStatusEl = document.querySelector("[data-quest-form-status]");
+const questSubmitEl = document.querySelector("[data-quest-submit]");
+const questEditCancelEl = document.querySelector("[data-quest-edit-cancel]");
 const reviewForm = document.querySelector("#reviewForm");
 const completedQuestEl = document.querySelector("#completedQuest");
 const recommendedQuestsEl = document.querySelector("#recommendedQuests");
@@ -687,6 +694,64 @@ function getQuestDeadlineDate(daysValue) {
   return deadline.toISOString().slice(0, 10);
 }
 
+function getDeadlineDaysValue(deadlineValue) {
+  const allowedDays = [3, 5, 7, 10, 20, 30];
+  const deadline = new Date(`${deadlineValue}T00:00:00`);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const days = Math.round((deadline.getTime() - today.getTime()) / 86400000);
+  return allowedDays.includes(days) ? String(days) : "7";
+}
+
+function getQuestEscrow(quest) {
+  return (Number(quest.reward) || 0) * getQuestCapacity(quest);
+}
+
+function getRefundableEscrow(quest) {
+  const approved = Number(quest.approvedReports) || 0;
+  const remaining = Math.max(0, getQuestCapacity(quest) - approved);
+  return (Number(quest.reward) || 0) * remaining;
+}
+
+function getIssuedQuests() {
+  return state.quests.filter((quest) => {
+    if (isQuestClosed(quest)) return false;
+    if (remote.enabled) return quest.issuerId === remote.user?.id;
+    return quest.issuer === state.account.name;
+  });
+}
+
+function setQuestFormMode(quest = null) {
+  state.editingQuestId = quest?.id || null;
+  if (questFormTitleEl) questFormTitleEl.textContent = quest ? "クエスト編集" : "クエスト発行";
+  if (questFormStatusEl) questFormStatusEl.textContent = quest ? "編集中" : "発行可能";
+  if (questSubmitEl) {
+    questSubmitEl.innerHTML = quest ? '<i data-lucide="save"></i>変更を保存' : '<i data-lucide="send"></i>発行する';
+  }
+  if (questEditCancelEl) questEditCancelEl.hidden = !quest;
+  if (window.lucide) lucide.createIcons();
+}
+
+function resetQuestForm() {
+  questForm?.reset();
+  setQuestFormMode(null);
+}
+
+function populateQuestForm(quest) {
+  if (!questForm || !quest) return;
+  questForm.elements.title.value = quest.title || "";
+  questForm.elements.description.value = quest.description || "";
+  questForm.elements.url.value = quest.url || "";
+  questForm.elements.type.value = quest.type || "report";
+  questForm.elements.capacity.value = getQuestCapacity(quest);
+  questForm.elements.reward.value = String(quest.reward || 5);
+  questForm.elements.category.value = quest.category || "フィードバックが欲しい";
+  questForm.elements.tags.value = normalizeList(quest.tags).join(", ");
+  questForm.elements.deadline_days.value = getDeadlineDaysValue(quest.deadline);
+  setQuestFormMode(quest);
+  document.querySelector("#quest-create")?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 function renderAccountProfile() {
   const account = state.account;
   const accountEmail = remote.user?.email || "デモアカウント";
@@ -888,6 +953,7 @@ function syncStats() {
   renderLatestQuestSlider();
   renderRecommendedQuests();
   renderReviewOptions();
+  renderIssuedQuests();
   setTrustAvatarFrame(accountInitialsEl, state.trust);
   setTrustAvatarFrame(authAccountInitialsEl, state.trust);
 }
@@ -988,6 +1054,65 @@ function renderReviewOptions() {
   if (reviewNote) {
     reviewNote.textContent = approvableQuests.length ? `未承認の完了報告が${approvableQuests.length}件あります。` : "承認待ちのクエストはありません。";
   }
+}
+
+function renderIssuedQuests() {
+  if (!issuedQuestsEl) return;
+
+  const quests = getIssuedQuests();
+  if (issuedListCountEl) issuedListCountEl.textContent = `${quests.length}件`;
+
+  if (!quests.length) {
+    issuedQuestsEl.innerHTML = `
+      <article class="empty-state">
+        <h3>発行中のクエストはありません</h3>
+        <p>新しくクエストを発行すると、ここから編集や削除ができます。</p>
+      </article>
+    `;
+    return;
+  }
+
+  issuedQuestsEl.innerHTML = quests
+    .map((quest) => {
+      const type = getQuestType(quest);
+      const progress = Math.min(getQuestProgress(quest), getQuestCapacity(quest));
+      return `
+        <article class="issued-quest-card">
+          <div>
+            <div class="quest-card-labels">
+              <span class="category">${quest.category}</span>
+              <span class="quest-type-badge">${type.label}</span>
+            </div>
+            <h3>${quest.title}</h3>
+            <p>${quest.description}</p>
+            <div class="quest-card-meta">
+              <span>${quest.reward}G</span>
+              <span>${type.metricLabel}: ${progress}/${getQuestCapacity(quest)}名</span>
+              <span>締切: ${formatDate(quest.deadline)}</span>
+            </div>
+          </div>
+          <div class="issued-quest-actions">
+            <a class="btn btn-outline btn-sm" href="${getQuestDetailUrl(quest.id)}"><i data-lucide="external-link"></i>詳細</a>
+            <button class="btn btn-outline btn-sm" type="button" data-edit-issued="${quest.id}"><i data-lucide="pencil"></i>編集</button>
+            <button class="btn btn-danger btn-sm" type="button" data-delete-issued="${quest.id}"><i data-lucide="trash-2"></i>削除</button>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  issuedQuestsEl.querySelectorAll("[data-edit-issued]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const quest = state.quests.find((item) => String(item.id) === String(button.dataset.editIssued));
+      populateQuestForm(quest);
+    });
+  });
+
+  issuedQuestsEl.querySelectorAll("[data-delete-issued]").forEach((button) => {
+    button.addEventListener("click", () => deleteIssuedQuest(button.dataset.deleteIssued));
+  });
+
+  if (window.lucide) lucide.createIcons();
 }
 
 function filteredQuests() {
@@ -1343,17 +1468,34 @@ questForm?.addEventListener("submit", async (event) => {
     return;
   }
 
-  if (escrowGold > state.gold) {
+  const selectedCategory = data.get("category");
+  const tags = unique([...(state.questTaxonomy[selectedCategory] || []).slice(0, 2), ...normalizeList(data.get("tags"))]);
+  const editingQuest = state.editingQuestId
+    ? state.quests.find((quest) => String(quest.id) === String(state.editingQuestId))
+    : null;
+
+  if (state.editingQuestId && !editingQuest) {
+    formNote.textContent = "編集中のクエストが見つかりません。";
+    resetQuestForm();
+    return;
+  }
+
+  if (!editingQuest && escrowGold > state.gold) {
     formNote.textContent = `残高不足です。現在のGoldは${state.gold}Gです。`;
     return;
   }
 
-  const selectedCategory = data.get("category");
-  const tags = unique([...(state.questTaxonomy[selectedCategory] || []).slice(0, 2), ...normalizeList(data.get("tags"))]);
+  if (editingQuest && !remote.enabled) {
+    const escrowDelta = escrowGold - getQuestEscrow(editingQuest);
+    if (escrowDelta > state.gold) {
+      formNote.textContent = `追加で${escrowDelta}Gが必要です。現在のGoldは${state.gold}Gです。`;
+      return;
+    }
+  }
 
   if (remote.enabled) {
     if (!remote.user) {
-      formNote.textContent = "クエスト発行にはログインが必要です。";
+      formNote.textContent = editingQuest ? "クエスト編集にはログインが必要です。" : "クエスト発行にはログインが必要です。";
       return;
     }
 
@@ -1365,7 +1507,7 @@ questForm?.addEventListener("submit", async (event) => {
       return;
     }
 
-    const { error } = await supabaseClient.rpc("issue_quest", {
+    const payload = {
       p_title: data.get("title"),
       p_description: data.get("description"),
       p_reward: reward,
@@ -1375,16 +1517,47 @@ questForm?.addEventListener("submit", async (event) => {
       p_deadline: deadline,
       p_tags: tags,
       p_reference_url: normalizeQuestUrl(data.get("url")),
-      p_screenshot_url: screenshotUrl,
-    });
+      p_screenshot_url: screenshotUrl || editingQuest?.screenshot?.url || "",
+    };
+    const { error } = editingQuest
+      ? await supabaseClient.rpc("update_quest", { p_quest_id: editingQuest.id, ...payload })
+      : await supabaseClient.rpc("issue_quest", payload);
 
     if (error) {
-      formNote.textContent = error.message || "クエストを発行できませんでした。";
+      formNote.textContent = error.message || (editingQuest ? "クエストを更新できませんでした。" : "クエストを発行できませんでした。");
       return;
     }
 
-    formNote.textContent = `${escrowGold}Gを確保して${QUEST_TYPES[type].label}クエストを発行しました。`;
+    formNote.textContent = editingQuest
+      ? "クエストを更新しました。"
+      : `${escrowGold}Gを確保して${QUEST_TYPES[type].label}クエストを発行しました。`;
+    resetQuestForm();
     await refreshRemoteState();
+    return;
+  }
+
+  if (editingQuest) {
+    const escrowDelta = escrowGold - getQuestEscrow(editingQuest);
+    state.gold -= escrowDelta;
+    Object.assign(editingQuest, {
+      type,
+      title: data.get("title"),
+      reward,
+      category: selectedCategory,
+      tags,
+      skills: overlap(tags, state.account.strengths),
+      deadline,
+      capacity,
+      description: data.get("description"),
+      url: normalizeQuestUrl(data.get("url")),
+      screenshot: screenshot || editingQuest.screenshot,
+    });
+    syncStats();
+    renderQuestList();
+    renderQuestDetailPage();
+    renderAccountProfile();
+    formNote.textContent = "クエストを更新しました。";
+    resetQuestForm();
     return;
   }
 
@@ -1416,7 +1589,55 @@ questForm?.addEventListener("submit", async (event) => {
   renderQuestList();
   renderAccountProfile();
   formNote.textContent = `${escrowGold}Gを確保して${getQuestType(quest).label}クエストを発行しました。`;
+  resetQuestForm();
 });
+
+questEditCancelEl?.addEventListener("click", () => {
+  resetQuestForm();
+  if (formNote) formNote.textContent = `現在の残高: ${state.gold}G / 現在ランク: ${getRank(state.trust)}`;
+});
+
+async function deleteIssuedQuest(questId) {
+  const quest = state.quests.find((item) => String(item.id) === String(questId));
+  if (!quest) return;
+
+  const confirmed = window.confirm(`「${quest.title}」を削除します。よろしいですか？`);
+  if (!confirmed) return;
+
+  if (!remote.enabled && Number(quest.approvedReports) > 0) {
+    if (formNote) formNote.textContent = "承認済みのあるクエストは削除できません。";
+    return;
+  }
+
+  if (remote.enabled) {
+    if (!remote.user) {
+      if (formNote) formNote.textContent = "クエスト削除にはログインが必要です。";
+      return;
+    }
+
+    const { error } = await supabaseClient.rpc("delete_quest", { p_quest_id: quest.id });
+    if (error) {
+      if (formNote) formNote.textContent = error.message || "クエストを削除できませんでした。";
+      return;
+    }
+
+    if (state.editingQuestId && String(state.editingQuestId) === String(quest.id)) resetQuestForm();
+    if (formNote) formNote.textContent = "クエストを削除しました。未消化のGoldを戻しました。";
+    await refreshRemoteState();
+    return;
+  }
+
+  state.gold += getRefundableEscrow(quest);
+  state.issued = Math.max(0, state.issued - 1);
+  state.quests = state.quests.filter((item) => String(item.id) !== String(quest.id));
+  if (state.selectedQuestId === quest.id) state.selectedQuestId = state.quests[0]?.id || null;
+  if (state.editingQuestId && String(state.editingQuestId) === String(quest.id)) resetQuestForm();
+  syncStats();
+  renderQuestList();
+  renderQuestDetailPage();
+  renderAccountProfile();
+  if (formNote) formNote.textContent = "クエストを削除しました。未消化のGoldを戻しました。";
+}
 
 function ratingFromTrustBonus(value) {
   const bonus = Number(value);
