@@ -681,29 +681,10 @@ h3 {
   min-width: 0;
 }
 
-.issuer-link {
+.issuer-name {
   display: inline;
-  border: 0;
-  padding: 0;
   color: #795a1d;
-  background: transparent;
-  font: inherit;
   font-weight: 900;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-  cursor: pointer;
-}
-
-.issuer-link:hover,
-.issuer-link:focus-visible {
-  color: #4d3914;
-}
-
-.issuer-link:focus-visible {
-  outline: 2px solid rgba(214, 168, 79, 0.65);
-  outline-offset: 3px;
-  border-radius: 4px;
 }
 
 .category,
@@ -2285,10 +2266,9 @@ h3 {
   line-height: 1.45;
 }
 
-.detail-meta .issuer-link {
+.detail-meta .issuer-name {
   color: var(--ink);
   font-weight: 900;
-  text-decoration-color: rgba(214, 168, 79, 0.7);
 }
 
 .detail-link {

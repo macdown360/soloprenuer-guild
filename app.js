@@ -25,7 +25,6 @@ const state = {
   completed: 18,
   issued: 7,
   selectedQuestId: 1,
-  selectedIssuer: null,
   missions: [false, false, false],
   streak: 5,
   weeklyProgress: 1,
@@ -587,7 +586,7 @@ function getIssuerProfile(name) {
 }
 
 function renderIssuerButton(name) {
-  return `<button class="issuer-link" type="button" data-issuer="${name}" aria-label="${name}のプロフィールを表示">${name}</button>`;
+  return `<span class="issuer-name">${name}</span>`;
 }
 
 function getQuestDetailUrl(id) {
@@ -1027,7 +1026,7 @@ function renderQuestDetail(quest) {
   const comments = quest.comments.length
     ? quest.comments.map((comment) => `<div class="comment">${comment}</div>`).join("")
     : '<div class="comment">まだコメントはありません。</div>';
-  const issuerProfile = state.selectedIssuer === quest.issuer ? renderIssuerProfile(quest.issuer) : "";
+  const issuerProfile = renderIssuerProfile(quest.issuer);
   updateQuestStatus(quest);
   const type = getQuestType(quest);
   const closed = isQuestClosed(quest);
@@ -1117,15 +1116,12 @@ function renderQuestDetail(quest) {
     </div>
     <div class="quest-flow-note">${type.guidance}</div>
     ${screenshotPreview}
-    ${issuerProfile}
     ${actionArea}
     <h3>コメント</h3>
     ${comments}
+    ${issuerProfile}
   `;
 
-  questDetail.querySelector("[data-issuer]")?.addEventListener("click", () => {
-    showIssuerProfile(quest.issuer, quest.id);
-  });
   questDetail.querySelector("[data-apply]")?.addEventListener("click", async () => {
     if (isQuestClosed(quest)) return;
     if (quest.type === "report") {
@@ -1197,18 +1193,6 @@ function renderQuestDetail(quest) {
 
 function selectQuest(id) {
   state.selectedQuestId = id;
-  state.selectedIssuer = null;
-  renderQuestList();
-}
-
-function showIssuerProfile(name, questId = state.selectedQuestId) {
-  state.selectedQuestId = questId;
-  state.selectedIssuer = name;
-  const quest = state.quests.find((item) => item.id === questId);
-  if (questDetail && quest) {
-    renderQuestDetail(quest);
-    return;
-  }
   renderQuestList();
 }
 
@@ -1354,7 +1338,6 @@ questForm?.addEventListener("submit", async (event) => {
 
   state.quests.unshift(quest);
   state.selectedQuestId = quest.id;
-  state.selectedIssuer = null;
   syncStats();
   renderQuestList();
   renderAccountProfile();
