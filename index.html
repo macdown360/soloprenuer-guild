@@ -54,7 +54,7 @@
             そんな声をクエストにすれば、仲間が動く。達成するたびにGoldとTrustが積み上がる。
           </p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#register"><i data-lucide="user-plus"></i>冒険者登録</a>
+            <a class="btn btn-primary" href="#register" data-register-cta><i data-lucide="user-plus"></i><span>冒険者登録</span></a>
             <a class="btn btn-secondary" href="quests.html"><i data-lucide="arrow-right"></i>クエストを見る</a>
           </div>
           <div class="hero-metrics" aria-label="ギルドの数字">
@@ -186,8 +186,11 @@
               登録は1分。すぐに100Gを受け取り、今日中に最初のクエストを出せる。<br />
               一人で抱えるより、助け合える仲間がいたほうが、ソロプレナーは強くなる。
             </p>
+            <div class="register-links" data-guest-only>
+              <a class="btn btn-outline light" href="dashboard.html"><i data-lucide="log-in"></i>登録済みの方はログイン</a>
+            </div>
           </div>
-          <form class="guild-form" id="registerForm" action="dashboard.html" method="get">
+          <form class="guild-form" id="registerForm" action="dashboard.html" method="get" data-guest-only>
             <label for="name">冒険者名</label>
             <input id="name" name="name" type="text" placeholder="例: アキラ" required />
             <label for="email">メールアドレス</label>
@@ -207,6 +210,19 @@
             <button class="btn btn-primary" type="submit"><i data-lucide="user-plus"></i>100Gを受け取って登録</button>
             <p class="form-note" data-auth-note></p>
           </form>
+          <article class="guild-form register-signed-in" data-auth-required hidden>
+            <div>
+              <p class="eyebrow">SIGNED IN</p>
+              <h3>冒険者登録は完了しています</h3>
+              <p data-register-signed-in-copy>マイページでGold、Trust、進行中クエストを確認できます。</p>
+            </div>
+            <div class="register-next-actions">
+              <a class="btn btn-primary" href="dashboard.html"><i data-lucide="layout-dashboard"></i>マイページへ</a>
+              <a class="btn btn-outline" href="dashboard.html#quest-create"><i data-lucide="plus-circle"></i>クエストを発行</a>
+              <a class="btn btn-outline" href="quests.html"><i data-lucide="search"></i>クエストを見る</a>
+            </div>
+            <p class="form-note" data-auth-note></p>
+          </article>
         </div>
       </section>
     </main>

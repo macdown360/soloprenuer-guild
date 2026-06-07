@@ -241,9 +241,10 @@ const authForm = document.querySelector("#authForm");
 const authNoteEls = document.querySelectorAll("[data-auth-note]");
 const authStatusEl = document.querySelector("[data-auth-status]");
 const signoutBtn = document.querySelector("[data-signout]");
-const dashboardMain = document.querySelector(".dashboard-main");
 const authRequiredEls = document.querySelectorAll("[data-auth-required]");
 const guestOnlyEls = document.querySelectorAll("[data-guest-only]");
+const registerCta = document.querySelector("[data-register-cta]");
+const registerSignedInCopy = document.querySelector("[data-register-signed-in-copy]");
 
 function setAuthNote(message) {
   authNoteEls.forEach((el) => {
@@ -256,8 +257,6 @@ function setAuthStatus(label) {
 }
 
 function syncAuthVisibility() {
-  if (!dashboardMain) return;
-
   const isAuthenticated = !remote.enabled || Boolean(remote.user);
   authRequiredEls.forEach((el) => {
     el.hidden = !isAuthenticated;
@@ -266,6 +265,18 @@ function syncAuthVisibility() {
     el.hidden = isAuthenticated;
   });
   if (signoutBtn) signoutBtn.hidden = !remote.enabled || !remote.user;
+
+  if (registerCta) {
+    registerCta.href = isAuthenticated ? "dashboard.html" : "#register";
+    const label = registerCta.querySelector("span");
+    if (label) label.textContent = isAuthenticated ? "マイページへ" : "冒険者登録";
+  }
+
+  if (registerSignedInCopy) {
+    registerSignedInCopy.textContent = remote.user
+      ? `${state.account.name}としてログイン中です。マイページでGold、Trust、進行中クエストを確認できます。`
+      : "Supabase未設定時はデモデータでギルドの流れを確認できます。";
+  }
 }
 
 function getInitials(name) {
@@ -1293,8 +1304,19 @@ document.querySelectorAll("[data-category-link]").forEach((link) => {
 });
 
 registerForm?.addEventListener("submit", async (event) => {
-  if (!remote.enabled) return;
   event.preventDefault();
+
+  if (!remote.enabled) {
+    setAuthNote("Supabase未設定のため、デモのマイページへ移動します。");
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  if (remote.user) {
+    setAuthNote("すでにログイン中です。マイページへ移動します。");
+    window.location.href = "dashboard.html";
+    return;
+  }
 
   const data = new FormData(registerForm);
   const email = data.get("email");

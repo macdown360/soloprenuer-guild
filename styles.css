@@ -204,6 +204,12 @@ a {
   background: #fff;
 }
 
+.btn-outline.light {
+  color: var(--gold-2);
+  border-color: rgba(242, 211, 138, 0.54);
+  background: rgba(255, 255, 255, 0.08);
+}
+
 .hero {
   position: relative;
   min-height: 520px;
@@ -883,6 +889,10 @@ h3 {
   color: rgba(238, 242, 246, 0.76);
 }
 
+.register-links {
+  margin-top: 1rem;
+}
+
 .guild-form {
   display: grid;
   gap: 0.8rem;
@@ -892,6 +902,30 @@ h3 {
 .register-section .guild-form,
 .dashboard-page .guild-form {
   color: var(--ink);
+}
+
+.register-signed-in {
+  align-content: start;
+  color: var(--ink);
+}
+
+.register-signed-in h3,
+.register-signed-in p {
+  margin: 0;
+}
+
+.register-signed-in h3 {
+  font-size: 1.35rem;
+}
+
+.register-signed-in p {
+  color: var(--muted);
+}
+
+.register-next-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.72rem;
 }
 
 .guild-form label {
