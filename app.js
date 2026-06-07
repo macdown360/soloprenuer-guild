@@ -214,6 +214,7 @@ const formNote = document.querySelector("[data-form-note]");
 const reviewNote = document.querySelector("[data-review-note]");
 const questList = document.querySelector("#questList");
 const questDetail = document.querySelector("#questDetail");
+const issuerProfileEl = document.querySelector("#issuerProfile");
 const latestQuestSlider = document.querySelector("#latestQuestSlider");
 const latestQuestPrev = document.querySelector("[data-latest-prev]");
 const latestQuestNext = document.querySelector("[data-latest-next]");
@@ -1019,6 +1020,10 @@ function renderQuestDetail(quest) {
         <a class="btn btn-primary" href="quests.html#quest-board"><i data-lucide="search"></i>一覧へ戻る</a>
       </div>
     `;
+    if (issuerProfileEl) {
+      issuerProfileEl.hidden = true;
+      issuerProfileEl.innerHTML = "";
+    }
     if (window.lucide) lucide.createIcons();
     return;
   }
@@ -1026,7 +1031,6 @@ function renderQuestDetail(quest) {
   const comments = quest.comments.length
     ? quest.comments.map((comment) => `<div class="comment">${comment}</div>`).join("")
     : '<div class="comment">まだコメントはありません。</div>';
-  const issuerProfile = renderIssuerProfile(quest.issuer);
   updateQuestStatus(quest);
   const type = getQuestType(quest);
   const closed = isQuestClosed(quest);
@@ -1119,8 +1123,12 @@ function renderQuestDetail(quest) {
     ${actionArea}
     <h3>コメント</h3>
     ${comments}
-    ${issuerProfile}
   `;
+
+  if (issuerProfileEl) {
+    issuerProfileEl.hidden = false;
+    issuerProfileEl.innerHTML = renderIssuerProfile(quest.issuer);
+  }
 
   questDetail.querySelector("[data-apply]")?.addEventListener("click", async () => {
     if (isQuestClosed(quest)) return;

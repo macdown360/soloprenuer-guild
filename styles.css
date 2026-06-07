@@ -2356,14 +2356,22 @@ h3 {
   padding: 0.58rem;
 }
 
-.issuer-profile-card {
+.issuer-profile-slot {
   display: grid;
-  gap: 0.9rem;
-  margin: 1rem 0;
   padding: 1rem;
   border: 1px solid rgba(214, 168, 79, 0.38);
   border-radius: 12px;
   background: #fffaf0;
+  box-shadow: 0 16px 40px rgba(13, 20, 36, 0.08);
+}
+
+.issuer-profile-slot[hidden] {
+  display: none;
+}
+
+.issuer-profile-card {
+  display: grid;
+  gap: 0.9rem;
 }
 
 .issuer-profile-card .eyebrow {
