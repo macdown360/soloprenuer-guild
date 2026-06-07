@@ -31,13 +31,18 @@
           </span>
           <span>ソロプレナー・ギルド</span>
         </a>
-        <nav class="nav-links" aria-label="グローバルメニュー">
+        <button class="menu-toggle" type="button" aria-controls="global-nav" aria-expanded="false" aria-label="メニューを開く">
+          <i data-lucide="menu"></i>
+        </button>
+        <nav class="nav-links" id="global-nav" aria-label="グローバルメニュー">
           <a href="index.html"><i data-lucide="home"></i>トップ</a>
           <a href="quests.html"><i data-lucide="search"></i>クエスト検索</a>
           <a href="dashboard.html"><i data-lucide="layout-dashboard"></i>マイページ</a>
           <a href="charter.html"><i data-lucide="book-open"></i>ギルド憲章</a>
         </nav>
-        <a class="btn btn-primary" href="dashboard.html#quest-create"><i data-lucide="plus-circle"></i>クエスト発行</a>
+        <div class="header-actions">
+          <a class="btn btn-primary" href="dashboard.html#quest-create"><i data-lucide="plus-circle"></i>クエスト発行</a>
+        </div>
       </div>
     </header>
 
@@ -159,6 +164,7 @@
         </nav>
       </div>
     </footer>
-    <script>document.addEventListener('DOMContentLoaded', function () { lucide.createIcons(); });</script>
+    <script src="app.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function () { if (window.lucide) lucide.createIcons(); });</script>
   </body>
 </html>

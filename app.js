@@ -259,6 +259,28 @@ const achievementCountEl = document.querySelector("[data-achievement-count]");
 const titleGridEl = document.querySelector("[data-title-grid]");
 const reviewCountStatusEl = document.querySelector("[data-review-count-status]");
 const weeklyCardEl = document.querySelector("[data-weekly-card]");
+const menuToggle = document.querySelector(".menu-toggle");
+const globalNav = document.querySelector("#global-nav");
+
+function setMobileMenu(open) {
+  document.body.classList.toggle("menu-open", open);
+  if (menuToggle) {
+    menuToggle.setAttribute("aria-expanded", String(open));
+    menuToggle.setAttribute("aria-label", open ? "メニューを閉じる" : "メニューを開く");
+  }
+}
+
+menuToggle?.addEventListener("click", () => {
+  setMobileMenu(!document.body.classList.contains("menu-open"));
+});
+
+globalNav?.querySelectorAll("a").forEach((link) => {
+  link.addEventListener("click", () => setMobileMenu(false));
+});
+
+window.addEventListener("resize", () => {
+  if (window.innerWidth > 640) setMobileMenu(false);
+});
 
 function setAuthNote(message) {
   authNoteEls.forEach((el) => {
