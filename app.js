@@ -739,7 +739,19 @@ function getNextRankInfo(trust) {
 }
 
 function formatDate(value) {
-  return formatter.format(new Date(`${value}T00:00:00`));
+  if (!value) return "";
+  const deadline = new Date(`${value}T23:59:59`);
+  const diffMs = deadline.getTime() - Date.now();
+  if (!Number.isFinite(diffMs)) return "";
+  if (diffMs <= 0) return "締切済";
+
+  const minutes = Math.ceil(diffMs / 60000);
+  if (minutes < 60) return `あと${minutes}分`;
+
+  const hours = Math.ceil(minutes / 60);
+  if (hours < 48) return `あと${hours}時間`;
+
+  return `あと${Math.ceil(hours / 24)}日`;
 }
 
 function formatDateTime(value) {
