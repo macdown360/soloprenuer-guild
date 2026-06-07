@@ -214,16 +214,18 @@ returns uuid language plpgsql security definer set search_path = public as $$
 declare
   v_user uuid := auth.uid();
   v_submission uuid;
+  v_issuer uuid;
   v_capacity integer;
   v_count integer;
 begin
   if v_user is null then raise exception 'not_authenticated'; end if;
 
-  select capacity into v_capacity
+  select issuer_id, capacity into v_issuer, v_capacity
   from public.quests
-  where id = p_quest_id and status = 'open' and issuer_id <> v_user;
+  where id = p_quest_id and status = 'open';
 
   if not found then raise exception 'quest_not_available'; end if;
+  if v_issuer = v_user then raise exception 'self_submission_denied'; end if;
 
   select count(*) into v_count
   from public.quest_submissions

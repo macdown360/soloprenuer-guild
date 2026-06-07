@@ -207,6 +207,8 @@ const remote = {
   pendingSubmissions: [],
 };
 
+const SELF_SUBMISSION_MESSAGE = "自分の発行したクエストには応募できません";
+
 const goldEls = document.querySelectorAll("[data-gold]");
 const trustEls = document.querySelectorAll("[data-trust]");
 const rankEls = document.querySelectorAll("[data-rank]");
@@ -323,6 +325,15 @@ function isAlreadyRegisteredError(error) {
 function isDuplicateSignupResponse(signUpData) {
   const identities = signUpData?.user?.identities;
   return Boolean(signUpData?.user && Array.isArray(identities) && identities.length === 0 && !signUpData?.session);
+}
+
+function isOwnQuest(quest) {
+  return Boolean(remote.user?.id && quest?.issuerId && String(quest.issuerId) === String(remote.user.id));
+}
+
+function getSubmitQuestErrorMessage(error, fallback) {
+  if (/self_submission_denied/i.test(error?.message || "")) return SELF_SUBMISSION_MESSAGE;
+  return error?.message || fallback;
 }
 
 async function resendSignupConfirmation(email) {
@@ -1314,16 +1325,22 @@ function renderQuestDetail(quest) {
   questDetail.querySelector("[data-apply]")?.addEventListener("click", async () => {
     if (isQuestClosed(quest)) return;
     if (quest.type === "report") {
+      if (remote.enabled) {
+        if (!remote.user) {
+          showToast("完了報告にはログインが必要です。");
+          return;
+        }
+        if (isOwnQuest(quest)) {
+          showToast(SELF_SUBMISSION_MESSAGE);
+          return;
+        }
+      }
       const evidence = questDetail.querySelector("[data-evidence]");
       if (!evidence?.files?.length) {
         showToast("スクショ画面のエビデンスを添付してください。");
         return;
       }
       if (remote.enabled) {
-        if (!remote.user) {
-          showToast("完了報告にはログインが必要です。");
-          return;
-        }
         const comment = questDetail.querySelector("[data-report-comment]")?.value || "";
         let evidenceUrl = "";
         try {
@@ -1339,7 +1356,7 @@ function renderQuestDetail(quest) {
           p_evidence_url: evidenceUrl,
         });
         if (error) {
-          showToast(error.message || "完了報告を送信できませんでした。");
+          showToast(getSubmitQuestErrorMessage(error, "完了報告を送信できませんでした。"));
           return;
         }
         showToast("完了報告を送信しました。発行者の承認を待ちます。");
@@ -1358,6 +1375,10 @@ function renderQuestDetail(quest) {
         showToast("応募にはログインが必要です。");
         return;
       }
+      if (isOwnQuest(quest)) {
+        showToast(SELF_SUBMISSION_MESSAGE);
+        return;
+      }
       const { error } = await supabaseClient.rpc("submit_quest", {
         p_quest_id: quest.id,
         p_submission_type: "application",
@@ -1365,7 +1386,7 @@ function renderQuestDetail(quest) {
         p_evidence_url: "",
       });
       if (error) {
-        showToast(error.message || "応募できませんでした。");
+        showToast(getSubmitQuestErrorMessage(error, "応募できませんでした。"));
         return;
       }
       showToast("応募しました。発行者との約束を進めてください。");
