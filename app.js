@@ -230,7 +230,6 @@ const accountInitialsEl = document.querySelector("[data-account-initials]");
 const accountNameEl = document.querySelector("[data-account-name]");
 const accountHeadlineEl = document.querySelector("[data-account-headline]");
 const profileSummaryEl = document.querySelector("[data-profile-summary]");
-const profileMetaEl = document.querySelector("[data-profile-meta]");
 const profileSkillsEl = document.querySelector("[data-profile-skills]");
 const profileInterestsEl = document.querySelector("[data-profile-interests]");
 const profileCategoriesEl = document.querySelector("[data-profile-categories]");
@@ -239,7 +238,6 @@ const authAccountNameEl = document.querySelector("[data-auth-account-name]");
 const authAccountHeadlineEl = document.querySelector("[data-auth-account-headline]");
 const authAccountEmailEl = document.querySelector("[data-auth-account-email]");
 const authProfileSummaryEl = document.querySelector("[data-auth-profile-summary]");
-const authProfileMetaEl = document.querySelector("[data-auth-profile-meta]");
 const authProfileSkillsEl = document.querySelector("[data-auth-profile-skills]");
 const matchSignalsEl = document.querySelector("[data-match-signals]");
 const categoryMatrixEl = document.querySelector("[data-category-matrix]");
@@ -664,17 +662,6 @@ function renderAccountProfile() {
   if (authAccountEmailEl) authAccountEmailEl.textContent = accountEmail;
   if (authProfileSummaryEl) authProfileSummaryEl.textContent = account.summary;
 
-  if (profileMetaEl) {
-    profileMetaEl.innerHTML = `
-      <div><dt>事業フェーズ</dt><dd>${account.businessStage}</dd></div>
-    `;
-  }
-  if (authProfileMetaEl) {
-    authProfileMetaEl.innerHTML = `
-      <div><dt>事業フェーズ</dt><dd>${account.businessStage}</dd></div>
-    `;
-  }
-
   if (profileSkillsEl) profileSkillsEl.innerHTML = createChips(account.strengths, "is-skill");
   if (authProfileSkillsEl) authProfileSkillsEl.innerHTML = createChips(account.strengths, "is-skill");
   if (profileInterestsEl) profileInterestsEl.innerHTML = createChips(account.interests);
@@ -684,7 +671,6 @@ function renderAccountProfile() {
     profileForm.elements.adventurer_name.value = account.name;
     profileForm.elements.headline.value = account.headline;
     profileForm.elements.summary.value = account.summary;
-    profileForm.elements.job.value = account.businessStage;
     profileForm.elements.skills.value = account.strengths.join(", ");
     profileForm.elements.interests.value = account.interests.join(", ");
   }
@@ -1645,7 +1631,6 @@ profileForm?.addEventListener("submit", async (event) => {
     adventurer_name: String(data.get("adventurer_name") || "").trim() || "冒険者",
     headline: String(data.get("headline") || "").trim(),
     summary: String(data.get("summary") || "").trim(),
-    job: String(data.get("job") || "").trim(),
     skills: normalizeList(data.get("skills")),
     interests: normalizeList(data.get("interests")),
   };
