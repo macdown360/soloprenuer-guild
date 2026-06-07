@@ -36,7 +36,7 @@
           <a href="dashboard.html"><i data-lucide="layout-dashboard"></i>マイページ</a>
           <a href="charter.html"><i data-lucide="book-open"></i>ギルド憲章</a>
         </nav>
-        <a class="btn btn-primary" href="#quest-create"><i data-lucide="plus-circle"></i>クエスト発行</a>
+        <a class="btn btn-primary" href="#quest-create" data-auth-required hidden><i data-lucide="plus-circle"></i>クエスト発行</a>
       </div>
     </header>
 
@@ -72,7 +72,26 @@
         </div>
       </section>
 
-      <section id="mypage" class="dashboard-hero">
+      <section class="section dashboard-guest" data-guest-only hidden>
+        <div class="container">
+          <article class="workspace-panel guest-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">MY PAGE</p>
+                <h1>ログインが必要です</h1>
+              </div>
+              <span class="status-pill">未ログイン</span>
+            </div>
+            <p>マイページでは、あなたのGold、Trust、発行中クエスト、承認待ちを表示します。メールアドレスとパスワードでログインしてください。</p>
+            <div class="header-actions">
+              <a class="btn btn-outline" href="index.html#register"><i data-lucide="user-plus"></i>冒険者登録</a>
+              <a class="btn btn-outline" href="quests.html"><i data-lucide="search"></i>クエストを見る</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="mypage" class="dashboard-hero" data-auth-required hidden>
         <div class="container dashboard-toolbar">
           <div>
             <p class="eyebrow">MY PAGE</p>
@@ -163,7 +182,7 @@
         </div>
       </section>
 
-      <section class="section progress-section">
+      <section class="section progress-section" data-auth-required hidden>
         <div class="container">
           <div class="progress-summary">
             <article class="next-rank-panel">
@@ -192,7 +211,7 @@
       </section>
 
       <!-- おすすめクエスト -->
-      <section class="section rec-quest-section">
+      <section class="section rec-quest-section" data-auth-required hidden>
         <div class="container">
           <div class="section-head">
             <div>
@@ -206,7 +225,7 @@
         </div>
       </section>
 
-      <section class="section section-soft achievements-section">
+      <section class="section section-soft achievements-section" data-auth-required hidden>
         <div class="container">
           <div class="section-head">
             <div>
@@ -259,7 +278,7 @@
         </div>
       </section>
 
-      <section id="quest-create" class="section">
+      <section id="quest-create" class="section" data-auth-required hidden>
         <div class="container dashboard-workspace">
           <article class="workspace-panel">
             <div class="panel-head">

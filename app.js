@@ -241,6 +241,9 @@ const authForm = document.querySelector("#authForm");
 const authNoteEls = document.querySelectorAll("[data-auth-note]");
 const authStatusEl = document.querySelector("[data-auth-status]");
 const signoutBtn = document.querySelector("[data-signout]");
+const dashboardMain = document.querySelector(".dashboard-main");
+const authRequiredEls = document.querySelectorAll("[data-auth-required]");
+const guestOnlyEls = document.querySelectorAll("[data-guest-only]");
 
 function setAuthNote(message) {
   authNoteEls.forEach((el) => {
@@ -250,6 +253,19 @@ function setAuthNote(message) {
 
 function setAuthStatus(label) {
   if (authStatusEl) authStatusEl.textContent = label;
+}
+
+function syncAuthVisibility() {
+  if (!dashboardMain) return;
+
+  const isAuthenticated = !remote.enabled || Boolean(remote.user);
+  authRequiredEls.forEach((el) => {
+    el.hidden = !isAuthenticated;
+  });
+  guestOnlyEls.forEach((el) => {
+    el.hidden = isAuthenticated;
+  });
+  if (signoutBtn) signoutBtn.hidden = !remote.enabled || !remote.user;
 }
 
 function getInitials(name) {
@@ -296,6 +312,7 @@ function mapQuest(row) {
 async function loadRemoteState() {
   if (!remote.enabled) {
     setAuthStatus("デモ");
+    syncAuthVisibility();
     return;
   }
 
@@ -332,6 +349,7 @@ async function loadRemoteState() {
     remote.profile = null;
     remote.pendingSubmissions = [];
     setAuthNote("クエストは閲覧できます。発行・応募・承認にはログインしてください。");
+    syncAuthVisibility();
     return;
   }
 
@@ -359,6 +377,7 @@ async function loadRemoteState() {
 
   if (submissionsError) throw submissionsError;
   remote.pendingSubmissions = (submissions || []).filter((submission) => issuedQuestIds.has(String(submission.quest_id)));
+  syncAuthVisibility();
 }
 
 async function refreshRemoteState() {
@@ -1346,6 +1365,7 @@ latestQuestPrev?.addEventListener("click", () => scrollLatestQuests(-1));
 latestQuestNext?.addEventListener("click", () => scrollLatestQuests(1));
 
 async function initApp() {
+  syncAuthVisibility();
   renderAccountProfile();
   syncStats();
   renderQuestList();
