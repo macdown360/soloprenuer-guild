@@ -316,6 +316,15 @@ function isEmailNotConfirmedError(error) {
   return /email not confirmed/i.test(error?.message || "");
 }
 
+function isAlreadyRegisteredError(error) {
+  return /already registered|user already exists|already been registered/i.test(error?.message || "");
+}
+
+function isDuplicateSignupResponse(signUpData) {
+  const identities = signUpData?.user?.identities;
+  return Boolean(signUpData?.user && Array.isArray(identities) && identities.length === 0 && !signUpData?.session);
+}
+
 async function resendSignupConfirmation(email) {
   if (!remote.enabled || !email) return false;
   const { error } = await supabaseClient.auth.resend({
@@ -1857,7 +1866,17 @@ registerForm?.addEventListener("submit", async (event) => {
   });
 
   if (error) {
+    if (isAlreadyRegisteredError(error)) {
+      setAuthNote("このメールアドレスはすでに登録済みです。登録済みの方はログインしてください。");
+      return;
+    }
+
     setAuthNote(error.message || "登録できませんでした。");
+    return;
+  }
+
+  if (isDuplicateSignupResponse(signUpData)) {
+    setAuthNote("このメールアドレスはすでに登録済みです。登録済みの方はログインしてください。");
     return;
   }
 
