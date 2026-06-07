@@ -44,18 +44,17 @@
     </header>
 
     <main class="dashboard-main">
-      <section class="section auth-section">
+      <section class="section auth-section" data-login-panel>
         <div class="container auth-grid">
           <article class="workspace-panel">
             <div class="panel-head">
               <div>
                 <p class="eyebrow">ACCOUNT</p>
-                <h2 data-login-panel>冒険者アカウント</h2>
-                <h2 data-account-panel hidden>冒険者アカウント</h2>
+                <h2>冒険者アカウント</h2>
               </div>
               <span class="status-pill" data-auth-status>デモ</span>
             </div>
-            <form class="guild-form auth-form" id="authForm" data-login-panel>
+            <form class="guild-form auth-form" id="authForm">
               <div class="form-row">
                 <label>
                   メールアドレス
@@ -73,59 +72,6 @@
               </div>
               <p class="form-note" data-auth-note>Supabase未設定時はデモデータで動作します。</p>
             </form>
-            <div class="account-summary" data-account-panel hidden>
-              <div class="profile-top">
-                <div class="avatar" aria-hidden="true" data-auth-account-initials>A</div>
-                <div>
-                  <p class="eyebrow">SIGNED IN</p>
-                  <h3 data-auth-account-name>アキラ</h3>
-                  <p class="profile-headline" data-auth-account-headline>個人開発者 / AIツール開発 / BtoB SaaS</p>
-                  <p class="panel-label">メール: <span data-auth-account-email>you@example.com</span></p>
-                </div>
-              </div>
-              <div class="kpi-grid account-summary-kpis">
-                <article>
-                  <span>Gold</span>
-                  <strong><span data-gold>100</span>G</strong>
-                </article>
-                <article>
-                  <span>Trust</span>
-                  <strong data-rank>Trust 0</strong>
-                </article>
-                <article>
-                  <span>完了</span>
-                  <strong data-completed-count>18</strong>
-                </article>
-                <article>
-                  <span>発行</span>
-                  <strong data-issued-count>7</strong>
-                </article>
-              </div>
-              <div class="header-actions account-summary-actions">
-                <a class="btn btn-primary" href="#quest-create"><i data-lucide="plus-circle"></i>クエスト発行</a>
-                <a class="btn btn-outline" href="#quest-review"><i data-lucide="badge-check"></i>クエスト承認</a>
-                <button class="btn btn-outline" type="button" data-signout><i data-lucide="log-out"></i>ログアウト</button>
-              </div>
-              <p class="form-note" data-auth-note>ログイン中です。</p>
-            </div>
-          </article>
-          <article class="workspace-panel account-profile-panel" data-account-panel hidden>
-            <div class="panel-head">
-              <div>
-                <p class="eyebrow">PROFILE</p>
-                <h2>ユーザー情報・プロフィール</h2>
-              </div>
-            </div>
-            <div class="account-profile-content">
-              <p class="profile-summary" data-auth-profile-summary>
-                AIプロダクトの初期検証、BtoB SaaSのオンボーディング改善、開発者向けUXレビューが得意です。
-              </p>
-              <dl class="profile-meta" data-auth-profile-meta></dl>
-              <div class="profile-chip-block">
-                <span class="panel-label">得意な領域</span>
-                <div class="chip-list" data-auth-profile-skills></div>
-              </div>
-            </div>
           </article>
         </div>
       </section>
@@ -135,7 +81,7 @@
           <div>
             <p class="eyebrow">MY PAGE</p>
             <h1>マイページ</h1>
-            <p>アカウント状況、進行中クエスト、承認待ちを確認します。</p>
+            <p>プロフィール、対応すべきクエスト、実績の進捗を確認します。</p>
           </div>
           <div class="header-actions">
             <a class="btn btn-outline" href="quests.html"><i data-lucide="search"></i>探す</a>
@@ -143,12 +89,38 @@
           </div>
         </div>
         <div class="container app-grid dashboard-overview dashboard-overview-main">
+          <section class="workspace-panel account-profile-panel" aria-label="プロフィール" data-account-panel hidden>
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">PROFILE</p>
+                <h2>プロフィール</h2>
+              </div>
+              <button class="btn btn-outline btn-sm" type="button" data-signout><i data-lucide="log-out"></i>ログアウト</button>
+            </div>
+            <div class="account-profile-content">
+              <div class="profile-top">
+                <div class="avatar" aria-hidden="true" data-auth-account-initials>A</div>
+                <div>
+                  <h3 data-auth-account-name>アキラ</h3>
+                  <p class="profile-headline" data-auth-account-headline>個人開発者 / AIツール開発 / BtoB SaaS</p>
+                </div>
+              </div>
+              <p class="profile-summary" data-auth-profile-summary>
+                AIプロダクトの初期検証、BtoB SaaSのオンボーディング改善、開発者向けUXレビューが得意です。
+              </p>
+              <dl class="profile-meta" data-auth-profile-meta></dl>
+              <div class="profile-chip-block">
+                <span class="panel-label">得意な領域</span>
+                <div class="chip-list" data-auth-profile-skills></div>
+              </div>
+            </div>
+          </section>
           <section class="command-panel focus-panel" aria-label="今日やること">
             <div class="command-head">
               <div>
                 <p class="eyebrow">TODAY</p>
                 <h2>今日やること</h2>
-                <p>未対応の承認と、次に進めるクエストだけを確認します。</p>
+                <p>未対応の承認と、発行中クエストの状態だけを確認します。</p>
               </div>
               <div class="header-actions">
                 <a class="btn btn-primary" href="#quest-review"><i data-lucide="badge-check"></i>承認へ</a>

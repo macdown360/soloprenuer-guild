@@ -237,7 +237,6 @@ const profileCategoriesEl = document.querySelector("[data-profile-categories]");
 const authAccountInitialsEl = document.querySelector("[data-auth-account-initials]");
 const authAccountNameEl = document.querySelector("[data-auth-account-name]");
 const authAccountHeadlineEl = document.querySelector("[data-auth-account-headline]");
-const authAccountEmailEl = document.querySelector("[data-auth-account-email]");
 const authProfileSummaryEl = document.querySelector("[data-auth-profile-summary]");
 const authProfileMetaEl = document.querySelector("[data-auth-profile-meta]");
 const authProfileSkillsEl = document.querySelector("[data-auth-profile-skills]");
@@ -332,10 +331,10 @@ function syncAuthVisibility() {
     el.hidden = isSignedIn;
   });
   accountPanelEls.forEach((el) => {
-    el.hidden = !isSignedIn;
+    el.hidden = !canUseAuthRequiredSections;
   });
   loginPanelEls.forEach((el) => {
-    el.hidden = isSignedIn;
+    el.hidden = canUseAuthRequiredSections;
   });
   if (signoutBtn) signoutBtn.hidden = !remote.enabled || !remote.user;
 
@@ -638,7 +637,6 @@ function formatDate(value) {
 
 function renderAccountProfile() {
   const account = state.account;
-  const accountEmail = remote.user?.email || remote.profile?.email || "メールアドレス未設定";
 
   if (accountInitialsEl) accountInitialsEl.textContent = account.initials;
   if (accountNameEl) accountNameEl.textContent = account.name;
@@ -647,7 +645,6 @@ function renderAccountProfile() {
   if (authAccountInitialsEl) authAccountInitialsEl.textContent = account.initials;
   if (authAccountNameEl) authAccountNameEl.textContent = account.name;
   if (authAccountHeadlineEl) authAccountHeadlineEl.textContent = account.headline;
-  if (authAccountEmailEl) authAccountEmailEl.textContent = accountEmail;
   if (authProfileSummaryEl) authProfileSummaryEl.textContent = account.summary;
 
   if (profileMetaEl) {
