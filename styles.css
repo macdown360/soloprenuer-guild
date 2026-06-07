@@ -3996,6 +3996,61 @@ h3 {
 /* ============================================================
    GAMIFICATION — Recommended Quests
    ============================================================ */
+.participant-quest-section {
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+}
+
+.participant-quest-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.participant-quest-panel {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.participant-quest-list {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1rem;
+}
+
+.participant-quest-card {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.95rem;
+  border: 1px solid #dfe6ef;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.participant-quest-card h3,
+.participant-quest-card p {
+  margin: 0;
+}
+
+.participant-quest-card h3 {
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.participant-quest-card p {
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.participant-quest-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .rec-quest-section {
   background: #f4f6fa;
   border-bottom: 1px solid var(--line);
@@ -4193,6 +4248,7 @@ h3 {
    ============================================================ */
 @media (max-width: 920px) {
   .gamification-grid,
+  .participant-quest-grid,
   .rec-quest-grid {
     grid-template-columns: 1fr;
   }
@@ -4201,6 +4257,7 @@ h3 {
 @media (max-width: 640px) {
   .weekly-challenge-card,
   .incentive-card,
+  .participant-quest-card,
   .rec-quest-card {
     padding: 1rem;
   }

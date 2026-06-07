@@ -198,6 +198,45 @@
         </div>
       </section>
 
+      <!-- 応募・完了報告したクエスト -->
+      <section class="section participant-quest-section" data-auth-required hidden>
+        <div class="container">
+          <div class="participant-quest-grid" aria-label="応募・完了報告したクエスト">
+            <article class="participant-quest-panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">WAITING</p>
+                  <h2>承認待ちクエスト</h2>
+                </div>
+                <span class="status-pill" data-participant-pending-count>0件</span>
+              </div>
+              <div class="participant-quest-list" id="participantPendingQuests">
+                <article class="empty-state">
+                  <h3>承認待ちクエストはありません</h3>
+                  <p>応募や完了報告を送ると、発行者の承認待ちとしてここに表示されます。</p>
+                </article>
+              </div>
+            </article>
+
+            <article class="participant-quest-panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">APPROVED</p>
+                  <h2>承認済みクエスト</h2>
+                </div>
+                <span class="status-pill" data-participant-approved-count>0件</span>
+              </div>
+              <div class="participant-quest-list" id="participantApprovedQuests">
+                <article class="empty-state">
+                  <h3>承認済みクエストはありません</h3>
+                  <p>発行者に承認されたクエストがここに表示されます。</p>
+                </article>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
       <!-- おすすめクエスト -->
       <section class="section rec-quest-section" data-auth-required hidden>
         <div class="container">

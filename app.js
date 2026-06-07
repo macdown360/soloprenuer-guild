@@ -206,6 +206,7 @@ const remote = {
   user: null,
   profile: null,
   pendingSubmissions: [],
+  participantSubmissions: [],
 };
 
 const SELF_SUBMISSION_MESSAGE = "自分の発行したクエストには応募できません";
@@ -245,6 +246,10 @@ const TRUST_RATING_OPTIONS = [
   { value: 0, label: "★ +0 Trust" },
 ];
 const recommendedQuestsEl = document.querySelector("#recommendedQuests");
+const participantPendingQuestsEl = document.querySelector("#participantPendingQuests");
+const participantApprovedQuestsEl = document.querySelector("#participantApprovedQuests");
+const participantPendingCountEl = document.querySelector("[data-participant-pending-count]");
+const participantApprovedCountEl = document.querySelector("[data-participant-approved-count]");
 const accountInitialsEl = document.querySelector("[data-account-initials]");
 const accountNameEl = document.querySelector("[data-account-name]");
 const accountHeadlineEl = document.querySelector("[data-account-headline]");
@@ -506,6 +511,7 @@ async function loadRemoteState() {
   if (!remote.user) {
     remote.profile = null;
     remote.pendingSubmissions = [];
+    remote.participantSubmissions = [];
     setAuthNote("クエストは閲覧できます。発行・応募・承認にはログインしてください。");
     syncAuthVisibility();
     return;
@@ -553,6 +559,16 @@ async function loadRemoteState() {
       adventurerHeadline: adventurer?.headline || "",
     };
   });
+
+  const { data: participantSubmissions, error: participantSubmissionsError } = await supabaseClient
+    .from("quest_submissions")
+    .select("id, quest_id, adventurer_id, submission_type, comment, evidence_url, status, created_at, updated_at")
+    .eq("adventurer_id", remote.user.id)
+    .in("status", ["pending", "approved"])
+    .order("created_at", { ascending: false });
+
+  if (participantSubmissionsError) throw participantSubmissionsError;
+  remote.participantSubmissions = participantSubmissions || [];
   syncAuthVisibility();
 }
 
@@ -852,6 +868,96 @@ function getClosedIssuedQuests() {
   });
 }
 
+function getSubmissionTypeLabel(type) {
+  return type === "report" ? "完了報告" : "応募";
+}
+
+function getParticipantQuestSubmissions(status) {
+  if (remote.enabled) {
+    return remote.participantSubmissions.filter((submission) => submission.status === status);
+  }
+
+  const demoItems = [
+    {
+      id: "demo-participant-pending-report",
+      quest_id: 1,
+      submission_type: "report",
+      status: "pending",
+      comment: "オンボーディング画面を確認し、初回ユーザー目線の感想を送りました。",
+      created_at: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
+    },
+    {
+      id: "demo-participant-approved-application",
+      quest_id: 2,
+      submission_type: "application",
+      status: "approved",
+      comment: "ユーザーインタビューに応募し、発行者に承認されました。",
+      created_at: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
+      updated_at: new Date(Date.now() - 1000 * 60 * 60 * 18).toISOString(),
+    },
+  ];
+  return demoItems.filter((submission) => submission.status === status);
+}
+
+function renderParticipantQuestList(targetEl, countEl, status) {
+  if (!targetEl) return;
+
+  const submissions = getParticipantQuestSubmissions(status);
+  const isApproved = status === "approved";
+  if (countEl) countEl.textContent = `${submissions.length}件`;
+
+  if (!submissions.length) {
+    targetEl.innerHTML = `
+      <article class="empty-state">
+        <h3>${isApproved ? "承認済みクエストはありません" : "承認待ちクエストはありません"}</h3>
+        <p>${isApproved ? "発行者に承認されたクエストがここに表示されます。" : "応募や完了報告を送ると、発行者の承認待ちとしてここに表示されます。"}</p>
+      </article>
+    `;
+    return;
+  }
+
+  targetEl.innerHTML = submissions
+    .map((submission) => {
+      const quest = state.quests.find((item) => String(item.id) === String(submission.quest_id));
+      const title = quest?.title || "クエスト";
+      const issuer = quest?.issuer || "冒険者";
+      const reward = Number(quest?.reward) || 0;
+      const typeLabel = getSubmissionTypeLabel(submission.submission_type);
+      const statusLabel = isApproved ? "承認済み" : "承認待ち";
+      const timeLabel = isApproved ? "更新" : "送信";
+      const timeValue = isApproved ? submission.updated_at || submission.created_at : submission.created_at;
+      const comment = submission.comment?.trim() || (isApproved ? "承認済みのクエストです。" : "発行者の承認を待っています。");
+      const detailHref = quest ? getQuestDetailUrl(quest.id) : "quests.html";
+
+      return `
+        <article class="participant-quest-card">
+          <div class="quest-card-labels">
+            <span class="quest-type-badge">${typeLabel}</span>
+            <span class="quest-status-badge">${statusLabel}</span>
+          </div>
+          <h3>${escapeHtml(title)}</h3>
+          <p>${escapeHtml(comment)}</p>
+          <div class="quest-card-meta">
+            <span>発行者: ${escapeHtml(issuer)}</span>
+            <span>${reward}G</span>
+            <span>${timeLabel}: ${formatDateTime(timeValue)}</span>
+          </div>
+          <div class="participant-quest-actions">
+            <a class="btn btn-outline btn-sm" href="${detailHref}"><i data-lucide="external-link"></i>詳細</a>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  if (window.lucide) lucide.createIcons();
+}
+
+function renderParticipantQuests() {
+  renderParticipantQuestList(participantPendingQuestsEl, participantPendingCountEl, "pending");
+  renderParticipantQuestList(participantApprovedQuestsEl, participantApprovedCountEl, "approved");
+}
+
 function setQuestFormMode(quest = null) {
   state.editingQuestId = quest?.id || null;
   if (questFormTitleEl) questFormTitleEl.textContent = quest ? "クエスト編集" : "クエスト発行";
@@ -1087,6 +1193,7 @@ function syncStats() {
   if (formNote) formNote.textContent = `現在の残高: ${state.gold}G / 現在ランク: ${getRank(state.trust)}`;
   syncDashboardSummary();
   renderLatestQuestSlider();
+  renderParticipantQuests();
   renderRecommendedQuests();
   renderIssuedQuests();
   renderClosedIssuedQuests();
@@ -2217,6 +2324,7 @@ signoutBtn?.addEventListener("click", async () => {
   remote.user = null;
   remote.profile = null;
   remote.pendingSubmissions = [];
+  remote.participantSubmissions = [];
   setAuthStatus("未ログイン");
   setAuthNote("ログアウトしました。");
   await refreshRemoteState();
