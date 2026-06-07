@@ -249,6 +249,8 @@ const authStatusEl = document.querySelector("[data-auth-status]");
 const signoutBtn = document.querySelector("[data-signout]");
 const authRequiredEls = document.querySelectorAll("[data-auth-required]");
 const guestOnlyEls = document.querySelectorAll("[data-guest-only]");
+const headerAuthEls = document.querySelectorAll("[data-header-auth]");
+const headerGuestEls = document.querySelectorAll("[data-header-guest]");
 const registerCta = document.querySelector("[data-register-cta]");
 const registerSignedInCopy = document.querySelector("[data-register-signed-in-copy]");
 const pendingTitleEl = document.querySelector("[data-pending-title]");
@@ -313,11 +315,18 @@ async function resendSignupConfirmation(email) {
 
 function syncAuthVisibility() {
   const isAuthenticated = !remote.enabled || Boolean(remote.user);
+  const isHeaderAuthenticated = Boolean(remote.user);
   authRequiredEls.forEach((el) => {
     el.hidden = !isAuthenticated;
   });
   guestOnlyEls.forEach((el) => {
     el.hidden = isAuthenticated;
+  });
+  headerAuthEls.forEach((el) => {
+    el.hidden = !isHeaderAuthenticated;
+  });
+  headerGuestEls.forEach((el) => {
+    el.hidden = isHeaderAuthenticated;
   });
   if (signoutBtn) signoutBtn.hidden = !remote.enabled || !remote.user;
 
