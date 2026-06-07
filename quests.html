@@ -50,7 +50,7 @@
             <p class="eyebrow">QUEST SEARCH</p>
             <h1>今日こなせるクエストを探す</h1>
             <p class="lead">
-              フィードバック、壁打ち、インタビュー、デザイン相談、開発レビュー。
+              フィードバック、登録、拡散、インタビュー、壁打ち、テスト。
               スキルと空き時間に合う依頼を選んで、GoldとTrustを積み上げよう。
             </p>
           </div>
@@ -58,21 +58,23 @@
             <label for="heroKeyword">キーワード</label>
             <div class="search-input-wrap">
               <i data-lucide="search"></i>
-              <input id="heroKeyword" type="search" placeholder="LP, AI, インタビュー, 営業資料..." />
+              <input id="heroKeyword" type="search" placeholder="LP, 登録, 拡散, インタビュー..." />
             </div>
             <div class="hero-filter-grid">
               <label>
                 カテゴリ
                 <select id="heroCategory">
                   <option value="all">すべて</option>
-                  <option>フィードバック</option>
-                  <option>インタビュー</option>
-                  <option>デザイン</option>
-                  <option>AI</option>
-                  <option>マーケティング</option>
-                  <option>開発</option>
-                  <option>営業</option>
-                  <option>その他</option>
+                  <option>フィードバックが欲しい</option>
+                  <option>ダウンロードして欲しい</option>
+                  <option>ユーザー登録して欲しい</option>
+                  <option>SNS等で拡散して欲しい</option>
+                  <option>インタビューさせて欲しい</option>
+                  <option>壁打ちさせて欲しい</option>
+                  <option>テストをして欲しい</option>
+                  <option>良いね・レビューを入れて欲しい</option>
+                  <option>めっためたに批判が欲しい</option>
+                  <option>とにかく褒めちぎって欲しい</option>
                 </select>
               </label>
               <label>
@@ -122,11 +124,16 @@
             </div>
           </div>
           <div class="category-tile-grid">
-            <a href="#quest-board" data-category-link="フィードバック"><i data-lucide="messages-square"></i><strong>フィードバック</strong><span>LP感想、テスト利用</span></a>
-            <a href="#quest-board" data-category-link="インタビュー"><i data-lucide="mic"></i><strong>インタビュー</strong><span>30分相談、顧客理解</span></a>
-            <a href="#quest-board" data-category-link="AI"><i data-lucide="sparkles"></i><strong>AI</strong><span>プロンプト、導入相談</span></a>
-            <a href="#quest-board" data-category-link="開発"><i data-lucide="code-2"></i><strong>開発</strong><span>レビュー、動作確認</span></a>
-            <a href="#quest-board" data-category-link="営業"><i data-lucide="briefcase-business"></i><strong>営業</strong><span>資料レビュー、提案文</span></a>
+            <a href="#quest-board" data-category-link="フィードバックが欲しい"><i data-lucide="messages-square"></i><strong>フィードバックが欲しい</strong><span>LP感想、導線改善</span></a>
+            <a href="#quest-board" data-category-link="ダウンロードして欲しい"><i data-lucide="download"></i><strong>ダウンロードして欲しい</strong><span>アプリ導入、初回確認</span></a>
+            <a href="#quest-board" data-category-link="ユーザー登録して欲しい"><i data-lucide="user-plus"></i><strong>ユーザー登録して欲しい</strong><span>登録導線、初回体験</span></a>
+            <a href="#quest-board" data-category-link="SNS等で拡散して欲しい"><i data-lucide="megaphone"></i><strong>SNS等で拡散して欲しい</strong><span>告知、投稿シェア</span></a>
+            <a href="#quest-board" data-category-link="インタビューさせて欲しい"><i data-lucide="mic"></i><strong>インタビューさせて欲しい</strong><span>30分相談、顧客理解</span></a>
+            <a href="#quest-board" data-category-link="壁打ちさせて欲しい"><i data-lucide="messages-square"></i><strong>壁打ちさせて欲しい</strong><span>相談、仮説整理</span></a>
+            <a href="#quest-board" data-category-link="テストをして欲しい"><i data-lucide="test-tube"></i><strong>テストをして欲しい</strong><span>動作確認、バグ探し</span></a>
+            <a href="#quest-board" data-category-link="良いね・レビューを入れて欲しい"><i data-lucide="thumbs-up"></i><strong>良いね・レビューを入れて欲しい</strong><span>評価、口コミ</span></a>
+            <a href="#quest-board" data-category-link="めっためたに批判が欲しい"><i data-lucide="message-square-warning"></i><strong>めっためたに批判が欲しい</strong><span>辛口レビュー、改善</span></a>
+            <a href="#quest-board" data-category-link="とにかく褒めちぎって欲しい"><i data-lucide="sparkles"></i><strong>とにかく褒めちぎって欲しい</strong><span>応援、良い点発見</span></a>
           </div>
         </div>
       </section>
@@ -150,19 +157,21 @@
                   カテゴリ
                   <select id="categoryFilter">
                     <option value="all">すべて</option>
-                    <option>フィードバック</option>
-                    <option>インタビュー</option>
-                    <option>デザイン</option>
-                    <option>AI</option>
-                    <option>マーケティング</option>
-                    <option>開発</option>
-                    <option>営業</option>
-                    <option>その他</option>
+                    <option>フィードバックが欲しい</option>
+                    <option>ダウンロードして欲しい</option>
+                    <option>ユーザー登録して欲しい</option>
+                    <option>SNS等で拡散して欲しい</option>
+                    <option>インタビューさせて欲しい</option>
+                    <option>壁打ちさせて欲しい</option>
+                    <option>テストをして欲しい</option>
+                    <option>良いね・レビューを入れて欲しい</option>
+                    <option>めっためたに批判が欲しい</option>
+                    <option>とにかく褒めちぎって欲しい</option>
                   </select>
                 </label>
                 <label>
                   キーワード
-                  <input id="keywordFilter" type="search" placeholder="LP, AI, インタビュー..." />
+                  <input id="keywordFilter" type="search" placeholder="LP, 登録, 拡散, インタビュー..." />
                 </label>
                 <label>
                   締切

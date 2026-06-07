@@ -29,7 +29,7 @@ create table if not exists public.quests (
   title text not null check (char_length(title) between 3 and 120),
   description text not null,
   reward integer not null check (reward > 0 and reward <= 300),
-  category text not null check (category in ('フィードバック', 'インタビュー', 'デザイン', 'AI', 'マーケティング', '開発', '営業', 'その他')),
+  category text not null check (category in ('フィードバックが欲しい', 'ダウンロードして欲しい', 'ユーザー登録して欲しい', 'SNS等で拡散して欲しい', 'インタビューさせて欲しい', '壁打ちさせて欲しい', 'テストをして欲しい', '良いね・レビューを入れて欲しい', 'めっためたに批判が欲しい', 'とにかく褒めちぎって欲しい')),
   quest_type text not null default 'report' check (quest_type in ('report', 'recruiting')),
   capacity integer not null default 1 check (capacity between 1 and 50),
   status text not null default 'open' check (status in ('open', 'closed', 'cancelled')),
