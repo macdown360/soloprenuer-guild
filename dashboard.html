@@ -56,11 +56,12 @@
             <div class="panel-head">
               <div>
                 <p class="eyebrow">ACCOUNT</p>
-                <h2>冒険者アカウント</h2>
+                <h2 data-guest-only>冒険者アカウント</h2>
+                <h2 data-auth-required hidden>アカウント情報</h2>
               </div>
               <span class="status-pill" data-auth-status>デモ</span>
             </div>
-            <form class="guild-form auth-form" id="authForm">
+            <form class="guild-form auth-form" id="authForm" data-guest-only>
               <div class="form-row">
                 <label>
                   メールアドレス
@@ -73,12 +74,53 @@
               </div>
               <div class="header-actions">
                 <button class="btn btn-primary" type="submit" data-auth-action="signin"><i data-lucide="log-in"></i>ログイン</button>
-                <button class="btn btn-outline" type="button" data-signout><i data-lucide="log-out"></i>ログアウト</button>
                 <a class="btn btn-outline" href="index.html#register" data-guest-only hidden><i data-lucide="user-plus"></i>冒険者登録</a>
                 <a class="btn btn-outline" href="quests.html" data-guest-only hidden><i data-lucide="search"></i>クエストを見る</a>
               </div>
               <p class="form-note" data-auth-note>Supabase未設定時はデモデータで動作します。</p>
             </form>
+            <div class="account-summary" data-auth-required hidden>
+              <div class="profile-top">
+                <div class="avatar" aria-hidden="true" data-auth-account-initials>A</div>
+                <div>
+                  <p class="eyebrow">SIGNED IN</p>
+                  <h3 data-auth-account-name>アキラ</h3>
+                  <p class="profile-headline" data-auth-account-headline>個人開発者 / AIツール開発 / BtoB SaaS</p>
+                </div>
+              </div>
+              <p class="profile-summary" data-auth-profile-summary>
+                AIプロダクトの初期検証、BtoB SaaSのオンボーディング改善、開発者向けUXレビューが得意です。
+              </p>
+              <div class="kpi-grid account-summary-kpis">
+                <article>
+                  <span>Gold</span>
+                  <strong><span data-gold>100</span>G</strong>
+                </article>
+                <article>
+                  <span>Trust</span>
+                  <strong data-rank>Trust 0</strong>
+                </article>
+                <article>
+                  <span>完了</span>
+                  <strong data-completed-count>18</strong>
+                </article>
+                <article>
+                  <span>発行</span>
+                  <strong data-issued-count>7</strong>
+                </article>
+              </div>
+              <dl class="profile-meta" data-auth-profile-meta></dl>
+              <div class="profile-chip-block">
+                <span class="panel-label">得意な領域</span>
+                <div class="chip-list" data-auth-profile-skills></div>
+              </div>
+              <div class="header-actions account-summary-actions">
+                <a class="btn btn-primary" href="#quest-create"><i data-lucide="plus-circle"></i>クエスト発行</a>
+                <a class="btn btn-outline" href="#quest-review"><i data-lucide="badge-check"></i>クエスト承認</a>
+                <button class="btn btn-outline" type="button" data-signout><i data-lucide="log-out"></i>ログアウト</button>
+              </div>
+              <p class="form-note" data-auth-note>ログイン中です。</p>
+            </div>
           </article>
         </div>
       </section>
@@ -104,7 +146,7 @@
                 <p>未対応の承認と、次に進めるクエストだけを確認します。</p>
               </div>
               <div class="header-actions">
-                <a class="btn btn-primary" href="#completion"><i data-lucide="badge-check"></i>承認へ</a>
+                <a class="btn btn-primary" href="#quest-review"><i data-lucide="badge-check"></i>承認へ</a>
                 <a class="btn btn-outline" href="quests.html"><i data-lucide="search"></i>探す</a>
               </div>
             </div>
@@ -116,7 +158,7 @@
                   <h3 data-pending-title>承認待ちはありません</h3>
                   <p data-pending-copy>新しい完了報告が届くとここに表示されます。</p>
                 </div>
-                <a class="btn btn-primary btn-sm" href="#completion">対応</a>
+                <a class="btn btn-primary btn-sm" href="#quest-review">対応</a>
               </article>
               <article class="priority-item">
                 <div class="priority-icon"><i data-lucide="send"></i></div>

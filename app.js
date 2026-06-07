@@ -205,12 +205,12 @@ const remote = {
   pendingSubmissions: [],
 };
 
-const goldEl = document.querySelector("[data-gold]");
-const trustEl = document.querySelector("[data-trust]");
-const rankEl = document.querySelector("[data-rank]");
-const completedEl = document.querySelector("[data-completed-count]");
-const issuedEl = document.querySelector("[data-issued-count]");
-const totalQuestsEl = document.querySelector("[data-total-quests]");
+const goldEls = document.querySelectorAll("[data-gold]");
+const trustEls = document.querySelectorAll("[data-trust]");
+const rankEls = document.querySelectorAll("[data-rank]");
+const completedEls = document.querySelectorAll("[data-completed-count]");
+const issuedEls = document.querySelectorAll("[data-issued-count]");
+const totalQuestEls = document.querySelectorAll("[data-total-quests]");
 const formNote = document.querySelector("[data-form-note]");
 const reviewNote = document.querySelector("[data-review-note]");
 const questList = document.querySelector("#questList");
@@ -234,6 +234,12 @@ const profileMetaEl = document.querySelector("[data-profile-meta]");
 const profileSkillsEl = document.querySelector("[data-profile-skills]");
 const profileInterestsEl = document.querySelector("[data-profile-interests]");
 const profileCategoriesEl = document.querySelector("[data-profile-categories]");
+const authAccountInitialsEl = document.querySelector("[data-auth-account-initials]");
+const authAccountNameEl = document.querySelector("[data-auth-account-name]");
+const authAccountHeadlineEl = document.querySelector("[data-auth-account-headline]");
+const authProfileSummaryEl = document.querySelector("[data-auth-profile-summary]");
+const authProfileMetaEl = document.querySelector("[data-auth-profile-meta]");
+const authProfileSkillsEl = document.querySelector("[data-auth-profile-skills]");
 const matchSignalsEl = document.querySelector("[data-match-signals]");
 const categoryMatrixEl = document.querySelector("[data-category-matrix]");
 const registerForm = document.querySelector("#registerForm");
@@ -619,14 +625,24 @@ function renderAccountProfile() {
   if (accountNameEl) accountNameEl.textContent = account.name;
   if (accountHeadlineEl) accountHeadlineEl.textContent = account.headline;
   if (profileSummaryEl) profileSummaryEl.textContent = account.summary;
+  if (authAccountInitialsEl) authAccountInitialsEl.textContent = account.initials;
+  if (authAccountNameEl) authAccountNameEl.textContent = account.name;
+  if (authAccountHeadlineEl) authAccountHeadlineEl.textContent = account.headline;
+  if (authProfileSummaryEl) authProfileSummaryEl.textContent = account.summary;
 
   if (profileMetaEl) {
     profileMetaEl.innerHTML = `
       <div><dt>事業フェーズ</dt><dd>${account.businessStage}</dd></div>
     `;
   }
+  if (authProfileMetaEl) {
+    authProfileMetaEl.innerHTML = `
+      <div><dt>事業フェーズ</dt><dd>${account.businessStage}</dd></div>
+    `;
+  }
 
   if (profileSkillsEl) profileSkillsEl.innerHTML = createChips(account.strengths, "is-skill");
+  if (authProfileSkillsEl) authProfileSkillsEl.innerHTML = createChips(account.strengths, "is-skill");
   if (profileInterestsEl) profileInterestsEl.innerHTML = createChips(account.interests);
   if (profileCategoriesEl) profileCategoriesEl.innerHTML = createChips(account.preferredCategories, "is-category");
 
@@ -779,12 +795,24 @@ function renderLatestQuestSlider() {
 }
 
 function syncStats() {
-  if (goldEl) goldEl.textContent = state.gold;
-  if (trustEl) trustEl.textContent = state.trust;
-  if (rankEl) rankEl.textContent = `Trust ${state.trust}`;
-  if (completedEl) completedEl.textContent = state.completed;
-  if (issuedEl) issuedEl.textContent = state.issued;
-  if (totalQuestsEl) totalQuestsEl.textContent = state.quests.length;
+  goldEls.forEach((el) => {
+    el.textContent = state.gold;
+  });
+  trustEls.forEach((el) => {
+    el.textContent = state.trust;
+  });
+  rankEls.forEach((el) => {
+    el.textContent = `Trust ${state.trust}`;
+  });
+  completedEls.forEach((el) => {
+    el.textContent = state.completed;
+  });
+  issuedEls.forEach((el) => {
+    el.textContent = state.issued;
+  });
+  totalQuestEls.forEach((el) => {
+    el.textContent = state.quests.length;
+  });
   if (formNote) formNote.textContent = `現在の残高: ${state.gold}G / 現在ランク: ${getRank(state.trust)}`;
   syncDashboardSummary();
   renderLatestQuestSlider();

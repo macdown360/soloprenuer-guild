@@ -1073,6 +1073,30 @@ h3 {
   padding-top: 0.2rem;
 }
 
+.account-summary {
+  display: grid;
+  gap: 1rem;
+  padding-top: 0.2rem;
+}
+
+.account-summary h3 {
+  margin: 0 0 0.25rem;
+  color: var(--ink);
+  font-size: 1.55rem;
+}
+
+.account-summary-kpis {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.account-summary-kpis article {
+  min-height: 86px;
+}
+
+.account-summary-actions {
+  justify-content: flex-start;
+}
+
 .quest-search-hero {
   padding: 72px 0 46px;
   color: #fff;
@@ -2352,6 +2376,10 @@ h3 {
   .point-panels,
   .progress-summary {
     grid-template-columns: 1fr;
+  }
+
+  .account-summary-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .category-matrix {
