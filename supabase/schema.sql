@@ -340,11 +340,19 @@ begin
   from public.quest_submissions
   where quest_id = p_quest_id and status = 'approved';
 
-  if v_approved > 0 then raise exception 'quest_has_approved_submissions'; end if;
+  v_refund := v_quest.reward * greatest(0, v_quest.capacity - v_approved);
 
-  v_refund := v_quest.reward * v_quest.capacity;
+  if v_approved > 0 then
+    update public.quest_submissions
+    set status = 'rejected'
+    where quest_id = p_quest_id and status = 'pending';
 
-  delete from public.quests where id = p_quest_id;
+    update public.quests
+    set status = 'cancelled'
+    where id = p_quest_id;
+  else
+    delete from public.quests where id = p_quest_id;
+  end if;
 
   update public.profiles
   set gold = gold + v_refund,
@@ -352,8 +360,8 @@ begin
   where id = v_user;
 
   if v_refund > 0 then
-    insert into public.gold_ledger (profile_id, amount, reason)
-    values (v_user, v_refund, 'quest_deleted_refund');
+    insert into public.gold_ledger (profile_id, quest_id, amount, reason)
+    values (v_user, case when v_approved > 0 then p_quest_id else null end, v_refund, 'quest_deleted_refund');
   end if;
 end;
 $$;

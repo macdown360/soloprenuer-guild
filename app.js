@@ -336,6 +336,13 @@ function getSubmitQuestErrorMessage(error, fallback) {
   return error?.message || fallback;
 }
 
+function getDeleteQuestErrorMessage(error) {
+  const message = error?.message || "";
+  if (/quest_not_deletable/i.test(message)) return "削除できる発行中クエストが見つかりません。";
+  if (/not_authenticated/i.test(message)) return "クエスト削除にはログインが必要です。";
+  return message || "クエストを削除できませんでした。";
+}
+
 async function resendSignupConfirmation(email) {
   if (!remote.enabled || !email) return false;
   const { error } = await supabaseClient.auth.resend({
@@ -576,7 +583,7 @@ function getQuestProgress(quest) {
 }
 
 function isQuestClosed(quest) {
-  return quest.status === "closed" || getQuestProgress(quest) >= getQuestCapacity(quest);
+  return quest.status === "closed" || quest.status === "cancelled" || getQuestProgress(quest) >= getQuestCapacity(quest);
 }
 
 function updateQuestStatus(quest) {
@@ -1652,12 +1659,12 @@ async function deleteIssuedQuest(questId) {
 
     const { error } = await supabaseClient.rpc("delete_quest", { p_quest_id: quest.id });
     if (error) {
-      if (formNote) formNote.textContent = error.message || "クエストを削除できませんでした。";
+      if (formNote) formNote.textContent = getDeleteQuestErrorMessage(error);
       return;
     }
 
     if (state.editingQuestId && String(state.editingQuestId) === String(quest.id)) resetQuestForm();
-    if (formNote) formNote.textContent = "クエストを削除しました。未消化のGoldを戻しました。";
+    if (formNote) formNote.textContent = "発行中クエストを削除しました。未消化のGoldを戻しました。";
     await refreshRemoteState();
     return;
   }
