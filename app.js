@@ -256,6 +256,19 @@ function setAuthStatus(label) {
   if (authStatusEl) authStatusEl.textContent = label;
 }
 
+function isEmailNotConfirmedError(error) {
+  return /email not confirmed/i.test(error?.message || "");
+}
+
+async function resendSignupConfirmation(email) {
+  if (!remote.enabled || !email) return false;
+  const { error } = await supabaseClient.auth.resend({
+    type: "signup",
+    email,
+  });
+  return !error;
+}
+
 function syncAuthVisibility() {
   const isAuthenticated = !remote.enabled || Boolean(remote.user);
   authRequiredEls.forEach((el) => {
@@ -1328,7 +1341,7 @@ registerForm?.addEventListener("submit", async (event) => {
     headline: data.get("job") || "ソロプレナー",
   };
 
-  const { error } = await supabaseClient.auth.signUp({
+  const { data: signUpData, error } = await supabaseClient.auth.signUp({
     email,
     password,
     options: { data: metadata },
@@ -1339,8 +1352,13 @@ registerForm?.addEventListener("submit", async (event) => {
     return;
   }
 
-  setAuthNote("登録しました。メール確認が有効な場合は、確認後にログインしてください。");
-  window.location.href = "dashboard.html";
+  if (signUpData?.session) {
+    setAuthNote("登録しました。マイページへ移動します。");
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  setAuthNote("登録しました。確認メールを開いて認証を完了してからログインしてください。");
 });
 
 authForm?.addEventListener("submit", async (event) => {
@@ -1351,12 +1369,22 @@ authForm?.addEventListener("submit", async (event) => {
   }
 
   const data = new FormData(authForm);
+  const email = data.get("email");
   const { error } = await supabaseClient.auth.signInWithPassword({
-    email: data.get("email"),
+    email,
     password: data.get("password"),
   });
 
   if (error) {
+    if (isEmailNotConfirmedError(error)) {
+      const resent = await resendSignupConfirmation(email);
+      setAuthNote(
+        resent
+          ? "メール認証が未完了です。確認メールを再送しました。メール内のリンクで認証してからログインしてください。"
+          : "メール認証が未完了です。登録時の確認メールを開いて認証してからログインしてください。"
+      );
+      return;
+    }
     setAuthNote(error.message || "ログインできませんでした。");
     return;
   }
