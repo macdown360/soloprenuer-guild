@@ -2709,6 +2709,10 @@ h3 {
   background: #fff;
 }
 
+.issued-quest-main {
+  min-width: 0;
+}
+
 .issued-quest-card h3,
 .issued-quest-card p {
   margin-bottom: 0;
@@ -2732,6 +2736,106 @@ h3 {
   flex-wrap: wrap;
   gap: 0.5rem;
   justify-content: flex-end;
+}
+
+.approval-panel {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 0.8rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.approval-panel[hidden] {
+  display: none;
+}
+
+.approval-panel-head,
+.approval-item-head,
+.approval-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.approval-panel-head h4,
+.approval-item h4 {
+  margin: 0;
+}
+
+.approval-item {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border: 1px solid #d7deea;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.approval-item-head p,
+.approval-item-head time {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.approval-type {
+  display: inline-flex;
+  width: fit-content;
+  margin-bottom: 0.3rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  color: #24475d;
+  background: #e7f2f8;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.approval-comment {
+  padding: 0.7rem;
+  border: 1px solid #e3e8f0;
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fff;
+  line-height: 1.7;
+}
+
+.approval-evidence {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+  width: fit-content;
+  color: #795a1d;
+  font-weight: 900;
+}
+
+.approval-controls {
+  display: grid;
+  grid-template-columns: minmax(160px, 0.35fr) minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+.approval-controls label {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.approval-actions {
+  align-items: center;
+}
+
+.approval-actions .form-note {
+  margin: 0;
+}
+
+.approval-empty {
+  padding: 0.85rem;
+  border: 1px dashed #cfd6e2;
+  border-radius: 8px;
+  color: var(--muted);
+  background: #f8fafc;
 }
 
 .empty-state {
@@ -3260,6 +3364,16 @@ h3 {
 
   .issued-quest-actions .btn {
     flex: 1 1 120px;
+  }
+
+  .approval-panel-head,
+  .approval-item-head,
+  .approval-actions {
+    display: grid;
+  }
+
+  .approval-controls {
+    grid-template-columns: 1fr;
   }
 
   .simple-kpis {

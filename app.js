@@ -216,7 +216,6 @@ const completedEls = document.querySelectorAll("[data-completed-count]");
 const issuedEls = document.querySelectorAll("[data-issued-count]");
 const totalQuestEls = document.querySelectorAll("[data-total-quests]");
 const formNote = document.querySelector("[data-form-note]");
-const reviewNote = document.querySelector("[data-review-note]");
 const questList = document.querySelector("#questList");
 const questDetail = document.querySelector("#questDetail");
 const issuerProfileEl = document.querySelector("#issuerProfile");
@@ -234,8 +233,13 @@ const questFormTitleEl = document.querySelector("[data-quest-form-title]");
 const questFormStatusEl = document.querySelector("[data-quest-form-status]");
 const questSubmitEl = document.querySelector("[data-quest-submit]");
 const questEditCancelEl = document.querySelector("[data-quest-edit-cancel]");
-const reviewForm = document.querySelector("#reviewForm");
-const completedQuestEl = document.querySelector("#completedQuest");
+const TRUST_RATING_OPTIONS = [
+  { value: 10, label: "★★★★★ +10 Trust" },
+  { value: 8, label: "★★★★ +8 Trust" },
+  { value: 5, label: "★★★ +5 Trust" },
+  { value: 2, label: "★★ +2 Trust" },
+  { value: 0, label: "★ +0 Trust" },
+];
 const recommendedQuestsEl = document.querySelector("#recommendedQuests");
 const accountInitialsEl = document.querySelector("[data-account-initials]");
 const accountNameEl = document.querySelector("[data-account-name]");
@@ -279,7 +283,6 @@ const nextRankCopyEl = document.querySelector("[data-next-rank-copy]");
 const recCopyEl = document.querySelector("[data-rec-copy]");
 const achievementCountEl = document.querySelector("[data-achievement-count]");
 const titleGridEl = document.querySelector("[data-title-grid]");
-const reviewCountStatusEl = document.querySelector("[data-review-count-status]");
 const weeklyCardEl = document.querySelector("[data-weekly-card]");
 const menuToggle = document.querySelector(".menu-toggle");
 const globalNav = document.querySelector("#global-nav");
@@ -329,6 +332,15 @@ function isDuplicateSignupResponse(signUpData) {
 
 function isOwnQuest(quest) {
   return Boolean(remote.user?.id && quest?.issuerId && String(quest.issuerId) === String(remote.user.id));
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 function getSubmitQuestErrorMessage(error, fallback) {
@@ -513,12 +525,30 @@ async function loadRemoteState() {
   const issuedQuestIds = new Set(state.quests.filter((quest) => quest.issuerId === remote.user.id).map((quest) => String(quest.id)));
   const { data: submissions, error: submissionsError } = await supabaseClient
     .from("quest_submissions")
-    .select("id, quest_id, submission_type, comment, status, created_at")
+    .select("id, quest_id, adventurer_id, submission_type, comment, evidence_url, status, created_at")
     .eq("status", "pending")
     .order("created_at", { ascending: false });
 
   if (submissionsError) throw submissionsError;
-  remote.pendingSubmissions = (submissions || []).filter((submission) => issuedQuestIds.has(String(submission.quest_id)));
+  const visibleSubmissions = (submissions || []).filter((submission) => issuedQuestIds.has(String(submission.quest_id)));
+  const adventurerIds = unique(visibleSubmissions.map((submission) => submission.adventurer_id).filter(Boolean));
+  let adventurerProfiles = new Map();
+  if (adventurerIds.length) {
+    const { data: profiles, error: profilesError } = await supabaseClient
+      .from("profiles")
+      .select("id, adventurer_name, headline")
+      .in("id", adventurerIds);
+    if (profilesError) throw profilesError;
+    adventurerProfiles = new Map((profiles || []).map((profile) => [String(profile.id), profile]));
+  }
+  remote.pendingSubmissions = visibleSubmissions.map((submission) => {
+    const adventurer = adventurerProfiles.get(String(submission.adventurer_id));
+    return {
+      ...submission,
+      adventurerName: adventurer?.adventurer_name || "冒険者",
+      adventurerHeadline: adventurer?.headline || "",
+    };
+  });
   syncAuthVisibility();
 }
 
@@ -708,6 +738,56 @@ function getNextRankInfo(trust) {
 
 function formatDate(value) {
   return formatter.format(new Date(`${value}T00:00:00`));
+}
+
+function formatDateTime(value) {
+  if (!value) return "";
+  return new Intl.DateTimeFormat("ja-JP", {
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
+
+function getLocalPendingApprovalCount() {
+  return getIssuedQuests().reduce((count, quest) => count + getQuestPendingSubmissions(quest).length, 0);
+}
+
+function getQuestPendingSubmissions(quest) {
+  if (!quest) return [];
+  if (remote.enabled) {
+    return remote.pendingSubmissions.filter((submission) => String(submission.quest_id) === String(quest.id));
+  }
+  if (quest.type === "report" && !isQuestClosed(quest)) {
+    return [
+      {
+        id: `local-report-${quest.id}`,
+        quest_id: quest.id,
+        submission_type: "report",
+        adventurerName: "デモ冒険者",
+        adventurerHeadline: "プロダクト初期検証を手伝っています",
+        comment: "画面を確認しました。主要導線は分かりやすいですが、初回ユーザー向けの補足があるとさらに迷いにくいです。",
+        evidence_url: "",
+        created_at: new Date().toISOString(),
+      },
+    ];
+  }
+  if (Number(quest.applicants) > 0) {
+    return [
+      {
+        id: `local-application-${quest.id}`,
+        quest_id: quest.id,
+        submission_type: "application",
+        adventurerName: "デモ冒険者",
+        adventurerHeadline: "インタビューと壁打ちに対応できます",
+        comment: "応募しました。日程調整後に進められます。",
+        evidence_url: "",
+        created_at: new Date().toISOString(),
+      },
+    ];
+  }
+  return [];
 }
 
 function getQuestDeadlineDate(daysValue) {
@@ -984,14 +1064,13 @@ function syncStats() {
   syncDashboardSummary();
   renderLatestQuestSlider();
   renderRecommendedQuests();
-  renderReviewOptions();
   renderIssuedQuests();
   setTrustAvatarFrame(accountInitialsEl, state.trust);
   setTrustAvatarFrame(authAccountInitialsEl, state.trust);
 }
 
 function syncDashboardSummary() {
-  const pendingCount = remote.enabled ? remote.pendingSubmissions.length : 3;
+  const pendingCount = remote.enabled ? remote.pendingSubmissions.length : getLocalPendingApprovalCount();
   const openIssuedCount = remote.enabled
     ? state.quests.filter((quest) => quest.issuerId === remote.user?.id && !isQuestClosed(quest)).length
     : 2;
@@ -1016,7 +1095,6 @@ function syncDashboardSummary() {
       ? "クエストを達成するとTrustが積み上がります。"
       : "積み上げたTrustがギルド内の実績として表示されます。";
   }
-  if (reviewCountStatusEl) reviewCountStatusEl.textContent = `${pendingCount}件`;
   if (weeklyCardEl) weeklyCardEl.hidden = remote.enabled;
   renderAchievements();
 }
@@ -1049,43 +1127,56 @@ function renderAchievements() {
   if (window.lucide) lucide.createIcons();
 }
 
-function renderReviewOptions() {
-  if (!completedQuestEl) return;
+function renderApprovalItems(quest, submissions) {
+  if (!submissions.length) {
+    return '<div class="approval-empty">このクエストへの応募・完了報告はまだありません。</div>';
+  }
 
-  const previousValue = completedQuestEl.value;
-  const approvableQuests = remote.enabled
-    ? remote.pendingSubmissions
-        .map((submission) => {
-          const quest = state.quests.find((item) => String(item.id) === String(submission.quest_id));
-          return quest ? { quest, submission } : null;
-        })
-        .filter(Boolean)
-    : state.quests
-        .filter((quest) => {
-          if (quest.type === "report") return !isQuestClosed(quest);
-          return Number(quest.applicants) > 0;
-        })
-        .map((quest) => ({ quest, submission: null }));
-
-  completedQuestEl.innerHTML = approvableQuests
-    .map(({ quest, submission }) => {
-      const type = getQuestType(quest);
-      const value = submission ? submission.id : quest.id;
-      return `<option value="${value}">${quest.title} / ${type.label} / ${quest.reward}G / ${getQuestStatusText(quest)}</option>`;
+  return submissions
+    .map((submission, index) => {
+      const submissionId = escapeHtml(submission.id);
+      const questId = escapeHtml(quest.id);
+      const typeLabel = submission.submission_type === "report" ? "完了報告" : "応募";
+      const comment = submission.comment?.trim() || "内容コメントはありません。";
+      const evidenceUrl = normalizeQuestUrl(submission.evidence_url || "");
+      const ratingOptions = TRUST_RATING_OPTIONS.map((option) => `<option value="${option.value}">${option.label}</option>`).join("");
+      const noteId = `approval-note-${String(quest.id).replace(/[^a-zA-Z0-9_-]/g, "")}-${index}`;
+      return `
+        <article class="approval-item">
+          <div class="approval-item-head">
+            <div>
+              <span class="approval-type">${typeLabel}</span>
+              <h4>${escapeHtml(submission.adventurerName || "冒険者")}</h4>
+              ${submission.adventurerHeadline ? `<p>${escapeHtml(submission.adventurerHeadline)}</p>` : ""}
+            </div>
+            <time>${formatDateTime(submission.created_at)}</time>
+          </div>
+          <div class="approval-comment">${escapeHtml(comment)}</div>
+          ${
+            evidenceUrl
+              ? `<a class="approval-evidence" href="${escapeHtml(evidenceUrl)}" target="_blank" rel="noopener"><i data-lucide="image"></i>エビデンスを見る</a>`
+              : ""
+          }
+          <div class="approval-controls">
+            <label>
+              評価
+              <select data-approval-rating="${submissionId}">${ratingOptions}</select>
+            </label>
+            <label>
+              承認コメント
+              <textarea rows="3" data-approval-comment="${submissionId}" placeholder="承認時のコメントを入力してください。"></textarea>
+            </label>
+          </div>
+          <div class="approval-actions">
+            <button class="btn btn-primary btn-sm" type="button" data-approve-submission="${submissionId}" data-approve-quest="${questId}" aria-describedby="${noteId}">
+              <i data-lucide="badge-check"></i>承認する
+            </button>
+            <p class="form-note" id="${noteId}" data-approval-note="${submissionId}"></p>
+          </div>
+        </article>
+      `;
     })
     .join("");
-
-  if (approvableQuests.some(({ quest, submission }) => String(submission?.id || quest.id) === previousValue)) {
-    completedQuestEl.value = previousValue;
-  }
-
-  completedQuestEl.disabled = approvableQuests.length === 0;
-  const submitButton = reviewForm?.querySelector('button[type="submit"]');
-  if (submitButton) submitButton.disabled = approvableQuests.length === 0;
-
-  if (reviewNote) {
-    reviewNote.textContent = approvableQuests.length ? `未承認の完了報告が${approvableQuests.length}件あります。` : "承認待ちのクエストはありません。";
-  }
 }
 
 function renderIssuedQuests() {
@@ -1108,12 +1199,15 @@ function renderIssuedQuests() {
     .map((quest) => {
       const type = getQuestType(quest);
       const progress = Math.min(getQuestProgress(quest), getQuestCapacity(quest));
+      const submissions = getQuestPendingSubmissions(quest);
+      const approvalCount = submissions.length;
       return `
         <article class="issued-quest-card">
-          <div>
+          <div class="issued-quest-main">
             <div class="quest-card-labels">
               <span class="category">${quest.category}</span>
               <span class="quest-type-badge">${type.label}</span>
+              ${approvalCount ? `<span class="quest-status-badge">承認待ち ${approvalCount}件</span>` : ""}
             </div>
             <h3>${quest.title}</h3>
             <p>${quest.description}</p>
@@ -1125,13 +1219,41 @@ function renderIssuedQuests() {
           </div>
           <div class="issued-quest-actions">
             <a class="btn btn-outline btn-sm" href="${getQuestDetailUrl(quest.id)}" target="_blank" rel="noopener"><i data-lucide="external-link"></i>詳細</a>
+            <button class="btn btn-primary btn-sm" type="button" data-toggle-approvals="${quest.id}" ${approvalCount ? "" : "disabled"}>
+              <i data-lucide="badge-check"></i>承認${approvalCount ? ` (${approvalCount})` : ""}
+            </button>
             <button class="btn btn-outline btn-sm" type="button" data-edit-issued="${quest.id}"><i data-lucide="pencil"></i>編集</button>
             <button class="btn btn-danger btn-sm" type="button" data-delete-issued="${quest.id}"><i data-lucide="trash-2"></i>削除</button>
+          </div>
+          <div class="approval-panel" data-approval-panel="${quest.id}" hidden>
+            <div class="approval-panel-head">
+              <div>
+                <span class="eyebrow">APPROVAL</span>
+                <h4>届いている応募・完了報告</h4>
+              </div>
+              <span class="status-pill">${approvalCount}件</span>
+            </div>
+            ${renderApprovalItems(quest, submissions)}
           </div>
         </article>
       `;
     })
     .join("");
+
+  issuedQuestsEl.querySelectorAll("[data-toggle-approvals]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const panel = issuedQuestsEl.querySelector(`[data-approval-panel="${CSS.escape(button.dataset.toggleApprovals)}"]`);
+      if (!panel) return;
+      panel.hidden = !panel.hidden;
+    });
+  });
+
+  issuedQuestsEl.querySelectorAll("[data-approve-submission]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const submissionId = button.dataset.approveSubmission;
+      approveSubmissionFromIssuedCard(button.dataset.approveQuest, submissionId);
+    });
+  });
 
   issuedQuestsEl.querySelectorAll("[data-edit-issued]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -1274,6 +1396,10 @@ function renderQuestDetail(quest) {
           <strong>${closed ? type.closedLabel : type.actionLabel}</strong>
           <span>${closed ? "募集人数に達したため、応募受付は停止されています。" : getQuestActionHint(quest)}</span>
         </div>
+        <div class="report-evidence-box">
+          <label for="questApplicationComment">応募メッセージ</label>
+          <textarea id="questApplicationComment" rows="4" data-application-comment ${closed ? "disabled" : ""} placeholder="対応できる内容、希望日程、発行者に伝えたいこと"></textarea>
+        </div>
         <button class="btn btn-primary" type="button" data-apply ${closed ? "disabled" : ""}>${closed ? type.closedLabel : type.actionLabel}</button>
       `;
   const issuerProfileMarkup = renderIssuerProfile(quest.issuer);
@@ -1389,7 +1515,7 @@ function renderQuestDetail(quest) {
       const { error } = await supabaseClient.rpc("submit_quest", {
         p_quest_id: quest.id,
         p_submission_type: "application",
-        p_comment: "応募しました。",
+        p_comment: questDetail.querySelector("[data-application-comment]")?.value || "応募しました。",
         p_evidence_url: "",
       });
       if (error) {
@@ -1685,41 +1811,34 @@ function ratingFromTrustBonus(value) {
   return 1;
 }
 
-reviewForm?.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  if (!completedQuestEl?.value) {
-    reviewNote.textContent = "承認待ちのクエストはありません。";
-    return;
-  }
-
-  const trustBonus = Number(document.querySelector("#rating").value);
+async function approveQuestSubmission({ questId, submissionId, trustBonus, comment, noteEl }) {
   const gainedTrust = 5 + trustBonus;
 
   if (remote.enabled) {
     if (!remote.user) {
-      reviewNote.textContent = "承認にはログインが必要です。";
+      if (noteEl) noteEl.textContent = "承認にはログインが必要です。";
       return;
     }
 
     const { error } = await supabaseClient.rpc("approve_submission", {
-      p_submission_id: completedQuestEl?.value,
+      p_submission_id: submissionId,
       p_rating: ratingFromTrustBonus(trustBonus),
-      p_comment: document.querySelector("#reviewComment")?.value || "",
+      p_comment: comment || "",
     });
 
     if (error) {
-      reviewNote.textContent = error.message || "承認できませんでした。";
+      if (noteEl) noteEl.textContent = error.message || "承認できませんでした。";
       return;
     }
 
-    reviewNote.textContent = `承認完了。達成者へ報酬Goldと${gainedTrust} Trustを付与しました。`;
+    showToast(`承認完了。達成者へ報酬Goldと${gainedTrust} Trustを付与しました。`);
     await refreshRemoteState();
     return;
   }
 
-  const quest = state.quests.find((item) => String(item.id) === String(completedQuestEl?.value));
+  const quest = state.quests.find((item) => String(item.id) === String(questId));
   if (!quest) {
-    reviewNote.textContent = "承認できるクエストがありません。";
+    if (noteEl) noteEl.textContent = "承認できるクエストがありません。";
     return;
   }
 
@@ -1744,8 +1863,23 @@ reviewForm?.addEventListener("submit", async (event) => {
       ? "承認数が募集人数に達したため、完了報告型クエストをクローズしました。"
       : "募集人数に達している応募型クエストです。"
     : "承認待ちを更新しました。";
-  reviewNote.textContent = `承認完了。${reward}Gと${gainedTrust} Trustを付与しました。${closeMessage} 現在ランク: ${getRank(state.trust)}`;
-});
+  showToast(`承認完了。${reward}Gと${gainedTrust} Trustを付与しました。${closeMessage}`);
+  renderIssuedQuests();
+}
+
+function approveSubmissionFromIssuedCard(questId, submissionId) {
+  if (!submissionId) return;
+  const ratingEl = issuedQuestsEl?.querySelector(`[data-approval-rating="${CSS.escape(submissionId)}"]`);
+  const commentEl = issuedQuestsEl?.querySelector(`[data-approval-comment="${CSS.escape(submissionId)}"]`);
+  const noteEl = issuedQuestsEl?.querySelector(`[data-approval-note="${CSS.escape(submissionId)}"]`);
+  approveQuestSubmission({
+    questId,
+    submissionId,
+    trustBonus: Number(ratingEl?.value || 10),
+    comment: commentEl?.value || "",
+    noteEl,
+  });
+}
 
 categoryFilter?.addEventListener("change", renderQuestList);
 keywordFilter?.addEventListener("input", renderQuestList);

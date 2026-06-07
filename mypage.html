@@ -115,7 +115,7 @@
                 <p>未対応の承認と、発行中クエストの状態だけを確認します。</p>
               </div>
               <div class="header-actions">
-                <a class="btn btn-primary" href="#quest-review"><i data-lucide="badge-check"></i>承認へ</a>
+                <a class="btn btn-primary" href="#quest-create"><i data-lucide="badge-check"></i>承認へ</a>
               </div>
             </div>
             <div class="priority-list" aria-label="優先タスク">
@@ -126,7 +126,7 @@
                   <h3 data-pending-title>承認待ちはありません</h3>
                   <p data-pending-copy>新しい完了報告が届くとここに表示されます。</p>
                 </div>
-                <a class="btn btn-primary btn-sm" href="#quest-review">対応</a>
+                <a class="btn btn-primary btn-sm" href="#quest-create">対応</a>
               </article>
               <article class="priority-item">
                 <div class="priority-icon"><i data-lucide="send"></i></div>
@@ -365,35 +365,6 @@
             </form>
           </article>
 
-          <article class="workspace-panel" id="quest-review">
-            <div class="panel-head">
-              <div>
-                <p class="eyebrow">APPROVAL</p>
-                <h2>承認待ち</h2>
-              </div>
-              <span class="status-pill" data-review-count-status>0件</span>
-            </div>
-            <form class="guild-form" id="reviewForm">
-              <label for="completedQuest">承認するクエスト</label>
-              <select id="completedQuest" name="completedQuest">
-                <option value="2">副業SaaSのユーザーインタビュー30分 / 応募型 / 50G</option>
-                <option value="1">オンボーディング画面の感想 / 完了報告型 / 10G</option>
-                <option value="4">営業資料レビュー / 応募型 / 100G</option>
-              </select>
-              <label for="rating">評価</label>
-              <select id="rating">
-                <option value="10">★★★★★ +10 Trust</option>
-                <option value="8">★★★★ +8 Trust</option>
-                <option value="5">★★★ +5 Trust</option>
-                <option value="2">★★ +2 Trust</option>
-                <option value="0">★ +0 Trust</option>
-              </select>
-              <label for="reviewComment">コメント</label>
-              <textarea id="reviewComment" rows="5" placeholder="承認時のコメントを入力してください。"></textarea>
-              <button class="btn btn-primary" type="submit"><i data-lucide="badge-check"></i>承認する</button>
-              <p class="form-note" data-review-note>承認待ちのクエストはありません。</p>
-            </form>
-          </article>
         </div>
       </section>
     </main>
