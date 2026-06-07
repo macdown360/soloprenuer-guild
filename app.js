@@ -1842,11 +1842,12 @@ registerForm?.addEventListener("submit", async (event) => {
   const data = new FormData(registerForm);
   const email = data.get("email");
   const password = data.get("password");
+  const job = String(data.get("job") || "").trim();
   const metadata = {
     adventurer_name: data.get("name"),
-    job: data.get("job"),
-    skills: data.get("skills"),
-    headline: data.get("job") || "ソロプレナー",
+    job,
+    skills: String(data.get("skills") || "").trim(),
+    headline: job || "ソロプレナー",
   };
 
   const { data: signUpData, error } = await supabaseClient.auth.signUp({
