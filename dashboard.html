@@ -41,6 +41,37 @@
     </header>
 
     <main class="dashboard-main">
+      <section class="section auth-section">
+        <div class="container auth-grid">
+          <article class="workspace-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">ACCOUNT</p>
+                <h2>冒険者アカウント</h2>
+              </div>
+              <span class="status-pill" data-auth-status>デモ</span>
+            </div>
+            <form class="guild-form auth-form" id="authForm">
+              <div class="form-row">
+                <label>
+                  メールアドレス
+                  <input name="email" type="email" placeholder="you@example.com" autocomplete="email" required />
+                </label>
+                <label>
+                  パスワード
+                  <input name="password" type="password" placeholder="8文字以上" autocomplete="current-password" required />
+                </label>
+              </div>
+              <div class="header-actions">
+                <button class="btn btn-primary" type="submit" data-auth-action="signin"><i data-lucide="log-in"></i>ログイン</button>
+                <button class="btn btn-outline" type="button" data-signout><i data-lucide="log-out"></i>ログアウト</button>
+              </div>
+              <p class="form-note" data-auth-note>Supabase未設定時はデモデータで動作します。</p>
+            </form>
+          </article>
+        </div>
+      </section>
+
       <section id="mypage" class="dashboard-hero">
         <div class="container dashboard-toolbar">
           <div>
@@ -333,6 +364,8 @@
       </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-env.js"></script>
     <script src="app.js"></script>
     <script>document.addEventListener('DOMContentLoaded', function () { if (window.lucide) lucide.createIcons(); });</script>
   </body>

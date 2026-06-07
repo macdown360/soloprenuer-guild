@@ -967,6 +967,20 @@ h3 {
   background: #f4f6fa;
 }
 
+.auth-section {
+  padding: 1.25rem 0 0;
+  background: #f4f6fa;
+}
+
+.auth-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.auth-form {
+  padding-top: 0.2rem;
+}
+
 .quest-search-hero {
   padding: 72px 0 46px;
   color: #fff;

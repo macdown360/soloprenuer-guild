@@ -192,6 +192,19 @@ const formatter = new Intl.DateTimeFormat("ja-JP", {
   day: "numeric",
 });
 
+const supabaseConfig = window.SG_SUPABASE || {};
+const supabaseClient =
+  supabaseConfig.url && supabaseConfig.anonKey && window.supabase
+    ? window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey)
+    : null;
+
+const remote = {
+  enabled: Boolean(supabaseClient),
+  user: null,
+  profile: null,
+  pendingSubmissions: [],
+};
+
 const goldEl = document.querySelector("[data-gold]");
 const trustEl = document.querySelector("[data-trust]");
 const rankEl = document.querySelector("[data-rank]");
@@ -223,6 +236,154 @@ const profileInterestsEl = document.querySelector("[data-profile-interests]");
 const profileCategoriesEl = document.querySelector("[data-profile-categories]");
 const matchSignalsEl = document.querySelector("[data-match-signals]");
 const categoryMatrixEl = document.querySelector("[data-category-matrix]");
+const registerForm = document.querySelector("#registerForm");
+const authForm = document.querySelector("#authForm");
+const authNoteEls = document.querySelectorAll("[data-auth-note]");
+const authStatusEl = document.querySelector("[data-auth-status]");
+const signoutBtn = document.querySelector("[data-signout]");
+
+function setAuthNote(message) {
+  authNoteEls.forEach((el) => {
+    el.textContent = message;
+  });
+}
+
+function setAuthStatus(label) {
+  if (authStatusEl) authStatusEl.textContent = label;
+}
+
+function getInitials(name) {
+  return String(name || "冒").slice(0, 1).toUpperCase();
+}
+
+function mapProfile(row) {
+  if (!row) return null;
+  return {
+    name: row.adventurer_name || "冒険者",
+    initials: getInitials(row.adventurer_name),
+    headline: row.headline || row.job || "ソロプレナー",
+    summary: row.summary || "プロフィールはまだ編集中です。",
+    businessStage: row.job || "活動中",
+    strengths: normalizeList(row.skills),
+    interests: normalizeList(row.interests),
+    preferredCategories: ["AI", "フィードバック", "開発", "インタビュー"],
+    preferredTags: unique([...normalizeList(row.skills), ...normalizeList(row.interests)]),
+  };
+}
+
+function mapQuest(row) {
+  return {
+    id: row.id,
+    type: row.quest_type || "report",
+    status: row.status || "open",
+    title: row.title,
+    issuer: row.issuer_name || "冒険者",
+    reward: Number(row.reward) || 0,
+    category: row.category,
+    tags: normalizeList(row.tags),
+    skills: normalizeList(row.issuer_skills),
+    deadline: row.deadline,
+    applicants: Number(row.submission_count) || 0,
+    capacity: Number(row.capacity) || 1,
+    approvedReports: Number(row.approved_count) || 0,
+    description: row.description,
+    url: row.reference_url || "",
+    screenshot: row.screenshot_url ? { name: "添付画像", url: row.screenshot_url } : null,
+    comments: ["Supabaseから読み込んだクエストです。"],
+  };
+}
+
+async function loadRemoteState() {
+  if (!remote.enabled) {
+    setAuthStatus("デモ");
+    return;
+  }
+
+  const {
+    data: { session },
+  } = await supabaseClient.auth.getSession();
+  remote.user = session?.user || null;
+  setAuthStatus(remote.user ? "ログイン中" : "未ログイン");
+
+  const { data: questRows, error: questError } = await supabaseClient
+    .from("quest_board")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (questError) throw questError;
+  state.quests = (questRows || []).map(mapQuest);
+
+  state.issuerProfiles = {};
+  (questRows || []).forEach((row) => {
+    const name = row.issuer_name || "冒険者";
+    state.issuerProfiles[name] = {
+      initials: getInitials(name),
+      headline: row.issuer_headline || "ソロプレナー",
+      summary: row.issuer_summary || "プロフィールはまだ編集中です。",
+      trust: Number(row.issuer_trust) || 0,
+      completed: Number(row.issuer_completed) || 0,
+      issued: Number(row.issuer_issued) || 0,
+      skills: normalizeList(row.issuer_skills),
+      interests: normalizeList(row.issuer_interests),
+    };
+  });
+
+  if (!remote.user) {
+    remote.profile = null;
+    remote.pendingSubmissions = [];
+    setAuthNote("クエストは閲覧できます。発行・応募・承認にはログインしてください。");
+    return;
+  }
+
+  const { data: profile, error: profileError } = await supabaseClient
+    .from("profiles")
+    .select("*")
+    .eq("id", remote.user.id)
+    .single();
+
+  if (profileError) throw profileError;
+  remote.profile = profile;
+  state.account = mapProfile(profile);
+  state.gold = Number(profile.gold) || 0;
+  state.trust = Number(profile.trust) || 0;
+  state.completed = Number(profile.completed_quests) || 0;
+  state.issued = Number(profile.issued_quests) || 0;
+  setAuthNote(`${state.account.name}としてログイン中です。`);
+
+  const issuedQuestIds = new Set(state.quests.filter((quest) => quest.issuer === state.account.name).map((quest) => String(quest.id)));
+  const { data: submissions, error: submissionsError } = await supabaseClient
+    .from("quest_submissions")
+    .select("id, quest_id, submission_type, comment, status, created_at")
+    .eq("status", "pending")
+    .order("created_at", { ascending: false });
+
+  if (submissionsError) throw submissionsError;
+  remote.pendingSubmissions = (submissions || []).filter((submission) => issuedQuestIds.has(String(submission.quest_id)));
+}
+
+async function refreshRemoteState() {
+  if (!remote.enabled) return;
+  await loadRemoteState();
+  renderAccountProfile();
+  syncStats();
+  renderQuestList();
+  renderQuestDetailPage();
+}
+
+async function uploadQuestAsset(file, folder) {
+  if (!remote.enabled || !remote.user || !(file instanceof File) || file.size === 0) return "";
+
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
+  const path = `${remote.user.id}/${folder}/${Date.now()}-${safeName}`;
+  const { error } = await supabaseClient.storage.from("quest-assets").upload(path, file, {
+    cacheControl: "3600",
+    upsert: false,
+  });
+  if (error) throw error;
+
+  const { data } = supabaseClient.storage.from("quest-assets").getPublicUrl(path);
+  return data.publicUrl;
+}
 
 function normalizeList(values) {
   if (!values) return [];
@@ -487,19 +648,29 @@ function renderReviewOptions() {
   if (!completedQuestEl) return;
 
   const previousValue = completedQuestEl.value;
-  const approvableQuests = state.quests.filter((quest) => {
-    if (quest.type === "report") return !isQuestClosed(quest);
-    return Number(quest.applicants) > 0;
-  });
+  const approvableQuests = remote.enabled
+    ? remote.pendingSubmissions
+        .map((submission) => {
+          const quest = state.quests.find((item) => String(item.id) === String(submission.quest_id));
+          return quest ? { quest, submission } : null;
+        })
+        .filter(Boolean)
+    : state.quests
+        .filter((quest) => {
+          if (quest.type === "report") return !isQuestClosed(quest);
+          return Number(quest.applicants) > 0;
+        })
+        .map((quest) => ({ quest, submission: null }));
 
   completedQuestEl.innerHTML = approvableQuests
-    .map((quest) => {
+    .map(({ quest, submission }) => {
       const type = getQuestType(quest);
-      return `<option value="${quest.id}">${quest.title} / ${type.label} / ${quest.reward}G / ${getQuestStatusText(quest)}</option>`;
+      const value = submission ? submission.id : quest.id;
+      return `<option value="${value}">${quest.title} / ${type.label} / ${quest.reward}G / ${getQuestStatusText(quest)}</option>`;
     })
     .join("");
 
-  if (approvableQuests.some((quest) => String(quest.id) === previousValue)) {
+  if (approvableQuests.some(({ quest, submission }) => String(submission?.id || quest.id) === previousValue)) {
     completedQuestEl.value = previousValue;
   }
 
@@ -687,7 +858,7 @@ function renderQuestDetail(quest) {
   questDetail.querySelector("[data-issuer]")?.addEventListener("click", () => {
     showIssuerProfile(quest.issuer, quest.id);
   });
-  questDetail.querySelector("[data-apply]")?.addEventListener("click", () => {
+  questDetail.querySelector("[data-apply]")?.addEventListener("click", async () => {
     if (isQuestClosed(quest)) return;
     if (quest.type === "report") {
       const evidence = questDetail.querySelector("[data-evidence]");
@@ -695,11 +866,57 @@ function renderQuestDetail(quest) {
         showToast("スクショ画面のエビデンスを添付してください。");
         return;
       }
+      if (remote.enabled) {
+        if (!remote.user) {
+          showToast("完了報告にはログインが必要です。");
+          return;
+        }
+        const comment = questDetail.querySelector("[data-report-comment]")?.value || "";
+        let evidenceUrl = "";
+        try {
+          evidenceUrl = await uploadQuestAsset(evidence.files[0], "evidence");
+        } catch (error) {
+          showToast(error.message || "エビデンスをアップロードできませんでした。");
+          return;
+        }
+        const { error } = await supabaseClient.rpc("submit_quest", {
+          p_quest_id: quest.id,
+          p_submission_type: "report",
+          p_comment: comment,
+          p_evidence_url: evidenceUrl,
+        });
+        if (error) {
+          showToast(error.message || "完了報告を送信できませんでした。");
+          return;
+        }
+        showToast("完了報告を送信しました。発行者の承認を待ちます。");
+        await refreshRemoteState();
+        return;
+      }
       quest.applicants += 1;
       quest.comments.unshift("スクショ付きの完了報告が送信されました。承認待ちです。");
       showToast("完了報告を送信しました。発行者の承認後にクローズ判定されます。");
       renderQuestList();
       renderQuestDetail(quest);
+      return;
+    }
+    if (remote.enabled) {
+      if (!remote.user) {
+        showToast("応募にはログインが必要です。");
+        return;
+      }
+      const { error } = await supabaseClient.rpc("submit_quest", {
+        p_quest_id: quest.id,
+        p_submission_type: "application",
+        p_comment: "応募しました。",
+        p_evidence_url: "",
+      });
+      if (error) {
+        showToast(error.message || "応募できませんでした。");
+        return;
+      }
+      showToast("応募しました。発行者との約束を進めてください。");
+      await refreshRemoteState();
       return;
     }
     quest.applicants += 1;
@@ -784,11 +1001,12 @@ function renderIssuerProfile(name) {
   `;
 }
 
-questForm?.addEventListener("submit", (event) => {
+questForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const data = new FormData(questForm);
   const reward = Number(data.get("reward"));
   const capacity = Math.max(1, Number(data.get("capacity")) || 1);
+  const escrowGold = reward * capacity;
   const type = data.get("type") === "recruiting" ? "recruiting" : "report";
   const screenshotFile = data.get("screenshot");
   const screenshot =
@@ -799,15 +1017,53 @@ questForm?.addEventListener("submit", (event) => {
         }
       : null;
 
-  if (reward > state.gold) {
+  if (escrowGold > state.gold) {
     formNote.textContent = `残高不足です。現在のGoldは${state.gold}Gです。`;
     return;
   }
 
-  state.gold -= reward;
-  state.issued += 1;
   const selectedCategory = data.get("category");
   const tags = unique([...(state.questTaxonomy[selectedCategory] || []).slice(0, 2), ...normalizeList(data.get("tags"))]);
+
+  if (remote.enabled) {
+    if (!remote.user) {
+      formNote.textContent = "クエスト発行にはログインが必要です。";
+      return;
+    }
+
+    let screenshotUrl = "";
+    try {
+      screenshotUrl = await uploadQuestAsset(screenshotFile, "quest-screenshots");
+    } catch (error) {
+      formNote.textContent = error.message || "スクショをアップロードできませんでした。";
+      return;
+    }
+
+    const { error } = await supabaseClient.rpc("issue_quest", {
+      p_title: data.get("title"),
+      p_description: data.get("description"),
+      p_reward: reward,
+      p_category: selectedCategory,
+      p_quest_type: type,
+      p_capacity: capacity,
+      p_deadline: data.get("deadline"),
+      p_tags: tags,
+      p_reference_url: normalizeQuestUrl(data.get("url")),
+      p_screenshot_url: screenshotUrl,
+    });
+
+    if (error) {
+      formNote.textContent = error.message || "クエストを発行できませんでした。";
+      return;
+    }
+
+    formNote.textContent = `${escrowGold}Gを確保して${QUEST_TYPES[type].label}クエストを発行しました。`;
+    await refreshRemoteState();
+    return;
+  }
+
+  state.gold -= escrowGold;
+  state.issued += 1;
   const quest = {
     id: Date.now(),
     type,
@@ -834,11 +1090,45 @@ questForm?.addEventListener("submit", (event) => {
   syncStats();
   renderQuestList();
   renderAccountProfile();
-  formNote.textContent = `${reward}Gを確保して${getQuestType(quest).label}クエストを発行しました。`;
+  formNote.textContent = `${escrowGold}Gを確保して${getQuestType(quest).label}クエストを発行しました。`;
 });
 
-reviewForm?.addEventListener("submit", (event) => {
+function ratingFromTrustBonus(value) {
+  const bonus = Number(value);
+  if (bonus >= 10) return 5;
+  if (bonus >= 8) return 4;
+  if (bonus >= 5) return 3;
+  if (bonus >= 2) return 2;
+  return 1;
+}
+
+reviewForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
+  const trustBonus = Number(document.querySelector("#rating").value);
+  const gainedTrust = 5 + trustBonus;
+
+  if (remote.enabled) {
+    if (!remote.user) {
+      reviewNote.textContent = "承認にはログインが必要です。";
+      return;
+    }
+
+    const { error } = await supabaseClient.rpc("approve_submission", {
+      p_submission_id: completedQuestEl?.value,
+      p_rating: ratingFromTrustBonus(trustBonus),
+      p_comment: document.querySelector("#reviewComment")?.value || "",
+    });
+
+    if (error) {
+      reviewNote.textContent = error.message || "承認できませんでした。";
+      return;
+    }
+
+    reviewNote.textContent = `承認完了。達成者へ報酬Goldと${gainedTrust} Trustを付与しました。`;
+    await refreshRemoteState();
+    return;
+  }
+
   const quest = state.quests.find((item) => String(item.id) === String(completedQuestEl?.value));
   if (!quest) {
     reviewNote.textContent = "承認できるクエストがありません。";
@@ -846,8 +1136,6 @@ reviewForm?.addEventListener("submit", (event) => {
   }
 
   const reward = Number(quest.reward);
-  const trustBonus = Number(document.querySelector("#rating").value);
-  const gainedTrust = 5 + trustBonus;
 
   state.gold += reward;
   state.trust += gainedTrust;
@@ -985,6 +1273,68 @@ document.querySelectorAll("[data-category-link]").forEach((link) => {
   });
 });
 
+registerForm?.addEventListener("submit", async (event) => {
+  if (!remote.enabled) return;
+  event.preventDefault();
+
+  const data = new FormData(registerForm);
+  const email = data.get("email");
+  const password = data.get("password");
+  const metadata = {
+    adventurer_name: data.get("name"),
+    job: data.get("job"),
+    skills: data.get("skills"),
+    headline: data.get("job") || "ソロプレナー",
+  };
+
+  const { error } = await supabaseClient.auth.signUp({
+    email,
+    password,
+    options: { data: metadata },
+  });
+
+  if (error) {
+    setAuthNote(error.message || "登録できませんでした。");
+    return;
+  }
+
+  setAuthNote("登録しました。メール確認が有効な場合は、確認後にログインしてください。");
+  window.location.href = "dashboard.html";
+});
+
+authForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!remote.enabled) {
+    setAuthNote("Supabase未設定のため、デモデータで動作しています。");
+    return;
+  }
+
+  const data = new FormData(authForm);
+  const { error } = await supabaseClient.auth.signInWithPassword({
+    email: data.get("email"),
+    password: data.get("password"),
+  });
+
+  if (error) {
+    setAuthNote(error.message || "ログインできませんでした。");
+    return;
+  }
+
+  setAuthNote("ログインしました。アカウント情報を読み込んでいます。");
+  await refreshRemoteState();
+});
+
+signoutBtn?.addEventListener("click", async () => {
+  if (!remote.enabled) return;
+  await supabaseClient.auth.signOut();
+  remote.user = null;
+  remote.profile = null;
+  remote.pendingSubmissions = [];
+  setAuthStatus("未ログイン");
+  setAuthNote("ログアウトしました。");
+  await refreshRemoteState();
+});
+
 function scrollLatestQuests(direction) {
   if (!latestQuestSlider) return;
   const firstCard = latestQuestSlider.querySelector(".latest-quest-card");
@@ -995,9 +1345,26 @@ function scrollLatestQuests(direction) {
 latestQuestPrev?.addEventListener("click", () => scrollLatestQuests(-1));
 latestQuestNext?.addEventListener("click", () => scrollLatestQuests(1));
 
-renderAccountProfile();
-syncStats();
-renderQuestList();
-renderQuestDetailPage();
-updateMissionUI();
-updateWeeklyChallenge();
+async function initApp() {
+  renderAccountProfile();
+  syncStats();
+  renderQuestList();
+  renderQuestDetailPage();
+  updateMissionUI();
+  updateWeeklyChallenge();
+
+  if (!remote.enabled) {
+    setAuthNote("Supabase未設定のため、デモデータで動作しています。");
+    return;
+  }
+
+  try {
+    await refreshRemoteState();
+  } catch (error) {
+    console.error(error);
+    setAuthStatus("接続エラー");
+    setAuthNote(error.message || "Supabaseからデータを読み込めませんでした。");
+  }
+}
+
+initApp();

@@ -187,7 +187,7 @@
               一人で抱えるより、助け合える仲間がいたほうが、ソロプレナーは強くなる。
             </p>
           </div>
-          <form class="guild-form" action="dashboard.html" method="get">
+          <form class="guild-form" id="registerForm" action="dashboard.html" method="get">
             <label for="name">冒険者名</label>
             <input id="name" name="name" type="text" placeholder="例: アキラ" required />
             <label for="email">メールアドレス</label>
@@ -205,6 +205,7 @@
               </label>
             </div>
             <button class="btn btn-primary" type="submit"><i data-lucide="user-plus"></i>100Gを受け取って登録</button>
+            <p class="form-note" data-auth-note></p>
           </form>
         </div>
       </section>
@@ -221,6 +222,8 @@
         </nav>
       </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-env.js"></script>
     <script src="app.js"></script>
     <script>document.addEventListener('DOMContentLoaded', function () { if (window.lucide) lucide.createIcons(); });</script>
   </body>
