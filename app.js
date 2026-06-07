@@ -237,6 +237,7 @@ const profileCategoriesEl = document.querySelector("[data-profile-categories]");
 const authAccountInitialsEl = document.querySelector("[data-auth-account-initials]");
 const authAccountNameEl = document.querySelector("[data-auth-account-name]");
 const authAccountHeadlineEl = document.querySelector("[data-auth-account-headline]");
+const authAccountEmailEl = document.querySelector("[data-auth-account-email]");
 const authProfileSummaryEl = document.querySelector("[data-auth-profile-summary]");
 const authProfileMetaEl = document.querySelector("[data-auth-profile-meta]");
 const authProfileSkillsEl = document.querySelector("[data-auth-profile-skills]");
@@ -316,32 +317,32 @@ async function resendSignupConfirmation(email) {
 }
 
 function syncAuthVisibility() {
-  const isAuthenticated = !remote.enabled || Boolean(remote.user);
-  const isHeaderAuthenticated = Boolean(remote.user);
+  const isSignedIn = Boolean(remote.user);
+  const canUseAuthRequiredSections = !remote.enabled || isSignedIn;
   authRequiredEls.forEach((el) => {
-    el.hidden = !isAuthenticated;
+    el.hidden = !canUseAuthRequiredSections;
   });
   guestOnlyEls.forEach((el) => {
-    el.hidden = isAuthenticated;
+    el.hidden = isSignedIn;
   });
   headerAuthEls.forEach((el) => {
-    el.hidden = !isHeaderAuthenticated;
+    el.hidden = !isSignedIn;
   });
   headerGuestEls.forEach((el) => {
-    el.hidden = isHeaderAuthenticated;
+    el.hidden = isSignedIn;
   });
   accountPanelEls.forEach((el) => {
-    el.hidden = !isHeaderAuthenticated;
+    el.hidden = !isSignedIn;
   });
   loginPanelEls.forEach((el) => {
-    el.hidden = isHeaderAuthenticated;
+    el.hidden = isSignedIn;
   });
   if (signoutBtn) signoutBtn.hidden = !remote.enabled || !remote.user;
 
   if (registerCta) {
-    registerCta.href = isAuthenticated ? "dashboard.html" : "#register";
+    registerCta.href = isSignedIn ? "dashboard.html" : "#register";
     const label = registerCta.querySelector("span");
-    if (label) label.textContent = isAuthenticated ? "マイページへ" : "冒険者登録";
+    if (label) label.textContent = isSignedIn ? "マイページへ" : "冒険者登録";
   }
 
   if (registerSignedInCopy) {
@@ -637,6 +638,7 @@ function formatDate(value) {
 
 function renderAccountProfile() {
   const account = state.account;
+  const accountEmail = remote.user?.email || remote.profile?.email || "メールアドレス未設定";
 
   if (accountInitialsEl) accountInitialsEl.textContent = account.initials;
   if (accountNameEl) accountNameEl.textContent = account.name;
@@ -645,6 +647,7 @@ function renderAccountProfile() {
   if (authAccountInitialsEl) authAccountInitialsEl.textContent = account.initials;
   if (authAccountNameEl) authAccountNameEl.textContent = account.name;
   if (authAccountHeadlineEl) authAccountHeadlineEl.textContent = account.headline;
+  if (authAccountEmailEl) authAccountEmailEl.textContent = accountEmail;
   if (authProfileSummaryEl) authProfileSummaryEl.textContent = account.summary;
 
   if (profileMetaEl) {
