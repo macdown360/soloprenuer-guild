@@ -1228,9 +1228,6 @@ function renderQuestDetail(quest) {
     return;
   }
 
-  const comments = quest.comments.length
-    ? quest.comments.map((comment) => `<div class="comment">${comment}</div>`).join("")
-    : '<div class="comment">まだコメントはありません。</div>';
   updateQuestStatus(quest);
   const type = getQuestType(quest);
   const closed = isQuestClosed(quest);
@@ -1322,8 +1319,6 @@ function renderQuestDetail(quest) {
     <div class="quest-flow-note">${type.guidance}</div>
     ${screenshotPreview}
     ${actionArea}
-    <h3>コメント</h3>
-    ${comments}
     <section class="quest-detail-issuer-profile" aria-label="発行者プロフィール">
       ${issuerProfileMarkup}
     </section>

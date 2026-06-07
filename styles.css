@@ -2799,8 +2799,7 @@ h3 {
   margin: 0;
 }
 
-.detail-meta div,
-.comment {
+.detail-meta div {
   padding: 0.7rem;
   border-radius: 8px;
   background: #f5f7fb;
@@ -3026,10 +3025,6 @@ h3 {
   margin: 0;
   color: var(--ink);
   font-weight: 900;
-}
-
-.comment {
-  margin-top: 0.7rem;
 }
 
 .rules-list {
