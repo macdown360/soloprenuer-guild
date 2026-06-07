@@ -881,7 +881,7 @@ function syncDashboardSummary() {
   if (issuedCopyEl) issuedCopyEl.textContent = openIssuedCount ? "応募や完了報告が届いたら承認できます。" : "必要ならクエストを発行できます。";
   if (currentRankEl) currentRankEl.textContent = rankInfo.current.name;
   if (nextRankTitleEl) {
-    nextRankTitleEl.textContent = rankInfo.next ? `${rankInfo.next.name}まであと${rankInfo.remaining} Trust` : "最高ランクに到達しています";
+    nextRankTitleEl.textContent = rankInfo.next ? `${rankInfo.next.name}まであと${rankInfo.remaining}T` : "最高ランクに到達しています";
   }
   if (nextRankBarEl) nextRankBarEl.style.width = `${rankInfo.percent}%`;
   if (nextRankCopyEl) {
