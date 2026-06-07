@@ -28,6 +28,7 @@ const state = {
   issued: 7,
   selectedQuestId: 1,
   editingQuestId: null,
+  questListTab: "new",
   missions: [false, false, false],
   streak: 5,
   weeklyProgress: 1,
@@ -224,6 +225,7 @@ const latestQuestPrev = document.querySelector("[data-latest-prev]");
 const latestQuestNext = document.querySelector("[data-latest-next]");
 const categoryFilter = document.querySelector("#categoryFilter");
 const keywordFilter = document.querySelector("#keywordFilter");
+const questTabButtons = document.querySelectorAll("[data-quest-tab]");
 const heroCategory = document.querySelector("#heroCategory");
 const heroKeyword = document.querySelector("#heroKeyword");
 const questForm = document.querySelector("#questForm");
@@ -1272,11 +1274,23 @@ function renderIssuedQuests() {
 function filteredQuests() {
   const category = categoryFilter?.value || "all";
   const keyword = (keywordFilter?.value || "").trim().toLowerCase();
+  const activeTab = state.questListTab || "new";
 
-  return state.quests.filter((quest) => {
-    const categoryMatch = category === "all" || quest.category === category;
-    const keywordText = `${quest.title} ${quest.issuer} ${quest.description} ${(quest.tags || []).join(" ")} ${(quest.skills || []).join(" ")}`.toLowerCase();
-    return categoryMatch && (!keyword || keywordText.includes(keyword));
+  const quests = state.quests
+    .filter((quest) => {
+      updateQuestStatus(quest);
+      const closed = isQuestClosed(quest);
+      const tabMatch = activeTab === "closed" ? closed : !closed;
+      const categoryMatch = category === "all" || quest.category === category;
+      const keywordText = `${quest.title} ${quest.issuer} ${quest.description} ${(quest.tags || []).join(" ")} ${(quest.skills || []).join(" ")}`.toLowerCase();
+      return tabMatch && categoryMatch && (!keyword || keywordText.includes(keyword));
+    });
+
+  return quests.sort((a, b) => {
+    if (activeTab === "popular") return getQuestProgress(b) - getQuestProgress(a) || b.reward - a.reward;
+    if (activeTab === "reward") return b.reward - a.reward || getQuestProgress(b) - getQuestProgress(a);
+    if (activeTab === "deadline") return new Date(`${a.deadline}T00:00:00`) - new Date(`${b.deadline}T00:00:00`);
+    return state.quests.indexOf(a) - state.quests.indexOf(b);
   });
 }
 
@@ -1285,9 +1299,13 @@ function renderQuestList() {
 
   const quests = filteredQuests();
   questList.innerHTML = "";
+  questTabButtons.forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.questTab === state.questListTab);
+  });
 
   if (!quests.length) {
-    questList.innerHTML = '<article class="quest-card"><div class="quest-main"><h3>該当するクエストがありません</h3><p>カテゴリやキーワードを変更してください。</p></div></article>';
+    const emptyCopy = state.questListTab === "closed" ? "クローズ済みのクエストはありません。" : "カテゴリやキーワードを変更してください。";
+    questList.innerHTML = `<article class="quest-card"><div class="quest-main"><h3>該当するクエストがありません</h3><p>${emptyCopy}</p></div></article>`;
     return;
   }
 
@@ -1883,6 +1901,12 @@ function approveSubmissionFromIssuedCard(questId, submissionId) {
 
 categoryFilter?.addEventListener("change", renderQuestList);
 keywordFilter?.addEventListener("input", renderQuestList);
+questTabButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    state.questListTab = button.dataset.questTab || "new";
+    renderQuestList();
+  });
+});
 
 /* ============================================================
    GAMIFICATION — Daily Missions

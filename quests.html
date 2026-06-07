@@ -185,10 +185,11 @@
 
             <section class="quest-results">
               <div class="quest-tabs" aria-label="並び替え">
-                <button class="is-active" type="button">新着</button>
-                <button type="button">人気</button>
-                <button type="button">高報酬</button>
-                <button type="button">締切間近</button>
+                <button class="is-active" type="button" data-quest-tab="new">新着</button>
+                <button type="button" data-quest-tab="popular">人気</button>
+                <button type="button" data-quest-tab="reward">高報酬</button>
+                <button type="button" data-quest-tab="deadline">締切間近</button>
+                <button type="button" data-quest-tab="closed">クローズ済</button>
               </div>
               <div class="quest-list quest-list-dense" id="questList" aria-label="クエスト一覧"></div>
             </section>
