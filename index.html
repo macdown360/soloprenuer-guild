@@ -85,35 +85,14 @@
               <h2>最新クエスト</h2>
               <p>あなたのスキルを待っている依頼がある。達成するたびにGoldとTrustが増える。</p>
             </div>
-            <a class="btn btn-outline" href="dashboard.html#quest-create"><i data-lucide="plus"></i>クエストを発行</a>
-            <a class="btn btn-outline" href="quests.html"><i data-lucide="search"></i>一覧で探す</a>
+            <div class="latest-quest-actions">
+              <button class="slider-btn" type="button" data-latest-prev aria-label="前のクエストを見る"><i data-lucide="chevron-left"></i></button>
+              <button class="slider-btn" type="button" data-latest-next aria-label="次のクエストを見る"><i data-lucide="chevron-right"></i></button>
+              <a class="btn btn-outline" href="dashboard.html#quest-create"><i data-lucide="plus"></i>クエストを発行</a>
+              <a class="btn btn-outline" href="quests.html"><i data-lucide="search"></i>一覧で探す</a>
+            </div>
           </div>
-          <div class="quest-list compact">
-            <article class="quest-card">
-              <div class="quest-main">
-                <span class="category">フィードバック</span>
-                <h3>新しいLPのファーストビューに率直な感想がほしい</h3>
-                <p>発行者: リナ / 締切: 6月12日 / 応募: 4名</p>
-              </div>
-              <strong class="gold">10G</strong>
-            </article>
-            <article class="quest-card">
-              <div class="quest-main">
-                <span class="category">インタビュー</span>
-                <h3>副業SaaSのユーザーインタビュー30分</h3>
-                <p>発行者: カイト / 締切: 6月15日 / 応募: 2名</p>
-              </div>
-              <strong class="gold">50G</strong>
-            </article>
-            <article class="quest-card">
-              <div class="quest-main">
-                <span class="category">開発</span>
-                <h3>予約フォームの初回テスト利用と改善コメント</h3>
-                <p>発行者: ミオ / 締切: 6月18日 / 応募: 6名</p>
-              </div>
-              <strong class="gold">50G</strong>
-            </article>
-          </div>
+          <div class="latest-quest-slider" id="latestQuestSlider" aria-label="最新クエスト"></div>
         </div>
       </section>
 
@@ -242,6 +221,7 @@
         </nav>
       </div>
     </footer>
-    <script>document.addEventListener('DOMContentLoaded', function () { lucide.createIcons(); });</script>
+    <script src="app.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function () { if (window.lucide) lucide.createIcons(); });</script>
   </body>
 </html>

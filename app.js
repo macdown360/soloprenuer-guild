@@ -202,6 +202,9 @@ const formNote = document.querySelector("[data-form-note]");
 const reviewNote = document.querySelector("[data-review-note]");
 const questList = document.querySelector("#questList");
 const questDetail = document.querySelector("#questDetail");
+const latestQuestSlider = document.querySelector("#latestQuestSlider");
+const latestQuestPrev = document.querySelector("[data-latest-prev]");
+const latestQuestNext = document.querySelector("[data-latest-next]");
 const categoryFilter = document.querySelector("#categoryFilter");
 const keywordFilter = document.querySelector("#keywordFilter");
 const heroCategory = document.querySelector("#heroCategory");
@@ -417,6 +420,43 @@ function renderRecommendedQuests() {
   if (window.lucide) lucide.createIcons();
 }
 
+function renderLatestQuestSlider() {
+  if (!latestQuestSlider) return;
+
+  const latestQuests = state.quests.slice(0, 6);
+  latestQuestSlider.innerHTML = latestQuests
+    .map((quest) => {
+      updateQuestStatus(quest);
+      const type = getQuestType(quest);
+      const closed = isQuestClosed(quest);
+      const progress = Math.min(getQuestProgress(quest), getQuestCapacity(quest));
+      return `
+        <a class="quest-card quest-card-link latest-quest-card${closed ? " is-closed" : ""}" href="${getQuestDetailUrl(quest.id)}">
+          <div class="quest-main">
+            <div class="quest-card-top">
+              <div class="quest-card-labels">
+                <span class="category">${quest.category}</span>
+                <span class="quest-type-badge">${type.label}</span>
+                ${closed ? `<span class="quest-status-badge">${type.closedLabel}</span>` : ""}
+              </div>
+              <strong class="gold">${quest.reward}G</strong>
+            </div>
+            <h3>${quest.title}</h3>
+            <p class="quest-card-desc">${quest.description}</p>
+            <div class="quest-card-meta">
+              <span>発行者: ${quest.issuer}</span>
+              <span>締切: ${formatDate(quest.deadline)}</span>
+              <span>${type.metricLabel}: ${progress}/${getQuestCapacity(quest)}名</span>
+            </div>
+          </div>
+        </a>
+      `;
+    })
+    .join("");
+
+  if (window.lucide) lucide.createIcons();
+}
+
 function syncStats() {
   if (goldEl) goldEl.textContent = state.gold;
   if (trustEl) trustEl.textContent = state.trust;
@@ -425,6 +465,7 @@ function syncStats() {
   if (issuedEl) issuedEl.textContent = state.issued;
   if (totalQuestsEl) totalQuestsEl.textContent = state.quests.length;
   if (formNote) formNote.textContent = `現在の残高: ${state.gold}G / 現在ランク: ${getRank(state.trust)}`;
+  renderLatestQuestSlider();
   renderRecommendedQuests();
   renderReviewOptions();
 }
@@ -897,6 +938,16 @@ document.querySelectorAll("[data-category-link]").forEach((link) => {
     }
   });
 });
+
+function scrollLatestQuests(direction) {
+  if (!latestQuestSlider) return;
+  const firstCard = latestQuestSlider.querySelector(".latest-quest-card");
+  const distance = firstCard ? firstCard.getBoundingClientRect().width + 16 : 360;
+  latestQuestSlider.scrollBy({ left: direction * distance, behavior: "smooth" });
+}
+
+latestQuestPrev?.addEventListener("click", () => scrollLatestQuests(-1));
+latestQuestNext?.addEventListener("click", () => scrollLatestQuests(1));
 
 renderAccountProfile();
 syncStats();
