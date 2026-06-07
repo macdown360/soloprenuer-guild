@@ -2702,6 +2702,12 @@ h3 {
   padding: 1rem;
 }
 
+.closed-quest-list {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1rem;
+}
+
 .issued-quest-card {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -2713,22 +2719,41 @@ h3 {
   background: #fff;
 }
 
+.closed-quest-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.8rem;
+  align-items: center;
+  padding: 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}
+
 .issued-quest-main {
   min-width: 0;
 }
 
+.closed-quest-main {
+  min-width: 0;
+}
+
 .issued-quest-card h3,
-.issued-quest-card p {
+.issued-quest-card p,
+.closed-quest-card h3,
+.closed-quest-card p {
   margin-bottom: 0;
 }
 
-.issued-quest-card h3 {
+.issued-quest-card h3,
+.closed-quest-card h3 {
   margin-top: 0.45rem;
   font-size: 1rem;
   line-height: 1.45;
 }
 
-.issued-quest-card p {
+.issued-quest-card p,
+.closed-quest-card p {
   margin-top: 0.2rem;
   color: var(--muted);
   font-size: 0.9rem;
@@ -3359,8 +3384,13 @@ h3 {
     width: 100%;
   }
 
-  .issued-quest-card {
+  .issued-quest-card,
+  .closed-quest-card {
     grid-template-columns: 1fr;
+  }
+
+  .closed-quest-card .btn {
+    width: 100%;
   }
 
   .issued-quest-actions {

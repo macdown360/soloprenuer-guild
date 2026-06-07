@@ -231,6 +231,8 @@ const heroKeyword = document.querySelector("#heroKeyword");
 const questForm = document.querySelector("#questForm");
 const issuedQuestsEl = document.querySelector("#issuedQuests");
 const issuedListCountEl = document.querySelector("[data-issued-list-count]");
+const closedIssuedQuestsEl = document.querySelector("#closedIssuedQuests");
+const closedIssuedCountEl = document.querySelector("[data-closed-issued-count]");
 const questFormTitleEl = document.querySelector("[data-quest-form-title]");
 const questFormStatusEl = document.querySelector("[data-quest-form-status]");
 const questSubmitEl = document.querySelector("[data-quest-submit]");
@@ -842,6 +844,14 @@ function getIssuedQuests() {
   });
 }
 
+function getClosedIssuedQuests() {
+  return state.quests.filter((quest) => {
+    if (!isQuestClosed(quest)) return false;
+    if (remote.enabled) return quest.issuerId === remote.user?.id;
+    return quest.issuer === state.account.name;
+  });
+}
+
 function setQuestFormMode(quest = null) {
   state.editingQuestId = quest?.id || null;
   if (questFormTitleEl) questFormTitleEl.textContent = quest ? "クエスト編集" : "クエスト発行";
@@ -1079,6 +1089,7 @@ function syncStats() {
   renderLatestQuestSlider();
   renderRecommendedQuests();
   renderIssuedQuests();
+  renderClosedIssuedQuests();
   setTrustAvatarFrame(accountInitialsEl, state.trust);
   setTrustAvatarFrame(authAccountInitialsEl, state.trust);
 }
@@ -1279,6 +1290,51 @@ function renderIssuedQuests() {
   issuedQuestsEl.querySelectorAll("[data-delete-issued]").forEach((button) => {
     button.addEventListener("click", () => deleteIssuedQuest(button.dataset.deleteIssued));
   });
+
+  if (window.lucide) lucide.createIcons();
+}
+
+function renderClosedIssuedQuests() {
+  if (!closedIssuedQuestsEl) return;
+
+  const quests = getClosedIssuedQuests();
+  if (closedIssuedCountEl) closedIssuedCountEl.textContent = `${quests.length}件`;
+
+  if (!quests.length) {
+    closedIssuedQuestsEl.innerHTML = `
+      <article class="empty-state">
+        <h3>クローズ済みクエストはありません</h3>
+        <p>募集人数に達したクエストや受付終了したクエストがここに表示されます。</p>
+      </article>
+    `;
+    return;
+  }
+
+  closedIssuedQuestsEl.innerHTML = quests
+    .map((quest) => {
+      const type = getQuestType(quest);
+      const progress = Math.min(getQuestProgress(quest), getQuestCapacity(quest));
+      return `
+        <article class="closed-quest-card">
+          <div class="closed-quest-main">
+            <div class="quest-card-labels">
+              <span class="category">${quest.category}</span>
+              <span class="quest-type-badge">${type.label}</span>
+              <span class="quest-status-badge">${type.closedLabel}</span>
+            </div>
+            <h3>${quest.title}</h3>
+            <p>${quest.description}</p>
+            <div class="quest-card-meta">
+              <span>${quest.reward}G</span>
+              <span>${type.metricLabel}: ${progress}/${getQuestCapacity(quest)}名</span>
+              <span>締切: ${formatDate(quest.deadline)}</span>
+            </div>
+          </div>
+          <a class="btn btn-outline btn-sm" href="${getQuestDetailUrl(quest.id)}" target="_blank" rel="noopener"><i data-lucide="external-link"></i>詳細</a>
+        </article>
+      `;
+    })
+    .join("");
 
   if (window.lucide) lucide.createIcons();
 }
