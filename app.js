@@ -845,13 +845,13 @@ function syncStats() {
     el.textContent = state.trust;
   });
   rankEls.forEach((el) => {
-    el.textContent = `Trust ${state.trust}`;
+    el.textContent = `${state.trust}T`;
   });
   completedEls.forEach((el) => {
-    el.textContent = state.completed;
+    el.textContent = `${state.completed}件`;
   });
   issuedEls.forEach((el) => {
-    el.textContent = state.issued;
+    el.textContent = `${state.issued}件`;
   });
   totalQuestEls.forEach((el) => {
     el.textContent = state.quests.length;

@@ -1795,7 +1795,7 @@ h3 {
 }
 
 .simple-kpis article {
-  border-top: 0;
+  border: 1px solid var(--line);
   background: #f8fafc;
 }
 
