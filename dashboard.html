@@ -118,12 +118,12 @@
               </div>
             </div>
             <div class="priority-list" aria-label="優先タスク">
-              <article class="priority-item is-urgent">
+              <article class="priority-item is-urgent" data-pending-task>
                 <div class="priority-icon"><i data-lucide="badge-check"></i></div>
                 <div>
                   <span>最優先</span>
-                  <h3>承認待ちが3件あります</h3>
-                  <p>評価すると報酬とTrustが反映されます。</p>
+                  <h3 data-pending-title>承認待ちはありません</h3>
+                  <p data-pending-copy>新しい完了報告が届くとここに表示されます。</p>
                 </div>
                 <a class="btn btn-primary btn-sm" href="#completion">対応</a>
               </article>
@@ -131,8 +131,8 @@
                 <div class="priority-icon"><i data-lucide="send"></i></div>
                 <div>
                   <span>発行中</span>
-                  <h3>進行中 2件 / 応募待ち 1件</h3>
-                  <p>必要なら追加でクエストを発行できます。</p>
+                  <h3 data-issued-title>発行中 0件</h3>
+                  <p data-issued-copy>必要ならクエストを発行できます。</p>
                 </div>
                 <a class="btn btn-outline btn-sm" href="#quest-create">発行</a>
               </article>
@@ -145,7 +145,7 @@
               </article>
               <article>
                 <span>Trust</span>
-                <strong data-rank>Trust 325</strong>
+                <strong data-rank>Trust 0</strong>
               </article>
               <article>
                 <span>完了</span>
@@ -172,7 +172,7 @@
             </p>
             <div class="rank-display">
               <span>現在のランク</span>
-              <strong>一人前冒険者</strong>
+              <strong data-current-rank>見習い冒険者</strong>
             </div>
             <dl class="profile-meta" data-profile-meta></dl>
             <div class="profile-chip-block">
@@ -189,14 +189,14 @@
             <article class="next-rank-panel">
               <div>
                 <span class="panel-label">NEXT RANK</span>
-                <h3>熟練冒険者まであと375 Trust</h3>
+                <h3 data-next-rank-title>駆け出し冒険者まであと100 Trust</h3>
               </div>
               <div class="progress-track" aria-label="熟練冒険者までの進捗">
-                <span style="width: 46%"></span>
+                <span data-next-rank-bar style="width: 0%"></span>
               </div>
-              <p>完了クエストあと8件、または5つ星評価あと25件が目安です。</p>
+              <p data-next-rank-copy>クエストを達成するとTrustが積み上がります。</p>
             </article>
-            <article class="weekly-challenge-card simple-challenge">
+            <article class="weekly-challenge-card simple-challenge" data-weekly-card>
               <div class="wc-head">
                 <span class="panel-label">WEEKLY</span>
                 <span class="wc-timer-badge"><i data-lucide="clock"></i> 残り4日</span>
@@ -218,7 +218,7 @@
             <div>
               <p class="eyebrow">FOR YOU</p>
               <h2>あなたへのおすすめクエスト</h2>
-              <p class="section-copy">AI開発・BtoB SaaSのスキルに合った、応募候補の依頼です。</p>
+              <p class="section-copy" data-rec-copy>プロフィールに合った応募候補の依頼です。</p>
             </div>
             <a class="btn btn-outline" href="quests.html"><i data-lucide="search"></i>すべて見る</a>
           </div>
@@ -235,11 +235,11 @@
               <p>よく使う情報だけを表示しています。</p>
             </div>
             <div class="collection-progress">
-              <strong>6 / 18</strong>
+              <strong data-achievement-count>0 / 18</strong>
               <span>獲得済み</span>
             </div>
           </div>
-          <div class="title-grid title-grid-wide">
+          <div class="title-grid title-grid-wide" data-title-grid>
             <article class="title-badge is-earned">
               <i data-lucide="swords"></i>
               <strong>初陣</strong>
@@ -291,11 +291,11 @@
             </div>
             <form class="guild-form" id="questForm">
               <label for="questTitle">タイトル</label>
-              <input id="questTitle" name="title" type="text" value="AIメモアプリの初回体験にコメントがほしい" required />
+              <input id="questTitle" name="title" type="text" placeholder="例: 初回体験に率直なコメントがほしい" required />
               <label for="questDescription">詳細説明</label>
-              <textarea id="questDescription" name="description" rows="5" required>URLを共有するので、登録から最初のメモ作成まで試して、分かりにくい点を3つ教えてください。</textarea>
+              <textarea id="questDescription" name="description" rows="5" placeholder="依頼したい内容、確認してほしい観点、提出してほしいものを書いてください。" required></textarea>
               <label for="questUrl">参考URL</label>
-              <input id="questUrl" name="url" type="url" value="https://example.com/demo" placeholder="https://example.com" />
+              <input id="questUrl" name="url" type="url" placeholder="https://example.com" />
               <label for="questScreenshot">スクショ画面</label>
               <input id="questScreenshot" name="screenshot" type="file" accept="image/*" />
               <div class="form-row">
@@ -314,7 +314,7 @@
               <div class="form-row">
                 <label>
                   報酬Gold
-                  <input id="questReward" name="reward" type="number" min="1" max="300" value="20" required />
+                  <input id="questReward" name="reward" type="number" min="1" max="300" placeholder="20" required />
                 </label>
                 <label>
                   カテゴリ
@@ -331,9 +331,9 @@
                 </label>
               </div>
               <label for="questTags">タグ</label>
-              <input id="questTags" name="tags" type="text" value="AI, UXレビュー, オンボーディング" placeholder="例: AI, UXレビュー, BtoB SaaS" />
+              <input id="questTags" name="tags" type="text" placeholder="例: AI, UXレビュー, BtoB SaaS" />
               <label for="questDeadline">締切</label>
-              <input id="questDeadline" name="deadline" type="date" value="2026-06-20" required />
+              <input id="questDeadline" name="deadline" type="date" required />
               <button class="btn btn-primary" type="submit"><i data-lucide="send"></i>発行する</button>
               <p class="form-note" data-form-note>現在の残高: 100G</p>
             </form>
@@ -345,7 +345,7 @@
                 <p class="eyebrow">APPROVAL</p>
                 <h2>承認待ち</h2>
               </div>
-              <span class="status-pill">3件</span>
+              <span class="status-pill" data-review-count-status>0件</span>
             </div>
             <form class="guild-form" id="reviewForm">
               <label for="completedQuest">承認するクエスト</label>
@@ -363,9 +363,9 @@
                 <option value="0">★ 承認のみ / +0 Trust</option>
               </select>
               <label for="reviewComment">コメント</label>
-              <textarea id="reviewComment" rows="5">質問設計が具体的で、次に改善する画面が明確になりました。</textarea>
+              <textarea id="reviewComment" rows="5" placeholder="承認時のコメントを入力してください。"></textarea>
               <button class="btn btn-primary" type="submit"><i data-lucide="badge-check"></i>承認する</button>
-              <p class="form-note" data-review-note>未承認の完了報告が3件あります。</p>
+              <p class="form-note" data-review-note>承認待ちのクエストはありません。</p>
             </form>
           </article>
         </div>

@@ -245,6 +245,20 @@ const authRequiredEls = document.querySelectorAll("[data-auth-required]");
 const guestOnlyEls = document.querySelectorAll("[data-guest-only]");
 const registerCta = document.querySelector("[data-register-cta]");
 const registerSignedInCopy = document.querySelector("[data-register-signed-in-copy]");
+const pendingTitleEl = document.querySelector("[data-pending-title]");
+const pendingCopyEl = document.querySelector("[data-pending-copy]");
+const pendingTaskEl = document.querySelector("[data-pending-task]");
+const issuedTitleEl = document.querySelector("[data-issued-title]");
+const issuedCopyEl = document.querySelector("[data-issued-copy]");
+const currentRankEl = document.querySelector("[data-current-rank]");
+const nextRankTitleEl = document.querySelector("[data-next-rank-title]");
+const nextRankBarEl = document.querySelector("[data-next-rank-bar]");
+const nextRankCopyEl = document.querySelector("[data-next-rank-copy]");
+const recCopyEl = document.querySelector("[data-rec-copy]");
+const achievementCountEl = document.querySelector("[data-achievement-count]");
+const titleGridEl = document.querySelector("[data-title-grid]");
+const reviewCountStatusEl = document.querySelector("[data-review-count-status]");
+const weeklyCardEl = document.querySelector("[data-weekly-card]");
 
 function setAuthNote(message) {
   authNoteEls.forEach((el) => {
@@ -296,8 +310,17 @@ function getInitials(name) {
   return String(name || "冒").slice(0, 1).toUpperCase();
 }
 
+function inferPreferredCategories(tags) {
+  const profileTags = normalizeList(tags);
+  if (!profileTags.length) return [];
+  return Object.entries(state.questTaxonomy)
+    .filter(([, categoryTags]) => overlap(categoryTags, profileTags).length > 0)
+    .map(([category]) => category);
+}
+
 function mapProfile(row) {
   if (!row) return null;
+  const profileTags = unique([...normalizeList(row.skills), ...normalizeList(row.interests)]);
   return {
     name: row.adventurer_name || "冒険者",
     initials: getInitials(row.adventurer_name),
@@ -306,8 +329,8 @@ function mapProfile(row) {
     businessStage: row.job || "活動中",
     strengths: normalizeList(row.skills),
     interests: normalizeList(row.interests),
-    preferredCategories: ["AI", "フィードバック", "開発", "インタビュー"],
-    preferredTags: unique([...normalizeList(row.skills), ...normalizeList(row.interests)]),
+    preferredCategories: inferPreferredCategories(profileTags),
+    preferredTags: profileTags,
   };
 }
 
@@ -317,6 +340,7 @@ function mapQuest(row) {
     type: row.quest_type || "report",
     status: row.status || "open",
     title: row.title,
+    issuerId: row.issuer_id || "",
     issuer: row.issuer_name || "冒険者",
     reward: Number(row.reward) || 0,
     category: row.category,
@@ -392,7 +416,7 @@ async function loadRemoteState() {
   state.issued = Number(profile.issued_quests) || 0;
   setAuthNote(`${state.account.name}としてログイン中です。`);
 
-  const issuedQuestIds = new Set(state.quests.filter((quest) => quest.issuer === state.account.name).map((quest) => String(quest.id)));
+  const issuedQuestIds = new Set(state.quests.filter((quest) => quest.issuerId === remote.user.id).map((quest) => String(quest.id)));
   const { data: submissions, error: submissionsError } = await supabaseClient
     .from("quest_submissions")
     .select("id, quest_id, submission_type, comment, status, created_at")
@@ -535,6 +559,33 @@ function getRank(trust) {
   return "見習い冒険者";
 }
 
+function getNextRankInfo(trust) {
+  const ranks = [
+    { name: "見習い冒険者", min: 0 },
+    { name: "駆け出し冒険者", min: 100 },
+    { name: "一人前冒険者", min: 300 },
+    { name: "熟練冒険者", min: 700 },
+    { name: "上級冒険者", min: 1500 },
+    { name: "マスター冒険者", min: 3000 },
+    { name: "伝説の冒険者", min: 5000 },
+  ];
+  let currentIndex = 0;
+  for (let index = 0; index < ranks.length; index += 1) {
+    if (trust >= ranks[index].min) currentIndex = index;
+  }
+  const current = ranks[Math.max(0, currentIndex)];
+  const next = ranks[currentIndex + 1] || null;
+  if (!next) return { current, next: null, remaining: 0, percent: 100 };
+  const previousMin = current.min;
+  const span = next.min - previousMin;
+  return {
+    current,
+    next,
+    remaining: Math.max(0, next.min - trust),
+    percent: Math.min(100, Math.round(((trust - previousMin) / span) * 100)),
+  };
+}
+
 function formatDate(value) {
   return formatter.format(new Date(`${value}T00:00:00`));
 }
@@ -558,13 +609,18 @@ function renderAccountProfile() {
   if (profileCategoriesEl) profileCategoriesEl.innerHTML = createChips(account.preferredCategories, "is-category");
 
   if (matchSignalsEl) {
-    matchSignalsEl.innerHTML = [
-      ["優先カテゴリ", account.preferredCategories.join(" / ")],
-      ["強いタグ", account.preferredTags.slice(0, 4).join(" / ")],
-      ["受けやすい依頼", "レビュー・検証・30分ヒアリング"],
-    ]
-      .map(([label, value]) => `<article><span>${label}</span><strong>${value}</strong></article>`)
-      .join("");
+    const signals = account.preferredTags.length
+      ? [
+          ["優先カテゴリ", account.preferredCategories.join(" / ") || "未設定"],
+          ["強いタグ", account.preferredTags.slice(0, 4).join(" / ")],
+          ["受けやすい依頼", "プロフィールに近いクエストを優先表示"],
+        ]
+      : [
+          ["優先カテゴリ", "未設定"],
+          ["強いタグ", "未設定"],
+          ["受けやすい依頼", "スキルを登録すると表示されます"],
+        ];
+    matchSignalsEl.innerHTML = signals.map(([label, value]) => `<article><span>${label}</span><strong>${value}</strong></article>`).join("");
   }
 
   if (categoryMatrixEl) {
@@ -604,11 +660,37 @@ function scoreQuest(quest) {
 function renderRecommendedQuests() {
   if (!recommendedQuestsEl) return;
 
-  const recommended = state.quests
+  const hasPersonalization = state.account.preferredTags.length || state.account.preferredCategories.length;
+  const recommended = hasPersonalization
+    ? state.quests
     .filter((quest) => !isQuestClosed(quest))
     .map((quest) => ({ quest, match: scoreQuest(quest) }))
     .sort((a, b) => b.match.score - a.match.score || b.quest.reward - a.quest.reward)
-    .slice(0, 3);
+        .slice(0, 3)
+    : [];
+
+  if (recCopyEl) {
+    recCopyEl.textContent = hasPersonalization
+      ? "プロフィールのスキルや関心に合った応募候補の依頼です。"
+      : "スキルや関心をプロフィールに登録すると、おすすめクエストが表示されます。";
+  }
+
+  if (!recommended.length) {
+    recommendedQuestsEl.innerHTML = `
+      <article class="rec-quest-card">
+        <div class="rec-quest-top">
+          <span class="category">未設定</span>
+        </div>
+        <h3>おすすめクエストはまだありません</h3>
+        <p>プロフィールのスキルや関心を登録するか、クエスト一覧から気になる依頼を探してください。</p>
+        <div class="rec-quest-foot">
+          <a class="btn btn-primary btn-sm" href="quests.html">一覧へ</a>
+        </div>
+      </article>
+    `;
+    if (window.lucide) lucide.createIcons();
+    return;
+  }
 
   recommendedQuestsEl.innerHTML = recommended
     .map(({ quest, match }) => {
@@ -682,9 +764,69 @@ function syncStats() {
   if (issuedEl) issuedEl.textContent = state.issued;
   if (totalQuestsEl) totalQuestsEl.textContent = state.quests.length;
   if (formNote) formNote.textContent = `現在の残高: ${state.gold}G / 現在ランク: ${getRank(state.trust)}`;
+  syncDashboardSummary();
   renderLatestQuestSlider();
   renderRecommendedQuests();
   renderReviewOptions();
+}
+
+function syncDashboardSummary() {
+  const pendingCount = remote.enabled ? remote.pendingSubmissions.length : 3;
+  const openIssuedCount = remote.enabled
+    ? state.quests.filter((quest) => quest.issuerId === remote.user?.id && !isQuestClosed(quest)).length
+    : 2;
+  const rankInfo = getNextRankInfo(state.trust);
+
+  if (pendingTitleEl) pendingTitleEl.textContent = pendingCount ? `承認待ちが${pendingCount}件あります` : "承認待ちはありません";
+  if (pendingCopyEl) {
+    pendingCopyEl.textContent = pendingCount
+      ? "評価すると報酬とTrustが反映されます。"
+      : "新しい完了報告が届くとここに表示されます。";
+  }
+  if (pendingTaskEl) pendingTaskEl.classList.toggle("is-urgent", pendingCount > 0);
+  if (issuedTitleEl) issuedTitleEl.textContent = `発行中 ${openIssuedCount}件`;
+  if (issuedCopyEl) issuedCopyEl.textContent = openIssuedCount ? "応募や完了報告が届いたら承認できます。" : "必要ならクエストを発行できます。";
+  if (currentRankEl) currentRankEl.textContent = rankInfo.current.name;
+  if (nextRankTitleEl) {
+    nextRankTitleEl.textContent = rankInfo.next ? `${rankInfo.next.name}まであと${rankInfo.remaining} Trust` : "最高ランクに到達しています";
+  }
+  if (nextRankBarEl) nextRankBarEl.style.width = `${rankInfo.percent}%`;
+  if (nextRankCopyEl) {
+    nextRankCopyEl.textContent = rankInfo.next
+      ? "クエストを達成するとTrustが積み上がります。"
+      : "積み上げたTrustがギルド内の実績として表示されます。";
+  }
+  if (reviewCountStatusEl) reviewCountStatusEl.textContent = `${pendingCount}件`;
+  if (weeklyCardEl) weeklyCardEl.hidden = remote.enabled;
+  renderAchievements();
+}
+
+function renderAchievements() {
+  if (!titleGridEl) return;
+
+  const titleRules = [
+    { icon: "swords", title: "初陣", copy: "初クエスト達成", earned: state.completed >= 1 },
+    { icon: "handshake", title: "助っ人", copy: "10件達成", earned: state.completed >= 10 },
+    { icon: "medal", title: "常連冒険者", copy: "7日継続", earned: !remote.enabled && state.streak >= 7 },
+    { icon: "message-square-heart", title: "壁打ち名人", copy: "相談回答5件", earned: state.completed >= 5 },
+    { icon: "star", title: "五つ星の協力者", copy: "高評価の実績", earned: false },
+    { icon: "scroll-text", title: "依頼上手", copy: "クエスト発行5件", earned: state.issued >= 5 },
+    { icon: "lock", title: "ベテラン", copy: "50件達成で獲得", earned: state.completed >= 50 },
+  ];
+  const earnedCount = titleRules.filter((rule) => rule.earned).length;
+  if (achievementCountEl) achievementCountEl.textContent = `${earnedCount} / 18`;
+  titleGridEl.innerHTML = titleRules
+    .map(
+      (rule) => `
+        <article class="title-badge ${rule.earned ? "is-earned" : "is-locked"}">
+          <i data-lucide="${rule.earned ? rule.icon : "lock"}"></i>
+          <strong>${rule.title}</strong>
+          <span>${rule.copy}</span>
+        </article>
+      `
+    )
+    .join("");
+  if (window.lucide) lucide.createIcons();
 }
 
 function renderReviewOptions() {
@@ -717,8 +859,12 @@ function renderReviewOptions() {
     completedQuestEl.value = previousValue;
   }
 
-  if (reviewNote && !approvableQuests.length) {
-    reviewNote.textContent = "承認待ちのクエストはありません。";
+  completedQuestEl.disabled = approvableQuests.length === 0;
+  const submitButton = reviewForm?.querySelector('button[type="submit"]');
+  if (submitButton) submitButton.disabled = approvableQuests.length === 0;
+
+  if (reviewNote) {
+    reviewNote.textContent = approvableQuests.length ? `未承認の完了報告が${approvableQuests.length}件あります。` : "承認待ちのクエストはありません。";
   }
 }
 
@@ -1147,6 +1293,11 @@ function ratingFromTrustBonus(value) {
 
 reviewForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (!completedQuestEl?.value) {
+    reviewNote.textContent = "承認待ちのクエストはありません。";
+    return;
+  }
+
   const trustBonus = Number(document.querySelector("#rating").value);
   const gainedTrust = 5 + trustBonus;
 
