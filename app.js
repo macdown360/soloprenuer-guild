@@ -308,6 +308,19 @@ function getQuestDetailUrl(id) {
   return `quest-detail.html?id=${encodeURIComponent(id)}`;
 }
 
+function normalizeQuestUrl(value) {
+  const rawValue = String(value || "").trim();
+  if (!rawValue) return "";
+
+  try {
+    const url = new URL(rawValue);
+    if (url.protocol !== "http:" && url.protocol !== "https:") return "";
+    return url.href;
+  } catch {
+    return "";
+  }
+}
+
 function getRank(trust) {
   if (trust >= 5000) return "伝説の冒険者";
   if (trust >= 3000) return "マスター冒険者";
@@ -581,6 +594,27 @@ function renderQuestDetail(quest) {
   const closed = isQuestClosed(quest);
   const progress = Math.min(getQuestProgress(quest), getQuestCapacity(quest));
   const progressPercent = getQuestProgressPercent(quest);
+  const referenceUrl = normalizeQuestUrl(quest.url);
+  const referenceMeta = referenceUrl
+    ? `
+      <div>
+        <span>参考URL</span>
+        <strong><a class="detail-link" href="${referenceUrl}" target="_blank" rel="noopener">開く</a></strong>
+      </div>
+    `
+    : "";
+  const screenshotPreview = quest.screenshot?.url
+    ? `
+      <section class="quest-attachment-preview">
+        <div>
+          <span class="panel-label">SCREENSHOT</span>
+          <h3>添付スクショ</h3>
+          <p>${quest.screenshot.name || "添付画像"}</p>
+        </div>
+        <img src="${quest.screenshot.url}" alt="クエスト発行時に添付されたスクショ" />
+      </section>
+    `
+    : "";
   const actionArea =
     quest.type === "report"
       ? `
@@ -640,8 +674,10 @@ function renderQuestDetail(quest) {
         <span>進め方</span>
         <strong>${getQuestActionHint(quest)}</strong>
       </div>
+      ${referenceMeta}
     </div>
     <div class="quest-flow-note">${type.guidance}</div>
+    ${screenshotPreview}
     ${issuerProfile}
     ${actionArea}
     <h3>コメント</h3>
@@ -754,6 +790,14 @@ questForm?.addEventListener("submit", (event) => {
   const reward = Number(data.get("reward"));
   const capacity = Math.max(1, Number(data.get("capacity")) || 1);
   const type = data.get("type") === "recruiting" ? "recruiting" : "report";
+  const screenshotFile = data.get("screenshot");
+  const screenshot =
+    screenshotFile instanceof File && screenshotFile.size > 0
+      ? {
+          name: screenshotFile.name,
+          url: URL.createObjectURL(screenshotFile),
+        }
+      : null;
 
   if (reward > state.gold) {
     formNote.textContent = `残高不足です。現在のGoldは${state.gold}Gです。`;
@@ -779,6 +823,8 @@ questForm?.addEventListener("submit", (event) => {
     capacity,
     approvedReports: 0,
     description: data.get("description"),
+    url: normalizeQuestUrl(data.get("url")),
+    screenshot,
     comments: ["発行されたばかりのクエストです。"],
   };
 

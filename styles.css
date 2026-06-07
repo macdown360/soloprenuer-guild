@@ -2038,6 +2038,12 @@ h3 {
   text-decoration-color: rgba(214, 168, 79, 0.7);
 }
 
+.detail-link {
+  color: #795a1d;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
 .quest-flow-note,
 .report-evidence-box {
   margin: 0;
@@ -2078,6 +2084,34 @@ h3 {
 .report-evidence-box {
   display: grid;
   gap: 0.55rem;
+}
+
+.quest-attachment-preview {
+  display: grid;
+  gap: 0.85rem;
+  padding: 0.9rem;
+  border: 1px solid #d7deea;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.quest-attachment-preview h3,
+.quest-attachment-preview p {
+  margin-bottom: 0;
+}
+
+.quest-attachment-preview p {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.quest-attachment-preview img {
+  width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
 }
 
 .report-evidence-box label {
