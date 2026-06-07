@@ -1074,6 +1074,25 @@ h3 {
   grid-template-columns: minmax(0, 1fr);
 }
 
+.login-section {
+  min-height: calc(100vh - 176px);
+  display: grid;
+  align-items: center;
+  padding: 48px 0;
+}
+
+.login-grid {
+  width: min(520px, 92vw);
+}
+
+.login-page h1 {
+  margin-bottom: 0;
+  color: var(--ink);
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: clamp(1.55rem, 3vw, 2rem);
+  line-height: 1.3;
+}
+
 .auth-form {
   padding-top: 0.2rem;
 }
@@ -1111,6 +1130,12 @@ h3 {
 .account-profile-content .profile-summary,
 .account-profile-content .profile-meta {
   margin: 0;
+}
+
+.profile-settings-form {
+  margin-top: 0.35rem;
+  padding: 1rem 0 0;
+  border-top: 1px solid var(--line);
 }
 
 .quest-search-hero {
@@ -1494,6 +1519,14 @@ h3 {
   color: var(--ink);
   font-weight: 800;
   line-height: 1.55;
+}
+
+.account-email {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
 }
 
 .profile-summary {

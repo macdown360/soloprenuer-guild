@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="styles.css" />
     <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
   </head>
-  <body class="dashboard-page">
+  <body class="dashboard-page mypage-page">
     <header class="site-header">
       <div class="container nav-wrap">
         <a class="logo" href="index.html">
@@ -37,45 +37,13 @@
         <nav class="nav-links" id="global-nav" aria-label="グローバルメニュー">
           <a href="index.html"><i data-lucide="home"></i>トップ</a>
           <a href="quests.html"><i data-lucide="search"></i>クエスト検索</a>
-          <a href="dashboard.html"><i data-lucide="layout-dashboard"></i>マイページ</a>
+          <a href="mypage.html"><i data-lucide="layout-dashboard"></i>マイページ</a>
           <a href="charter.html"><i data-lucide="book-open"></i>ギルド憲章</a>
         </nav>
       </div>
     </header>
 
     <main class="dashboard-main">
-      <section class="section auth-section" data-login-panel>
-        <div class="container auth-grid">
-          <article class="workspace-panel">
-            <div class="panel-head">
-              <div>
-                <p class="eyebrow">ACCOUNT</p>
-                <h2>冒険者アカウント</h2>
-              </div>
-              <span class="status-pill" data-auth-status>デモ</span>
-            </div>
-            <form class="guild-form auth-form" id="authForm">
-              <div class="form-row">
-                <label>
-                  メールアドレス
-                  <input name="email" type="email" placeholder="you@example.com" autocomplete="email" required />
-                </label>
-                <label>
-                  パスワード
-                  <input name="password" type="password" placeholder="8文字以上" autocomplete="current-password" required />
-                </label>
-              </div>
-              <div class="header-actions">
-                <button class="btn btn-primary" type="submit" data-auth-action="signin"><i data-lucide="log-in"></i>ログイン</button>
-                <a class="btn btn-outline" href="index.html#register" data-guest-only hidden><i data-lucide="user-plus"></i>冒険者登録</a>
-                <a class="btn btn-outline" href="quests.html" data-guest-only hidden><i data-lucide="search"></i>クエストを見る</a>
-              </div>
-              <p class="form-note" data-auth-note>Supabase未設定時はデモデータで動作します。</p>
-            </form>
-          </article>
-        </div>
-      </section>
-
       <section id="mypage" class="dashboard-hero" data-auth-required hidden>
         <div class="container dashboard-toolbar">
           <div>
@@ -103,6 +71,7 @@
                 <div>
                   <h3 data-auth-account-name>アキラ</h3>
                   <p class="profile-headline" data-auth-account-headline>個人開発者 / AIツール開発 / BtoB SaaS</p>
+                  <p class="account-email">メール: <span data-auth-account-email>デモアカウント</span></p>
                 </div>
               </div>
               <p class="profile-summary" data-auth-profile-summary>
@@ -113,6 +82,34 @@
                 <span class="panel-label">得意な領域</span>
                 <div class="chip-list" data-auth-profile-skills></div>
               </div>
+              <form class="guild-form profile-settings-form" id="profileForm">
+                <label>
+                  冒険者名
+                  <input name="adventurer_name" type="text" placeholder="例: アキラ" required />
+                </label>
+                <label>
+                  肩書き
+                  <input name="headline" type="text" placeholder="例: 個人開発者 / AIツール開発" />
+                </label>
+                <label>
+                  プロフィール
+                  <textarea name="summary" rows="4" placeholder="得意なこと、協力できること、今取り組んでいることを書いてください。"></textarea>
+                </label>
+                <label>
+                  事業フェーズ
+                  <input name="job" type="text" placeholder="例: BtoB SaaS 検証中" />
+                </label>
+                <label>
+                  得意な領域
+                  <input name="skills" type="text" placeholder="例: UXレビュー, BtoB SaaS, 顧客理解" />
+                </label>
+                <label>
+                  関心テーマ
+                  <input name="interests" type="text" placeholder="例: MVP検証, AI導入, 価格設計" />
+                </label>
+                <button class="btn btn-primary" type="submit"><i data-lucide="save"></i>プロフィールを保存</button>
+                <p class="form-note" data-profile-note>プロフィールはおすすめクエストの精度にも使われます。</p>
+              </form>
             </div>
           </section>
           <section class="command-panel focus-panel" aria-label="今日やること">
@@ -365,7 +362,7 @@
         <nav class="footer-links" aria-label="フッター">
           <a href="index.html">トップ</a>
           <a href="quests.html">クエスト検索</a>
-          <a href="dashboard.html">マイページ</a>
+          <a href="mypage.html">マイページ</a>
           <a href="charter.html">ギルド憲章</a>
         </nav>
       </div>

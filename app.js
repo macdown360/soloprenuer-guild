@@ -237,6 +237,7 @@ const profileCategoriesEl = document.querySelector("[data-profile-categories]");
 const authAccountInitialsEl = document.querySelector("[data-auth-account-initials]");
 const authAccountNameEl = document.querySelector("[data-auth-account-name]");
 const authAccountHeadlineEl = document.querySelector("[data-auth-account-headline]");
+const authAccountEmailEl = document.querySelector("[data-auth-account-email]");
 const authProfileSummaryEl = document.querySelector("[data-auth-profile-summary]");
 const authProfileMetaEl = document.querySelector("[data-auth-profile-meta]");
 const authProfileSkillsEl = document.querySelector("[data-auth-profile-skills]");
@@ -244,6 +245,8 @@ const matchSignalsEl = document.querySelector("[data-match-signals]");
 const categoryMatrixEl = document.querySelector("[data-category-matrix]");
 const registerForm = document.querySelector("#registerForm");
 const authForm = document.querySelector("#authForm");
+const profileForm = document.querySelector("#profileForm");
+const profileNoteEl = document.querySelector("[data-profile-note]");
 const authNoteEls = document.querySelectorAll("[data-auth-note]");
 const authStatusEl = document.querySelector("[data-auth-status]");
 const signoutBtn = document.querySelector("[data-signout]");
@@ -318,6 +321,7 @@ async function resendSignupConfirmation(email) {
 function syncAuthVisibility() {
   const isSignedIn = Boolean(remote.user);
   const canUseAuthRequiredSections = !remote.enabled || isSignedIn;
+  const isLoginPage = document.body.classList.contains("login-page");
   authRequiredEls.forEach((el) => {
     el.hidden = !canUseAuthRequiredSections;
   });
@@ -334,12 +338,12 @@ function syncAuthVisibility() {
     el.hidden = !canUseAuthRequiredSections;
   });
   loginPanelEls.forEach((el) => {
-    el.hidden = canUseAuthRequiredSections;
+    el.hidden = isLoginPage ? isSignedIn : canUseAuthRequiredSections;
   });
   if (signoutBtn) signoutBtn.hidden = !remote.enabled || !remote.user;
 
   if (registerCta) {
-    registerCta.href = isSignedIn ? "dashboard.html" : "#register";
+    registerCta.href = isSignedIn ? "mypage.html" : "#register";
     const label = registerCta.querySelector("span");
     if (label) label.textContent = isSignedIn ? "マイページへ" : "冒険者登録";
   }
@@ -414,6 +418,17 @@ async function loadRemoteState() {
   } = await supabaseClient.auth.getSession();
   remote.user = session?.user || null;
   setAuthStatus(remote.user ? "ログイン中" : "未ログイン");
+  syncAuthVisibility();
+
+  if (!remote.user && document.body.classList.contains("mypage-page")) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  if (remote.user && document.body.classList.contains("login-page")) {
+    window.location.href = "mypage.html";
+    return;
+  }
 
   const { data: questRows, error: questError } = await supabaseClient
     .from("quest_board")
@@ -637,6 +652,7 @@ function formatDate(value) {
 
 function renderAccountProfile() {
   const account = state.account;
+  const accountEmail = remote.user?.email || "デモアカウント";
 
   if (accountInitialsEl) accountInitialsEl.textContent = account.initials;
   if (accountNameEl) accountNameEl.textContent = account.name;
@@ -645,6 +661,7 @@ function renderAccountProfile() {
   if (authAccountInitialsEl) authAccountInitialsEl.textContent = account.initials;
   if (authAccountNameEl) authAccountNameEl.textContent = account.name;
   if (authAccountHeadlineEl) authAccountHeadlineEl.textContent = account.headline;
+  if (authAccountEmailEl) authAccountEmailEl.textContent = accountEmail;
   if (authProfileSummaryEl) authProfileSummaryEl.textContent = account.summary;
 
   if (profileMetaEl) {
@@ -662,6 +679,15 @@ function renderAccountProfile() {
   if (authProfileSkillsEl) authProfileSkillsEl.innerHTML = createChips(account.strengths, "is-skill");
   if (profileInterestsEl) profileInterestsEl.innerHTML = createChips(account.interests);
   if (profileCategoriesEl) profileCategoriesEl.innerHTML = createChips(account.preferredCategories, "is-category");
+
+  if (profileForm) {
+    profileForm.elements.adventurer_name.value = account.name;
+    profileForm.elements.headline.value = account.headline;
+    profileForm.elements.summary.value = account.summary;
+    profileForm.elements.job.value = account.businessStage;
+    profileForm.elements.skills.value = account.strengths.join(", ");
+    profileForm.elements.interests.value = account.interests.join(", ");
+  }
 
   if (matchSignalsEl) {
     const signals = account.preferredTags.length
@@ -1539,13 +1565,13 @@ registerForm?.addEventListener("submit", async (event) => {
 
   if (!remote.enabled) {
     setAuthNote("Supabase未設定のため、デモのマイページへ移動します。");
-    window.location.href = "dashboard.html";
+    window.location.href = "mypage.html";
     return;
   }
 
   if (remote.user) {
     setAuthNote("すでにログイン中です。マイページへ移動します。");
-    window.location.href = "dashboard.html";
+    window.location.href = "mypage.html";
     return;
   }
 
@@ -1572,7 +1598,7 @@ registerForm?.addEventListener("submit", async (event) => {
 
   if (signUpData?.session) {
     setAuthNote("登録しました。マイページへ移動します。");
-    window.location.href = "dashboard.html";
+    window.location.href = "mypage.html";
     return;
   }
 
@@ -1582,7 +1608,8 @@ registerForm?.addEventListener("submit", async (event) => {
 authForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   if (!remote.enabled) {
-    setAuthNote("Supabase未設定のため、デモデータで動作しています。");
+    setAuthNote("Supabase未設定のため、デモのマイページへ移動します。");
+    window.location.href = "mypage.html";
     return;
   }
 
@@ -1611,6 +1638,45 @@ authForm?.addEventListener("submit", async (event) => {
   await refreshRemoteState();
 });
 
+profileForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const data = new FormData(profileForm);
+  const nextProfile = {
+    adventurer_name: String(data.get("adventurer_name") || "").trim() || "冒険者",
+    headline: String(data.get("headline") || "").trim(),
+    summary: String(data.get("summary") || "").trim(),
+    job: String(data.get("job") || "").trim(),
+    skills: normalizeList(data.get("skills")),
+    interests: normalizeList(data.get("interests")),
+  };
+
+  if (!remote.enabled) {
+    state.account = mapProfile(nextProfile);
+    renderAccountProfile();
+    renderRecommendedQuests();
+    if (profileNoteEl) profileNoteEl.textContent = "デモプロフィールを更新しました。";
+    return;
+  }
+
+  if (!remote.user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("profiles")
+    .update({ ...nextProfile, updated_at: new Date().toISOString() })
+    .eq("id", remote.user.id);
+
+  if (error) {
+    if (profileNoteEl) profileNoteEl.textContent = error.message || "プロフィールを保存できませんでした。";
+    return;
+  }
+
+  if (profileNoteEl) profileNoteEl.textContent = "プロフィールを保存しました。";
+  await refreshRemoteState();
+});
+
 signoutBtn?.addEventListener("click", async () => {
   if (!remote.enabled) return;
   await supabaseClient.auth.signOut();
@@ -1620,6 +1686,7 @@ signoutBtn?.addEventListener("click", async () => {
   setAuthStatus("未ログイン");
   setAuthNote("ログアウトしました。");
   await refreshRemoteState();
+  window.location.href = "login.html";
 });
 
 function scrollLatestQuests(direction) {

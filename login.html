@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>クエスト詳細 | ソロプレナー・ギルド</title>
+    <title>ログイン | ソロプレナー・ギルド</title>
     <meta
       name="description"
-      content="ソロプレナー・ギルドのクエスト詳細ページ。依頼内容、報酬、締切、応募方法を確認できます。"
+      content="ソロプレナー・ギルドのログインページ。登録済みの冒険者アカウントでマイページへ進めます。"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,10 +18,10 @@
     <link rel="stylesheet" href="styles.css" />
     <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
   </head>
-  <body class="quests-page quest-detail-page">
+  <body class="dashboard-page login-page">
     <header class="site-header">
       <div class="container nav-wrap">
-        <a class="logo" href="index.html" aria-label="ソロプレナー・ギルド">
+        <a class="logo" href="index.html">
           <span class="logo-mark" aria-hidden="true">
             <svg viewBox="0 0 32 32" focusable="false">
               <path d="M16 3.5 26 7.7v7.1c0 6.5-3.9 11.3-10 13.7C9.9 26.1 6 21.3 6 14.8V7.7Z" />
@@ -43,20 +43,34 @@
       </div>
     </header>
 
-    <main>
-      <section class="quest-detail-hero">
-        <div class="container quest-detail-hero-inner">
-          <a class="back-link" href="quests.html#quest-board"><i data-lucide="arrow-left"></i>クエスト一覧へ戻る</a>
-          <div>
-            <p class="eyebrow">QUEST DETAIL</p>
-            <h1>クエスト詳細</h1>
-          </div>
-        </div>
-      </section>
-
-      <section class="section quest-detail-section">
-        <div class="container quest-detail-container">
-          <article class="quest-detail quest-detail-full" id="questDetail" aria-live="polite"></article>
+    <main class="dashboard-main">
+      <section class="section auth-section login-section" data-login-panel>
+        <div class="container auth-grid login-grid">
+          <article class="workspace-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">LOGIN</p>
+                <h1>ログイン</h1>
+              </div>
+              <span class="status-pill" data-auth-status>デモ</span>
+            </div>
+            <form class="guild-form auth-form" id="authForm">
+              <label>
+                メールアドレス
+                <input name="email" type="email" placeholder="you@example.com" autocomplete="email" required />
+              </label>
+              <label>
+                パスワード
+                <input name="password" type="password" placeholder="8文字以上" autocomplete="current-password" required />
+              </label>
+              <div class="header-actions">
+                <button class="btn btn-primary" type="submit" data-auth-action="signin"><i data-lucide="log-in"></i>ログイン</button>
+                <a class="btn btn-outline" href="index.html#register" data-guest-only hidden><i data-lucide="user-plus"></i>冒険者登録</a>
+                <a class="btn btn-outline" href="quests.html" data-guest-only hidden><i data-lucide="search"></i>クエストを見る</a>
+              </div>
+              <p class="form-note" data-auth-note>メールアドレスとパスワードを入力してください。</p>
+            </form>
+          </article>
         </div>
       </section>
     </main>
@@ -76,10 +90,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-env.js"></script>
     <script src="app.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        if (window.lucide) lucide.createIcons();
-      });
-    </script>
+    <script>document.addEventListener('DOMContentLoaded', function () { if (window.lucide) lucide.createIcons(); });</script>
   </body>
 </html>
