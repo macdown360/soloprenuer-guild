@@ -1102,6 +1102,16 @@ h3 {
   justify-content: flex-start;
 }
 
+.account-profile-content {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.account-profile-content .profile-summary,
+.account-profile-content .profile-meta {
+  margin: 0;
+}
+
 .quest-search-hero {
   padding: 72px 0 46px;
   color: #fff;
