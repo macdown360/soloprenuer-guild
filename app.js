@@ -648,6 +648,17 @@ function formatDate(value) {
   return formatter.format(new Date(`${value}T00:00:00`));
 }
 
+function getQuestDeadlineDate(daysValue) {
+  const allowedDays = new Set([3, 5, 7, 10, 20, 30]);
+  const days = Number(daysValue);
+  if (!allowedDays.has(days)) return "";
+
+  const deadline = new Date();
+  deadline.setHours(0, 0, 0, 0);
+  deadline.setDate(deadline.getDate() + days);
+  return deadline.toISOString().slice(0, 10);
+}
+
 function renderAccountProfile() {
   const account = state.account;
   const accountEmail = remote.user?.email || "デモアカウント";
@@ -1268,6 +1279,7 @@ questForm?.addEventListener("submit", async (event) => {
   const capacity = Math.max(1, Number(data.get("capacity")) || 1);
   const escrowGold = reward * capacity;
   const type = data.get("type") === "recruiting" ? "recruiting" : "report";
+  const deadline = getQuestDeadlineDate(data.get("deadline_days"));
   const screenshotFile = data.get("screenshot");
   const screenshot =
     screenshotFile instanceof File && screenshotFile.size > 0
@@ -1276,6 +1288,21 @@ questForm?.addEventListener("submit", async (event) => {
           url: URL.createObjectURL(screenshotFile),
         }
       : null;
+
+  if (!Number.isInteger(reward) || reward < 5 || reward > 50 || reward % 5 !== 0) {
+    formNote.textContent = "報酬Goldは5G単位で5Gから50Gまでを選んでください。";
+    return;
+  }
+
+  if (!Number.isInteger(capacity) || capacity < 1 || capacity > 50) {
+    formNote.textContent = "募集人数は1名から50名までで入力してください。";
+    return;
+  }
+
+  if (!deadline) {
+    formNote.textContent = "締切は3日後から30日後までの選択肢から選んでください。";
+    return;
+  }
 
   if (escrowGold > state.gold) {
     formNote.textContent = `残高不足です。現在のGoldは${state.gold}Gです。`;
@@ -1306,7 +1333,7 @@ questForm?.addEventListener("submit", async (event) => {
       p_category: selectedCategory,
       p_quest_type: type,
       p_capacity: capacity,
-      p_deadline: data.get("deadline"),
+      p_deadline: deadline,
       p_tags: tags,
       p_reference_url: normalizeQuestUrl(data.get("url")),
       p_screenshot_url: screenshotUrl,
@@ -1334,7 +1361,7 @@ questForm?.addEventListener("submit", async (event) => {
     category: selectedCategory,
     tags,
     skills: overlap(tags, state.account.strengths),
-    deadline: data.get("deadline"),
+    deadline,
     applicants: 0,
     capacity,
     approvedReports: 0,

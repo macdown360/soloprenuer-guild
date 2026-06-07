@@ -296,13 +296,24 @@
                 </label>
                 <label>
                   募集人数
-                  <input id="questCapacity" name="capacity" type="number" min="1" max="50" value="5" required />
+                  <input id="questCapacity" name="capacity" type="number" min="1" max="50" value="1" required />
                 </label>
               </div>
               <div class="form-row">
                 <label>
                   報酬Gold
-                  <input id="questReward" name="reward" type="number" min="1" max="300" placeholder="20" required />
+                  <select id="questReward" name="reward" required>
+                    <option value="5">5G</option>
+                    <option value="10">10G</option>
+                    <option value="15">15G</option>
+                    <option value="20">20G</option>
+                    <option value="25">25G</option>
+                    <option value="30">30G</option>
+                    <option value="35">35G</option>
+                    <option value="40">40G</option>
+                    <option value="45">45G</option>
+                    <option value="50">50G</option>
+                  </select>
                 </label>
                 <label>
                   カテゴリ
@@ -321,7 +332,14 @@
               <label for="questTags">タグ</label>
               <input id="questTags" name="tags" type="text" placeholder="例: AI, UXレビュー, BtoB SaaS" />
               <label for="questDeadline">締切</label>
-              <input id="questDeadline" name="deadline" type="date" required />
+              <select id="questDeadline" name="deadline_days" required>
+                <option value="3">3日後</option>
+                <option value="5">5日後</option>
+                <option value="7">7日後</option>
+                <option value="10">10日後</option>
+                <option value="20">20日後</option>
+                <option value="30">30日後</option>
+              </select>
               <button class="btn btn-primary" type="submit"><i data-lucide="send"></i>発行する</button>
               <p class="form-note" data-form-note>現在の残高: 100G</p>
             </form>
