@@ -53,265 +53,109 @@
             <a class="btn btn-primary" href="#quest-create"><i data-lucide="plus-circle"></i>発行</a>
           </div>
         </div>
-        <div class="container app-grid">
-          <aside class="profile-panel">
-            <div class="avatar" aria-hidden="true" data-account-initials>A</div>
-            <p class="eyebrow">ACCOUNT</p>
-            <h1 data-account-name>アキラ</h1>
-            <p class="profile-headline" data-account-headline>個人開発者 / AIツール開発 / BtoB SaaS</p>
+        <div class="container app-grid dashboard-overview">
+          <section class="command-panel focus-panel" aria-label="今日やること">
+            <div class="command-head">
+              <div>
+                <p class="eyebrow">TODAY</p>
+                <h2>今日やること</h2>
+                <p>未対応の承認と、次に進めるクエストだけを確認します。</p>
+              </div>
+              <div class="header-actions">
+                <a class="btn btn-primary" href="#completion"><i data-lucide="badge-check"></i>承認へ</a>
+                <a class="btn btn-outline" href="quests.html"><i data-lucide="search"></i>探す</a>
+              </div>
+            </div>
+            <div class="priority-list" aria-label="優先タスク">
+              <article class="priority-item is-urgent">
+                <div class="priority-icon"><i data-lucide="badge-check"></i></div>
+                <div>
+                  <span>最優先</span>
+                  <h3>承認待ちが3件あります</h3>
+                  <p>評価すると報酬とTrustが反映されます。</p>
+                </div>
+                <a class="btn btn-primary btn-sm" href="#completion">対応</a>
+              </article>
+              <article class="priority-item">
+                <div class="priority-icon"><i data-lucide="send"></i></div>
+                <div>
+                  <span>発行中</span>
+                  <h3>進行中 2件 / 応募待ち 1件</h3>
+                  <p>必要なら追加でクエストを発行できます。</p>
+                </div>
+                <a class="btn btn-outline btn-sm" href="#quest-create">発行</a>
+              </article>
+            </div>
+
+            <div class="kpi-grid simple-kpis">
+              <article>
+                <span>Gold</span>
+                <strong><span data-gold>100</span>G</strong>
+              </article>
+              <article>
+                <span>Trust</span>
+                <strong data-rank>Trust 325</strong>
+              </article>
+              <article>
+                <span>完了</span>
+                <strong data-completed-count>18</strong>
+              </article>
+              <article>
+                <span>発行</span>
+                <strong data-issued-count>7</strong>
+              </article>
+            </div>
+          </section>
+
+          <aside class="profile-panel compact-profile">
+            <div class="profile-top">
+              <div class="avatar" aria-hidden="true" data-account-initials>A</div>
+              <div>
+                <p class="eyebrow">ACCOUNT</p>
+                <h1 data-account-name>アキラ</h1>
+                <p class="profile-headline" data-account-headline>個人開発者 / AIツール開発 / BtoB SaaS</p>
+              </div>
+            </div>
             <p class="profile-summary" data-profile-summary>
               AIプロダクトの初期検証、BtoB SaaSのオンボーディング改善、開発者向けUXレビューが得意です。
             </p>
             <div class="rank-display">
-              <span>一人前冒険者</span>
-              <strong data-rank>Trust 325</strong>
+              <span>現在のランク</span>
+              <strong>一人前冒険者</strong>
             </div>
-            <div class="wallet">
-              <article>
-                <span><i data-lucide="coins"></i> Gold</span>
-                <strong><span data-gold>100</span>G</strong>
-              </article>
-              <article>
-                <span><i data-lucide="shield-check"></i> Trust</span>
-                <strong><span data-trust>325</span></strong>
-              </article>
-            </div>
-            <dl class="profile-stats">
-              <div><dt>完了クエスト数</dt><dd data-completed-count>18</dd></div>
-              <div><dt>発行クエスト数</dt><dd data-issued-count>7</dd></div>
-              <div><dt>継続利用日数</dt><dd>23日</dd></div>
-            </dl>
             <dl class="profile-meta" data-profile-meta></dl>
             <div class="profile-chip-block">
-              <span class="panel-label">SKILLS</span>
+              <span class="panel-label">得意な領域</span>
               <div class="chip-list" data-profile-skills></div>
             </div>
-            <div class="profile-chip-block">
-              <span class="panel-label">INTERESTS</span>
-              <div class="chip-list" data-profile-interests></div>
-            </div>
-            <div class="profile-chip-block">
-              <span class="panel-label">PREFERRED QUESTS</span>
-              <div class="chip-list" data-profile-categories></div>
-            </div>
-            <div class="streak-display">
-              <p class="panel-label">STREAK</p>
-              <div class="streak-row">
-                <span class="streak-icon-wrap" aria-hidden="true">5</span>
-                <div>
-                  <strong data-streak-count>5日</strong>連続アクティブ
-                  <span class="streak-hint-text">あと2日で「精勤冒険者」称号が解放！</span>
-                </div>
-              </div>
-              <div class="streak-days">
-                <span class="streak-day done">月</span>
-                <span class="streak-day done">火</span>
-                <span class="streak-day done">水</span>
-                <span class="streak-day done">木</span>
-                <span class="streak-day done active">金</span>
-                <span class="streak-day">土</span>
-                <span class="streak-day">日</span>
-              </div>
-            </div>
           </aside>
-
-          <section class="command-panel" aria-label="ダッシュボード概要">
-            <div class="command-head">
-              <div>
-                <p class="eyebrow">DASHBOARD</p>
-                <h2>ダッシュボード</h2>
-                <p>
-                  Gold、Trust、発行中の依頼、承認待ちをまとめて確認します。
-                </p>
-              </div>
-              <div class="header-actions">
-                <a class="btn btn-primary" href="#quest-create"><i data-lucide="plus-circle"></i>発行</a>
-                <a class="btn btn-outline" href="quests.html"><i data-lucide="search"></i>クエスト検索</a>
-              </div>
-            </div>
-            <div class="kpi-grid">
-              <article>
-                <span>今月の発行</span>
-                <strong data-total-quests>5</strong>
-                <small>あなたのクエスト</small>
-              </article>
-              <article>
-                <span>達成率</span>
-                <strong>72%</strong>
-                <small>承認済み / 応募済み</small>
-              </article>
-              <article>
-                <span>未対応</span>
-                <strong>3</strong>
-                <small>承認待ち</small>
-              </article>
-              <article>
-                <span>今月Trust</span>
-                <strong>+18</strong>
-                <small>あなたの増加分</small>
-              </article>
-            </div>
-            <div class="rank-track" aria-label="ランク条件">
-              <span class="done">見習い</span>
-              <span class="done">駆け出し</span>
-              <span class="current">一人前</span>
-              <span>熟練</span>
-              <span>上級</span>
-              <span>マスター</span>
-              <span>伝説</span>
-            </div>
-            <article class="match-panel">
-              <div class="panel-head-inline">
-                <div>
-                  <span class="panel-label">MATCHING PROFILE</span>
-                  <h3>おすすめ判定に使う情報</h3>
-                </div>
-                <span class="status-pill">更新済み</span>
-              </div>
-              <div class="match-signal-grid" data-match-signals></div>
-              <div class="category-matrix" data-category-matrix></div>
-            </article>
-            <div class="dashboard-panels">
-              <article class="next-rank-panel">
-                <div>
-                  <span class="panel-label">NEXT RANK</span>
-                  <h3>熟練冒険者まであと375 Trust</h3>
-                </div>
-                <div class="progress-track" aria-label="熟練冒険者までの進捗">
-                  <span style="width: 46%"></span>
-                </div>
-                <p>完了クエストあと8件、または5つ星評価あと25件が目安です。</p>
-              </article>
-              <article class="action-panel mission-panel">
-                <div class="mission-header">
-                  <span class="panel-label">DAILY MISSIONS</span>
-                  <span class="mission-count-badge"><span data-missions-done>0</span>/3 達成</span>
-                </div>
-                <h3>今日のミッション</h3>
-                <ul class="mission-list">
-                  <li class="mission-item" data-mission-item="0">
-                    <button class="mission-btn" type="button" data-mission-toggle="0" aria-pressed="false" aria-label="ミッション達成にする">
-                      <i data-lucide="check"></i>
-                    </button>
-                    <div class="mission-body">
-                      <span class="mission-text">クエストを1件応募する</span>
-                      <span class="mission-reward-tag">+5 Trust</span>
-                    </div>
-                  </li>
-                  <li class="mission-item" data-mission-item="1">
-                    <button class="mission-btn" type="button" data-mission-toggle="1" aria-pressed="false" aria-label="ミッション達成にする">
-                      <i data-lucide="check"></i>
-                    </button>
-                    <div class="mission-body">
-                      <span class="mission-text">承認待ちを1件評価・承認する</span>
-                      <span class="mission-reward-tag">+8 Trust &amp; +3G</span>
-                    </div>
-                  </li>
-                  <li class="mission-item" data-mission-item="2">
-                    <button class="mission-btn" type="button" data-mission-toggle="2" aria-pressed="false" aria-label="ミッション達成にする">
-                      <i data-lucide="check"></i>
-                    </button>
-                    <div class="mission-body">
-                      <span class="mission-text">今週ほしい協力を1件クエスト化する</span>
-                      <span class="mission-reward-tag">+3 Trust &amp; 10%還元</span>
-                    </div>
-                  </li>
-                </ul>
-                <div class="mission-progress-area">
-                  <div class="progress-track" aria-label="デイリーミッション達成度">
-                    <span data-mission-bar style="width: 0%"></span>
-                  </div>
-                  <p class="mission-all-done-hint">全達成で <strong>ボーナスTrust +5</strong> 獲得！</p>
-                </div>
-              </article>
-            </div>
-            <div class="activity-board" aria-label="進行中の状況">
-              <article>
-                <span class="panel-label">発行中</span>
-                <strong>3件</strong>
-                <p>応募待ち 1件 / 進行中 2件</p>
-              </article>
-              <article>
-                <span class="panel-label">応募中</span>
-                <strong>2件</strong>
-                <p>フィードバック 1件 / AI 1件</p>
-              </article>
-              <article class="activity-item urgent-item">
-                <span class="panel-label">承認待ち</span>
-                <strong>3件</strong>
-                <p>評価で最大 <span class="trust-highlight">+30 Trust</span> が反映されます</p>
-                <a class="btn btn-primary btn-sm" href="#completion"><i data-lucide="badge-check"></i>承認へ</a>
-              </article>
-            </div>
-          </section>
         </div>
       </section>
 
-      <!-- ゲーミフィケーション：週次チャレンジ・ストリーク・貢献 -->
-      <section class="section gamification-section">
+      <section class="section progress-section">
         <div class="container">
-          <div class="gamification-grid">
-            <article class="weekly-challenge-card">
+          <div class="progress-summary">
+            <article class="next-rank-panel">
+              <div>
+                <span class="panel-label">NEXT RANK</span>
+                <h3>熟練冒険者まであと375 Trust</h3>
+              </div>
+              <div class="progress-track" aria-label="熟練冒険者までの進捗">
+                <span style="width: 46%"></span>
+              </div>
+              <p>完了クエストあと8件、または5つ星評価あと25件が目安です。</p>
+            </article>
+            <article class="weekly-challenge-card simple-challenge">
               <div class="wc-head">
-                <span class="panel-label">WEEKLY CHALLENGE</span>
+                <span class="panel-label">WEEKLY</span>
                 <span class="wc-timer-badge"><i data-lucide="clock"></i> 残り4日</span>
               </div>
-              <h3>今週のギルドチャレンジ</h3>
-              <p class="wc-desc">他のソロプレナーを <strong>3人サポート</strong> する</p>
+              <h3>今週はあと2人サポート</h3>
               <div class="wc-progress-wrap">
-                <div class="wc-progress-track">
-                  <span data-wc-bar style="width: 33%"></span>
-                </div>
-                <span class="wc-progress-label"><span data-wc-count>1</span> / 3 完了</span>
+                <div class="wc-progress-track"><span data-wc-bar style="width: 33%"></span></div>
+                <span class="wc-progress-label"><span data-wc-count>1</span> / 3</span>
               </div>
-              <div class="wc-reward-box">
-                <i data-lucide="gift"></i>
-                <div>
-                  <span>達成報酬</span>
-                  <strong>Gold +30・Trust +25・限定称号「今週の縁の下」解放</strong>
-                </div>
-              </div>
-              <a class="btn btn-outline wc-cta" href="quests.html"><i data-lucide="search"></i>サポートできるクエストを探す</a>
             </article>
-            <div class="incentive-cards">
-              <article class="incentive-card streak-card-big">
-                <span class="panel-label">STREAK</span>
-                <div class="streak-stat">
-                  <span class="streak-fire" aria-hidden="true">5</span>
-                  <div>
-                    <strong><span data-streak-big>5</span>日</strong>
-                    <span>連続ギルド参加</span>
-                  </div>
-                </div>
-                <p class="streak-hint-msg">あと2日で「精勤冒険者」称号が解放されます！</p>
-                <div class="streak-bonus-info">
-                  <i data-lucide="zap"></i>
-                  <span>7日達成でTrust <strong>×1.2 ボーナス週</strong> が始まります</span>
-                </div>
-              </article>
-              <article class="incentive-card contribution-card">
-                <span class="panel-label">CONTRIBUTION</span>
-                <h3>今月の貢献</h3>
-                <dl class="contrib-stats">
-                  <div>
-                    <dt><i data-lucide="users"></i> サポートした仲間</dt>
-                    <dd>7人</dd>
-                  </div>
-                  <div>
-                    <dt><i data-lucide="message-circle"></i> 提供フィードバック</dt>
-                    <dd>12件</dd>
-                  </div>
-                  <div>
-                    <dt><i data-lucide="shield-check"></i> 今月の獲得Trust</dt>
-                    <dd>+142</dd>
-                  </div>
-                </dl>
-                <div class="contrib-rank">
-                  <i data-lucide="trophy"></i>
-                  <span>今月のギルド貢献 <strong>3位</strong></span>
-                </div>
-              </article>
-            </div>
           </div>
         </div>
       </section>
@@ -331,13 +175,13 @@
         </div>
       </section>
 
-      <section class="section section-soft">
+      <section class="section section-soft achievements-section">
         <div class="container">
           <div class="section-head">
             <div>
               <p class="eyebrow">ACHIEVEMENTS</p>
-              <h2>称号</h2>
-              <p>獲得済みの称号と、次に狙える称号を確認できます。</p>
+              <h2>最近の称号</h2>
+              <p>よく使う情報だけを表示しています。</p>
             </div>
             <div class="collection-progress">
               <strong>6 / 18</strong>
@@ -379,61 +223,6 @@
               <i data-lucide="lock"></i>
               <strong>ベテラン</strong>
               <span>50件達成で獲得</span>
-            </article>
-            <article class="title-badge is-locked">
-              <i data-lucide="lock"></i>
-              <strong>レビュー職人</strong>
-              <span>レビュー20件で獲得</span>
-            </article>
-            <article class="title-badge is-locked">
-              <i data-lucide="lock"></i>
-              <strong>インタビュー達人</strong>
-              <span>インタビュー10件で獲得</span>
-            </article>
-            <article class="title-badge is-locked">
-              <i data-lucide="lock"></i>
-              <strong>AI探究者</strong>
-              <span>AIカテゴリ15件で獲得</span>
-            </article>
-            <article class="title-badge is-locked">
-              <i data-lucide="lock"></i>
-              <strong>ギルドの支柱</strong>
-              <span>Trust 1500で獲得</span>
-            </article>
-            <article class="title-badge is-locked">
-              <i data-lucide="lock"></i>
-              <strong>英雄</strong>
-              <span>100件達成で獲得</span>
-            </article>
-            <article class="title-badge is-locked">
-              <i data-lucide="lock"></i>
-              <strong>マスター冒険者</strong>
-              <span>Trust 3000で獲得</span>
-            </article>
-            <article class="title-badge is-locked">
-              <i data-lucide="lock"></i>
-              <strong>伝説の協力者</strong>
-              <span>Trust 5000で獲得</span>
-            </article>
-            <article class="title-badge is-locked">
-              <i data-lucide="lock"></i>
-              <strong>月間MVP</strong>
-              <span>月間表彰で獲得</span>
-            </article>
-            <article class="title-badge is-locked">
-              <i data-lucide="lock"></i>
-              <strong>信頼の発行者</strong>
-              <span>発行クエスト30件で獲得</span>
-            </article>
-            <article class="title-badge is-locked">
-              <i data-lucide="lock"></i>
-              <strong>連続ログイン30日</strong>
-              <span>30日継続で獲得</span>
-            </article>
-            <article class="title-badge is-locked">
-              <i data-lucide="lock"></i>
-              <strong>ギルドの伝説</strong>
-              <span>全称号獲得で解放</span>
             </article>
           </div>
         </div>

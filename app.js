@@ -301,6 +301,10 @@ function renderIssuerButton(name) {
   return `<button class="issuer-link" type="button" data-issuer="${name}" aria-label="${name}のプロフィールを表示">${name}</button>`;
 }
 
+function getQuestDetailUrl(id) {
+  return `quest-detail.html?id=${encodeURIComponent(id)}`;
+}
+
 function getRank(trust) {
   if (trust >= 5000) return "伝説の冒険者";
   if (trust >= 3000) return "マスター冒険者";
@@ -403,7 +407,7 @@ function renderRecommendedQuests() {
           <div class="rec-quest-foot">
             <span class="rec-reward"><i data-lucide="coins"></i> ${quest.reward}G</span>
             <span class="rec-trust"><i data-lucide="shield-check"></i> +5 Trust</span>
-            <a class="btn btn-primary btn-sm" href="quests.html">詳細へ</a>
+            <a class="btn btn-primary btn-sm" href="${getQuestDetailUrl(quest.id)}">詳細へ</a>
           </div>
         </article>
       `;
@@ -469,12 +473,7 @@ function renderQuestList() {
 
   if (!quests.length) {
     questList.innerHTML = '<article class="quest-card"><div class="quest-main"><h3>該当するクエストがありません</h3><p>カテゴリやキーワードを変更してください。</p></div></article>';
-    renderQuestDetail(null);
     return;
-  }
-
-  if (!quests.some((quest) => quest.id === state.selectedQuestId)) {
-    state.selectedQuestId = quests[0].id;
   }
 
   quests.forEach((quest) => {
@@ -483,9 +482,9 @@ function renderQuestList() {
     const closed = isQuestClosed(quest);
     const progress = Math.min(getQuestProgress(quest), getQuestCapacity(quest));
     const progressPercent = getQuestProgressPercent(quest);
-    const card = document.createElement("article");
-    card.className = `quest-card${quest.id === state.selectedQuestId ? " is-selected" : ""}${closed ? " is-closed" : ""}`;
-    card.tabIndex = 0;
+    const card = document.createElement("a");
+    card.className = `quest-card quest-card-link${closed ? " is-closed" : ""}`;
+    card.href = getQuestDetailUrl(quest.id);
     card.innerHTML = `
       <div class="quest-main">
         <div class="quest-card-top">
@@ -499,7 +498,7 @@ function renderQuestList() {
         <h3>${quest.title}</h3>
         <p class="quest-card-desc">${quest.description}</p>
         <div class="quest-card-meta">
-          <span>発行者: ${renderIssuerButton(quest.issuer)}</span>
+          <span>発行者: ${quest.issuer}</span>
           <span>締切: ${formatDate(quest.deadline)}</span>
           <span>${getQuestActionHint(quest)}</span>
         </div>
@@ -513,32 +512,22 @@ function renderQuestList() {
         <div class="quest-tags">${createChips(quest.tags || [])}</div>
       </div>
     `;
-    const issuerButton = card.querySelector("[data-issuer]");
-    issuerButton?.addEventListener("click", (event) => {
-      event.stopPropagation();
-      showIssuerProfile(quest.issuer, quest.id);
-    });
-    issuerButton?.addEventListener("keydown", (event) => {
-      event.stopPropagation();
-    });
-    card.addEventListener("click", () => selectQuest(quest.id));
-    card.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        selectQuest(quest.id);
-      }
-    });
     questList.append(card);
   });
-
-  renderQuestDetail(state.quests.find((quest) => quest.id === state.selectedQuestId));
 }
 
 function renderQuestDetail(quest) {
   if (!questDetail) return;
 
   if (!quest) {
-    questDetail.innerHTML = "";
+    questDetail.innerHTML = `
+      <div class="empty-detail">
+        <h2>クエストが見つかりません</h2>
+        <p>URLを確認するか、一覧からクエストを選び直してください。</p>
+        <a class="btn btn-primary" href="quests.html#quest-board"><i data-lucide="search"></i>一覧へ戻る</a>
+      </div>
+    `;
+    if (window.lucide) lucide.createIcons();
     return;
   }
 
@@ -633,12 +622,14 @@ function renderQuestDetail(quest) {
       quest.comments.unshift("スクショ付きの完了報告が送信されました。承認待ちです。");
       showToast("完了報告を送信しました。発行者の承認後にクローズ判定されます。");
       renderQuestList();
+      renderQuestDetail(quest);
       return;
     }
     quest.applicants += 1;
     updateQuestStatus(quest);
     showToast(isQuestClosed(quest) ? "募集人数に達したため、応募受付を停止しました。" : "応募しました。発行者との約束を進めてください。");
     renderQuestList();
+    renderQuestDetail(quest);
   });
 }
 
@@ -651,7 +642,23 @@ function selectQuest(id) {
 function showIssuerProfile(name, questId = state.selectedQuestId) {
   state.selectedQuestId = questId;
   state.selectedIssuer = name;
+  const quest = state.quests.find((item) => item.id === questId);
+  if (questDetail && quest) {
+    renderQuestDetail(quest);
+    return;
+  }
   renderQuestList();
+}
+
+function renderQuestDetailPage() {
+  if (!questDetail) return;
+  const questId = new URLSearchParams(window.location.search).get("id");
+  const quest = state.quests.find((item) => String(item.id) === String(questId));
+  if (quest) {
+    state.selectedQuestId = quest.id;
+    document.title = `${quest.title} | ソロプレナー・ギルド`;
+  }
+  renderQuestDetail(quest);
 }
 
 function renderIssuerProfile(name) {
@@ -894,5 +901,6 @@ document.querySelectorAll("[data-category-link]").forEach((link) => {
 renderAccountProfile();
 syncStats();
 renderQuestList();
+renderQuestDetailPage();
 updateMissionUI();
 updateWeeklyChallenge();

@@ -490,6 +490,11 @@ h3 {
   cursor: pointer;
 }
 
+.quest-card-link {
+  color: inherit;
+  text-decoration: none;
+}
+
 .quest-card.is-closed {
   cursor: default;
   opacity: 0.72;
@@ -1124,6 +1129,58 @@ h3 {
   transform: translateY(-1px);
 }
 
+.quest-detail-hero {
+  padding: 34px 0 24px;
+  background: #f4f6fa;
+  border-bottom: 1px solid var(--line);
+}
+
+.quest-detail-hero-inner {
+  display: grid;
+  gap: 1rem;
+}
+
+.quest-detail-hero h1 {
+  margin-bottom: 0;
+  color: var(--ink);
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: clamp(1.8rem, 3.2vw, 2.45rem);
+  line-height: 1.25;
+}
+
+.back-link {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  color: #795a1d;
+  text-decoration: none;
+  font-weight: 900;
+}
+
+.back-link [data-lucide] {
+  width: 16px;
+  height: 16px;
+}
+
+.quest-detail-container {
+  width: min(860px, 92vw);
+}
+
+.quest-detail-full {
+  position: static;
+}
+
+.empty-detail {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.empty-detail h2,
+.empty-detail p {
+  margin-bottom: 0;
+}
+
 .dashboard-hero {
   padding: 28px 0 34px;
   background: #f4f6fa;
@@ -1160,6 +1217,11 @@ h3 {
   align-items: stretch;
 }
 
+.dashboard-overview {
+  grid-template-columns: minmax(0, 1fr) 330px;
+  align-items: start;
+}
+
 .profile-panel,
 .command-panel {
   padding: 1.2rem;
@@ -1168,6 +1230,10 @@ h3 {
 .command-panel {
   display: grid;
   gap: 1rem;
+}
+
+.focus-panel {
+  gap: 1.1rem;
 }
 
 .dashboard-page h2 {
@@ -1182,6 +1248,22 @@ h3 {
   margin-bottom: 1rem;
   border-radius: 8px;
   font-size: 1.7rem;
+}
+
+.compact-profile {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.profile-top {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: center;
+}
+
+.profile-top .avatar {
+  margin-bottom: 0;
 }
 
 .profile-panel h1 {
@@ -1206,7 +1288,7 @@ h3 {
 }
 
 .rank-display {
-  margin: 1rem 0;
+  margin: 0;
   padding: 0.9rem;
   border: 1px solid #ead49d;
   border-radius: 8px;
@@ -1311,7 +1393,7 @@ h3 {
 .profile-chip-block {
   display: grid;
   gap: 0.4rem;
-  margin-top: 0.85rem;
+  margin-top: 0;
 }
 
 .chip-list,
@@ -1444,11 +1526,16 @@ h3 {
 }
 
 .command-head p {
+  margin-bottom: 0;
   color: var(--muted);
 }
 
 .kpi-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.simple-kpis {
+  gap: 0.7rem;
 }
 
 .kpi-grid article {
@@ -1458,11 +1545,92 @@ h3 {
   border-radius: 8px;
 }
 
+.simple-kpis article {
+  border-top: 0;
+  background: #f8fafc;
+}
+
 .kpi-grid span {
   display: block;
   color: var(--muted);
   font-size: 0.8rem;
   margin-bottom: 0.12rem;
+}
+
+.priority-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.priority-item {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  gap: 0.85rem;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.priority-item.is-urgent {
+  border-color: rgba(214, 168, 79, 0.65);
+  background: #fffdf7;
+}
+
+.priority-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  color: #7b581c;
+  background: #fff0c9;
+}
+
+.priority-icon [data-lucide] {
+  width: 20px;
+  height: 20px;
+}
+
+.priority-item span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.priority-item h3,
+.priority-item p {
+  margin-bottom: 0;
+}
+
+.priority-item h3 {
+  font-size: 1rem;
+}
+
+.priority-item p {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.progress-section {
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+}
+
+.progress-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.72fr);
+  gap: 1rem;
+}
+
+.simple-challenge {
+  box-shadow: 0 12px 32px rgba(13, 20, 36, 0.08);
+}
+
+.simple-challenge h3 {
+  margin-bottom: 0.85rem;
 }
 
 .rank-track {
@@ -1975,6 +2143,7 @@ h3 {
   .register-grid,
   .split,
   .app-grid,
+  .dashboard-overview,
   .quest-layout,
   .quest-search-grid,
   .quest-search-layout,
@@ -1988,7 +2157,8 @@ h3 {
   .activity-board,
   .dashboard-workspace,
   .match-signal-grid,
-  .point-panels {
+  .point-panels,
+  .progress-summary {
     grid-template-columns: 1fr;
   }
 
@@ -2016,6 +2186,10 @@ h3 {
   .quest-board-head {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .compact-profile {
+    order: -1;
   }
 }
 
@@ -2075,6 +2249,19 @@ h3 {
     grid-template-columns: 1fr;
   }
 
+  .priority-item {
+    grid-template-columns: 38px minmax(0, 1fr);
+  }
+
+  .priority-item .btn {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .simple-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .title-grid,
   .title-grid-wide {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2124,6 +2311,7 @@ h3 {
 @media (max-width: 420px) {
   .hero-metrics,
   .wallet,
+  .simple-kpis,
   .category-matrix,
   .title-grid,
   .title-grid-wide,
