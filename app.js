@@ -572,7 +572,7 @@ function getQuestCapacity(quest) {
 }
 
 function getQuestProgress(quest) {
-  return quest.type === "report" ? Number(quest.approvedReports) || 0 : Number(quest.applicants) || 0;
+  return Number(quest.applicants) || 0;
 }
 
 function isQuestClosed(quest) {
