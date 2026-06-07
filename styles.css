@@ -1149,6 +1149,90 @@ h3 {
   gap: 1rem;
 }
 
+.policy-date {
+  margin: 1.3rem 0 0;
+  color: rgba(238, 242, 246, 0.72);
+  font-size: 0.92rem;
+}
+
+.policy-section {
+  background: #f4f6fa;
+}
+
+.policy-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.42fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.policy-summary,
+.policy-article {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.policy-summary {
+  position: sticky;
+  top: 96px;
+  padding: 1.4rem;
+}
+
+.policy-summary h2 {
+  font-size: clamp(1.7rem, 3vw, 2.35rem);
+}
+
+.policy-summary p,
+.policy-article p {
+  color: var(--muted);
+}
+
+.policy-summary-list {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.policy-summary-list span {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.72rem 0.8rem;
+  border: 1px solid #e6d58a;
+  border-radius: 10px;
+  color: var(--ink);
+  background: #fffcf0;
+  font-weight: 800;
+  font-size: 0.92rem;
+}
+
+.policy-summary-list [data-lucide] {
+  width: 18px;
+  height: 18px;
+  color: #8a641f;
+  flex: 0 0 auto;
+}
+
+.policy-articles {
+  display: grid;
+  gap: 1rem;
+}
+
+.policy-article {
+  padding: 1.5rem;
+}
+
+.policy-article h2 {
+  margin-bottom: 0.8rem;
+  font-size: clamp(1.35rem, 2vw, 1.8rem);
+}
+
+.policy-article .rules-list {
+  margin-top: 0.8rem;
+}
+
 .dashboard-page,
 .quests-page {
   background: #f4f6fa;
@@ -2964,6 +3048,7 @@ h3 {
   .quest-search-grid,
   .quest-search-layout,
   .search-results-layout,
+  .policy-layout,
   .ranking-grid,
   .loop-grid,
   .kpi-grid,
@@ -2996,6 +3081,10 @@ h3 {
 
   .quest-detail,
   .quest-filter-panel {
+    position: static;
+  }
+
+  .policy-summary {
     position: static;
   }
 
