@@ -1404,6 +1404,10 @@ h3 {
   align-items: start;
 }
 
+.dashboard-overview-main {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .profile-panel,
 .command-panel {
   padding: 1.2rem;

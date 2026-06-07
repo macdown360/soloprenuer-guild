@@ -251,6 +251,8 @@ const authRequiredEls = document.querySelectorAll("[data-auth-required]");
 const guestOnlyEls = document.querySelectorAll("[data-guest-only]");
 const headerAuthEls = document.querySelectorAll("[data-header-auth]");
 const headerGuestEls = document.querySelectorAll("[data-header-guest]");
+const accountPanelEls = document.querySelectorAll("[data-account-panel]");
+const loginPanelEls = document.querySelectorAll("[data-login-panel]");
 const registerCta = document.querySelector("[data-register-cta]");
 const registerSignedInCopy = document.querySelector("[data-register-signed-in-copy]");
 const pendingTitleEl = document.querySelector("[data-pending-title]");
@@ -326,6 +328,12 @@ function syncAuthVisibility() {
     el.hidden = !isHeaderAuthenticated;
   });
   headerGuestEls.forEach((el) => {
+    el.hidden = isHeaderAuthenticated;
+  });
+  accountPanelEls.forEach((el) => {
+    el.hidden = !isHeaderAuthenticated;
+  });
+  loginPanelEls.forEach((el) => {
     el.hidden = isHeaderAuthenticated;
   });
   if (signoutBtn) signoutBtn.hidden = !remote.enabled || !remote.user;

@@ -56,12 +56,12 @@
             <div class="panel-head">
               <div>
                 <p class="eyebrow">ACCOUNT</p>
-                <h2 data-guest-only>冒険者アカウント</h2>
-                <h2 data-auth-required hidden>アカウント情報</h2>
+                <h2 data-login-panel>冒険者アカウント</h2>
+                <h2 data-account-panel hidden>アカウント情報</h2>
               </div>
               <span class="status-pill" data-auth-status>デモ</span>
             </div>
-            <form class="guild-form auth-form" id="authForm" data-guest-only>
+            <form class="guild-form auth-form" id="authForm" data-login-panel>
               <div class="form-row">
                 <label>
                   メールアドレス
@@ -79,7 +79,7 @@
               </div>
               <p class="form-note" data-auth-note>Supabase未設定時はデモデータで動作します。</p>
             </form>
-            <div class="account-summary" data-auth-required hidden>
+            <div class="account-summary" data-account-panel hidden>
               <div class="profile-top">
                 <div class="avatar" aria-hidden="true" data-auth-account-initials>A</div>
                 <div>
@@ -137,7 +137,7 @@
             <a class="btn btn-primary" href="#quest-create"><i data-lucide="plus-circle"></i>発行</a>
           </div>
         </div>
-        <div class="container app-grid dashboard-overview">
+        <div class="container app-grid dashboard-overview dashboard-overview-main">
           <section class="command-panel focus-panel" aria-label="今日やること">
             <div class="command-head">
               <div>
@@ -190,29 +190,6 @@
               </article>
             </div>
           </section>
-
-          <aside class="profile-panel compact-profile">
-            <div class="profile-top">
-              <div class="avatar" aria-hidden="true" data-account-initials>A</div>
-              <div>
-                <p class="eyebrow">ACCOUNT</p>
-                <h1 data-account-name>アキラ</h1>
-                <p class="profile-headline" data-account-headline>個人開発者 / AIツール開発 / BtoB SaaS</p>
-              </div>
-            </div>
-            <p class="profile-summary" data-profile-summary>
-              AIプロダクトの初期検証、BtoB SaaSのオンボーディング改善、開発者向けUXレビューが得意です。
-            </p>
-            <div class="rank-display">
-              <span>現在のランク</span>
-              <strong data-current-rank>見習い冒険者</strong>
-            </div>
-            <dl class="profile-meta" data-profile-meta></dl>
-            <div class="profile-chip-block">
-              <span class="panel-label">得意な領域</span>
-              <div class="chip-list" data-profile-skills></div>
-            </div>
-          </aside>
         </div>
       </section>
 
