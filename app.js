@@ -1475,14 +1475,11 @@ function renderQuestDetail(quest) {
     <div class="quest-flow-note">${type.guidance}</div>
     ${screenshotPreview}
     ${actionArea}
-    <section class="quest-detail-issuer-profile" aria-label="発行者プロフィール">
-      ${issuerProfileMarkup}
-    </section>
   `;
 
   if (issuerProfileEl) {
-    issuerProfileEl.hidden = true;
-    issuerProfileEl.innerHTML = "";
+    issuerProfileEl.hidden = false;
+    issuerProfileEl.innerHTML = issuerProfileMarkup;
   }
 
   questDetail.querySelector("[data-apply]")?.addEventListener("click", async () => {
