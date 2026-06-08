@@ -633,13 +633,21 @@ async function loadRemoteState() {
 
   const { data: participantSubmissions, error: participantSubmissionsError } = await supabaseClient
     .from("quest_submissions")
-    .select("id, quest_id, adventurer_id, submission_type, comment, evidence_url, status, created_at, updated_at")
+    .select("id, quest_id, adventurer_id, submission_type, comment, evidence_url, status, created_at, updated_at, quest_reviews(comment, rating, created_at)")
     .eq("adventurer_id", remote.user.id)
     .in("status", ["pending", "approved"])
     .order("created_at", { ascending: false });
 
   if (participantSubmissionsError) throw participantSubmissionsError;
-  remote.participantSubmissions = participantSubmissions || [];
+  remote.participantSubmissions = (participantSubmissions || []).map((submission) => {
+    const review = Array.isArray(submission.quest_reviews) ? submission.quest_reviews[0] : submission.quest_reviews;
+    return {
+      ...submission,
+      reviewComment: review?.comment || "",
+      reviewRating: review?.rating || null,
+      reviewedAt: review?.created_at || "",
+    };
+  });
   syncAuthVisibility();
 }
 
@@ -963,6 +971,8 @@ function getParticipantQuestSubmissions(status) {
       submission_type: "application",
       status: "approved",
       comment: "ユーザーインタビューに応募し、発行者に承認されました。",
+      reviewComment: "応募内容を確認しました。日程候補も具体的で助かります。よろしくお願いします。",
+      reviewRating: 5,
       created_at: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
       updated_at: new Date(Date.now() - 1000 * 60 * 60 * 18).toISOString(),
     },
@@ -998,6 +1008,7 @@ function renderParticipantQuestList(targetEl, countEl, status) {
       const timeLabel = isApproved ? "更新" : "送信";
       const timeValue = isApproved ? submission.updated_at || submission.created_at : submission.created_at;
       const comment = submission.comment?.trim() || (isApproved ? "承認済みのクエストです。" : "発行者の承認を待っています。");
+      const reviewComment = submission.reviewComment?.trim() || "";
       const detailHref = quest ? getQuestDetailUrl(quest.id) : "quests.html";
 
       return `
@@ -1008,6 +1019,14 @@ function renderParticipantQuestList(targetEl, countEl, status) {
           </div>
           <h3>${escapeHtml(title)}</h3>
           <p>${escapeHtml(comment)}</p>
+          ${
+            isApproved && reviewComment
+              ? `<div class="participant-review-comment">
+                  <span>承認者コメント</span>
+                  <p>${escapeHtml(reviewComment)}</p>
+                </div>`
+              : ""
+          }
           <div class="quest-card-meta">
             <span>発行者: ${escapeHtml(issuer)}</span>
             <span>${reward}G</span>

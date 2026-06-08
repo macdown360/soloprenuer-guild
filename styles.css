@@ -4046,6 +4046,25 @@ h3 {
   line-height: 1.6;
 }
 
+.participant-review-comment {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #ead8b8;
+  border-radius: 8px;
+  background: #fff8eb;
+}
+
+.participant-review-comment span {
+  color: #7b3a14;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.participant-review-comment p {
+  color: var(--ink);
+}
+
 .participant-quest-actions {
   display: flex;
   justify-content: flex-end;
