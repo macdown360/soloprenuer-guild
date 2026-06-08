@@ -453,6 +453,16 @@ function getApprovalErrorMessage(error) {
   return "承認できませんでした。時間をおいて再度お試しください。";
 }
 
+function getSubmissionMessageErrorMessage(error) {
+  const message = error?.message || "";
+  if (/quest_submission_messages|relation .* does not exist|schema cache/i.test(message)) return "コメント用のSupabaseスキーマが未適用です。";
+  if (/row-level security|permission denied|not authorized|unauthorized/i.test(message)) return "この応募にコメントできる権限がありません。ログイン状態または応募の状態を確認してください。";
+  if (/violates check constraint|body|char_length|not-null|null value/i.test(message)) return "コメントは1文字以上1000文字以内で入力してください。";
+  if (/invalid input syntax.*uuid|submission_id/i.test(message)) return "応募データのIDを確認できませんでした。ページを再読み込みしてください。";
+  if (/failed to fetch|network|fetch/i.test(message)) return "通信に失敗しました。ネットワーク接続を確認してください。";
+  return "コメントを送信できませんでした。時間をおいて再度お試しください。";
+}
+
 function getAuthErrorMessage(error, fallback) {
   const message = error?.message || "";
   if (/invalid login credentials/i.test(message)) return "メールアドレスまたはパスワードが正しくありません。";
@@ -1192,12 +1202,12 @@ async function sendSubmissionMessage(submissionId, container = document) {
 
     const { error } = await supabaseClient.from("quest_submission_messages").insert({
       submission_id: submissionId,
-      sender_id: remote.user.id,
       body,
     });
 
     if (error) {
-      if (noteEl) noteEl.textContent = "コメントを送信できませんでした。権限または接続状態を確認してください。";
+      console.error("Failed to send submission message", error);
+      if (noteEl) noteEl.textContent = getSubmissionMessageErrorMessage(error);
       return;
     }
 
