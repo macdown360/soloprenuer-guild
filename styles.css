@@ -765,9 +765,11 @@ h3 {
 }
 
 .popover-head .issuer-avatar {
+  box-sizing: border-box;
   width: 40px;
   height: 40px;
   font-size: 0.95rem;
+  line-height: 1;
 }
 
 .popover-head strong,
