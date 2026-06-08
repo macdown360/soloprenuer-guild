@@ -1653,18 +1653,17 @@ function filteredQuests() {
     .filter((quest) => {
       updateQuestStatus(quest);
       const closed = isQuestClosed(quest);
-      const tabMatch = activeTab === "closed" ? closed : !closed;
+      let tabMatch = !closed;
+      if (activeTab === "closed") tabMatch = closed;
+      if (activeTab === "recruiting") tabMatch = !closed && quest.type === "recruiting";
+      if (activeTab === "report") tabMatch = !closed && quest.type === "report";
+      if (activeTab === "multi") tabMatch = !closed && getQuestCapacity(quest) >= 6;
       const categoryMatch = category === "all" || quest.category === category;
       const keywordText = `${quest.title} ${quest.issuer} ${quest.description} ${(quest.tags || []).join(" ")} ${(quest.skills || []).join(" ")}`.toLowerCase();
       return tabMatch && categoryMatch && (!keyword || keywordText.includes(keyword));
     });
 
-  return quests.sort((a, b) => {
-    if (activeTab === "popular") return getQuestProgress(b) - getQuestProgress(a) || b.reward - a.reward;
-    if (activeTab === "reward") return b.reward - a.reward || getQuestProgress(b) - getQuestProgress(a);
-    if (activeTab === "deadline") return new Date(`${a.deadline}T00:00:00`) - new Date(`${b.deadline}T00:00:00`);
-    return state.quests.indexOf(a) - state.quests.indexOf(b);
-  });
+  return quests.sort((a, b) => state.quests.indexOf(a) - state.quests.indexOf(b));
 }
 
 function renderQuestList() {
