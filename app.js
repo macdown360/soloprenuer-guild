@@ -1238,6 +1238,14 @@ function renderSubmissionChat(submission, context) {
   `;
 }
 
+function scrollSubmissionChatsToLatest(root = document) {
+  requestAnimationFrame(() => {
+    root.querySelectorAll(".submission-chat-log").forEach((log) => {
+      log.scrollTop = log.scrollHeight;
+    });
+  });
+}
+
 async function sendSubmissionMessage(submissionId, container = document) {
   const bodyEl = container.querySelector(`[data-submission-chat-body="${CSS.escape(String(submissionId))}"]`);
   const noteEl = container.querySelector(`[data-submission-chat-note="${CSS.escape(String(submissionId))}"]`);
@@ -1295,6 +1303,7 @@ function restoreOpenApprovalPanels(questIds) {
     const panel = issuedQuestsEl.querySelector(`[data-approval-panel="${CSS.escape(String(questId))}"]`);
     if (panel) panel.hidden = false;
   });
+  scrollSubmissionChatsToLatest(issuedQuestsEl);
 }
 
 function getParticipantQuestSubmissions(status) {
@@ -1400,6 +1409,7 @@ function renderParticipantQuestList(targetEl, countEl, status) {
   targetEl.querySelectorAll("[data-send-submission-message]").forEach((button) => {
     button.addEventListener("click", () => sendSubmissionMessage(button.dataset.sendSubmissionMessage, targetEl));
   });
+  scrollSubmissionChatsToLatest(targetEl);
 }
 
 function renderParticipantQuests() {
@@ -1880,6 +1890,7 @@ function renderIssuedQuests() {
       const panel = issuedQuestsEl.querySelector(`[data-approval-panel="${CSS.escape(button.dataset.toggleApprovals)}"]`);
       if (!panel) return;
       panel.hidden = !panel.hidden;
+      if (!panel.hidden) scrollSubmissionChatsToLatest(panel);
     });
   });
 
@@ -1906,6 +1917,7 @@ function renderIssuedQuests() {
   });
 
   if (window.lucide) lucide.createIcons();
+  scrollSubmissionChatsToLatest(issuedQuestsEl);
 }
 
 function renderClosedIssuedQuests() {
