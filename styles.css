@@ -2705,7 +2705,11 @@ h3 {
 .closed-quest-list {
   display: grid;
   gap: 0.8rem;
+  max-height: 560px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 1rem;
+  scrollbar-gutter: stable;
 }
 
 .issued-quest-card {
@@ -3420,6 +3424,10 @@ h3 {
     width: 100%;
   }
 
+  .closed-quest-list {
+    max-height: 440px;
+  }
+
   .issued-quest-actions {
     justify-content: stretch;
   }
@@ -4048,6 +4056,13 @@ h3 {
   padding: 1rem;
 }
 
+#participantApprovedQuests {
+  max-height: 520px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
 .participant-quest-card {
   display: grid;
   gap: 0.55rem;
@@ -4306,6 +4321,10 @@ h3 {
   .participant-quest-card,
   .rec-quest-card {
     padding: 1rem;
+  }
+
+  #participantApprovedQuests {
+    max-height: 420px;
   }
 
   .rec-urgency-badge,
