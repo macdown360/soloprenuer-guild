@@ -3030,6 +3030,9 @@ h3 {
 }
 
 .submission-chat-form textarea {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
   min-height: 42px;
   resize: vertical;
 }
@@ -3061,7 +3064,7 @@ h3 {
 
 .approval-controls {
   display: grid;
-  grid-template-columns: minmax(130px, 160px) minmax(0, 1fr);
+  grid-template-columns: minmax(160px, 0.35fr) minmax(0, 1fr);
   gap: 0.75rem;
 }
 
