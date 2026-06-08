@@ -32,6 +32,7 @@ const state = {
   missions: [false, false, false],
   streak: 5,
   weeklyProgress: 1,
+  submissionMessages: {},
   issuerProfiles: {
     リナ: {
       initials: "R",
@@ -208,6 +209,7 @@ const remote = {
   issuerSubmissions: [],
   pendingSubmissions: [],
   participantSubmissions: [],
+  submissionMessages: {},
 };
 
 const SELF_SUBMISSION_MESSAGE = "自分の発行したクエストには応募できません";
@@ -351,6 +353,10 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function getCurrentUserName() {
+  return remote.profile?.adventurer_name || state.account.name || "冒険者";
 }
 
 function isDuplicateSubmissionError(error) {
@@ -585,6 +591,7 @@ async function loadRemoteState() {
     remote.issuerSubmissions = [];
     remote.pendingSubmissions = [];
     remote.participantSubmissions = [];
+    remote.submissionMessages = {};
     setAuthNote("クエストは閲覧できます。発行・応募・承認にはログインしてください。");
     syncAuthVisibility();
     return;
@@ -655,6 +662,45 @@ async function loadRemoteState() {
       reviewedAt: review?.created_at || "",
     };
   });
+
+  const messageSubmissionIds = unique([
+    ...remote.issuerSubmissions
+      .filter((submission) => submission.submission_type === "application")
+      .map((submission) => submission.id),
+    ...remote.participantSubmissions
+      .filter((submission) => submission.submission_type === "application" && submission.status === "pending")
+      .map((submission) => submission.id),
+  ]);
+  remote.submissionMessages = {};
+  if (messageSubmissionIds.length) {
+    const { data: messages, error: messagesError } = await supabaseClient
+      .from("quest_submission_messages")
+      .select("id, submission_id, sender_id, body, created_at")
+      .in("submission_id", messageSubmissionIds)
+      .order("created_at", { ascending: true });
+
+    if (messagesError) throw messagesError;
+
+    const senderIds = unique((messages || []).map((message) => message.sender_id).filter(Boolean));
+    let senderProfiles = new Map();
+    if (senderIds.length) {
+      const { data: profiles, error: senderProfilesError } = await supabaseClient
+        .from("profiles")
+        .select("id, adventurer_name")
+        .in("id", senderIds);
+      if (senderProfilesError) throw senderProfilesError;
+      senderProfiles = new Map((profiles || []).map((profile) => [String(profile.id), profile]));
+    }
+
+    (messages || []).forEach((message) => {
+      const key = String(message.submission_id);
+      if (!remote.submissionMessages[key]) remote.submissionMessages[key] = [];
+      remote.submissionMessages[key].push({
+        ...message,
+        senderName: senderProfiles.get(String(message.sender_id))?.adventurer_name || "冒険者",
+      });
+    });
+  }
   syncAuthVisibility();
 }
 
@@ -1028,6 +1074,108 @@ function getSubmissionTypeLabel(type) {
   return type === "report" ? "完了報告" : "応募";
 }
 
+function getSubmissionMessages(submissionId) {
+  const key = String(submissionId);
+  if (remote.enabled) return remote.submissionMessages[key] || [];
+  return state.submissionMessages[key] || [];
+}
+
+function renderSubmissionChat(submission, context) {
+  if (!submission || submission.submission_type !== "application" || submission.status === "approved") return "";
+
+  const submissionId = String(submission.id);
+  const messages = getSubmissionMessages(submissionId);
+  const currentUserId = remote.user?.id ? String(remote.user.id) : "local-user";
+  const noteId = `submission-chat-note-${submissionId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
+  const title = context === "issuer" ? "応募者とのやり取り" : "発行者とのやり取り";
+  const placeholder = context === "issuer" ? "日程候補や連絡先を返信" : "日程候補や連絡先を送信";
+
+  return `
+    <section class="submission-chat" data-submission-chat="${escapeHtml(submissionId)}">
+      <div class="submission-chat-head">
+        <span>${title}</span>
+        <strong>${messages.length}件</strong>
+      </div>
+      <div class="submission-chat-log">
+        ${
+          messages.length
+            ? messages
+                .map((message) => {
+                  const mine = String(message.sender_id || "") === currentUserId;
+                  return `
+                    <article class="submission-chat-message${mine ? " is-mine" : ""}">
+                      <div>
+                        <strong>${escapeHtml(mine ? "あなた" : message.senderName || "冒険者")}</strong>
+                        <time>${formatDateTime(message.created_at)}</time>
+                      </div>
+                      <p>${escapeHtml(message.body)}</p>
+                    </article>
+                  `;
+                })
+                .join("")
+            : `<p class="submission-chat-empty">まだコメントはありません。</p>`
+        }
+      </div>
+      <div class="submission-chat-form">
+        <textarea rows="2" data-submission-chat-body="${escapeHtml(submissionId)}" placeholder="${placeholder}"></textarea>
+        <button class="btn btn-outline btn-sm" type="button" data-send-submission-message="${escapeHtml(submissionId)}" aria-describedby="${noteId}">
+          <i data-lucide="send"></i>送信
+        </button>
+      </div>
+      <p class="form-note" id="${noteId}" data-submission-chat-note="${escapeHtml(submissionId)}"></p>
+    </section>
+  `;
+}
+
+async function sendSubmissionMessage(submissionId, container = document) {
+  const bodyEl = container.querySelector(`[data-submission-chat-body="${CSS.escape(String(submissionId))}"]`);
+  const noteEl = container.querySelector(`[data-submission-chat-note="${CSS.escape(String(submissionId))}"]`);
+  const body = String(bodyEl?.value || "").trim();
+
+  if (!body) {
+    if (noteEl) noteEl.textContent = "コメントを入力してください。";
+    return;
+  }
+
+  if (remote.enabled) {
+    if (!remote.user) {
+      if (noteEl) noteEl.textContent = "コメント送信にはログインが必要です。";
+      return;
+    }
+
+    const { error } = await supabaseClient.from("quest_submission_messages").insert({
+      submission_id: submissionId,
+      sender_id: remote.user.id,
+      body,
+    });
+
+    if (error) {
+      if (noteEl) noteEl.textContent = "コメントを送信できませんでした。権限または接続状態を確認してください。";
+      return;
+    }
+
+    if (bodyEl) bodyEl.value = "";
+    showToast("コメントを送信しました。");
+    await refreshRemoteState();
+    return;
+  }
+
+  const key = String(submissionId);
+  if (!state.submissionMessages[key]) state.submissionMessages[key] = [];
+  state.submissionMessages[key].push({
+    id: `local-message-${Date.now()}`,
+    submission_id: key,
+    sender_id: "local-user",
+    senderName: getCurrentUserName(),
+    body,
+    created_at: new Date().toISOString(),
+  });
+  if (bodyEl) bodyEl.value = "";
+  showToast("コメントを送信しました。");
+  renderIssuedQuests();
+  renderParticipantQuests();
+}
+
 function getParticipantQuestSubmissions(status) {
   if (remote.enabled) {
     return remote.participantSubmissions.filter((submission) => submission.status === status);
@@ -1041,6 +1189,14 @@ function getParticipantQuestSubmissions(status) {
       status: "pending",
       comment: "オンボーディング画面を確認し、初回ユーザー目線の感想を送りました。",
       created_at: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
+    },
+    {
+      id: "demo-participant-pending-application",
+      quest_id: 4,
+      submission_type: "application",
+      status: "pending",
+      comment: "営業資料レビューに応募しました。平日夜で日程調整できます。",
+      created_at: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
     },
     {
       id: "demo-participant-approved-application",
@@ -1112,12 +1268,17 @@ function renderParticipantQuestList(targetEl, countEl, status) {
           <div class="participant-quest-actions">
             <a class="btn btn-outline btn-sm" href="${detailHref}"><i data-lucide="external-link"></i>詳細</a>
           </div>
+          ${!isApproved ? renderSubmissionChat(submission, "participant") : ""}
         </article>
       `;
     })
     .join("");
 
   if (window.lucide) lucide.createIcons();
+
+  targetEl.querySelectorAll("[data-send-submission-message]").forEach((button) => {
+    button.addEventListener("click", () => sendSubmissionMessage(button.dataset.sendSubmissionMessage, targetEl));
+  });
 }
 
 function renderParticipantQuests() {
@@ -1456,6 +1617,7 @@ function renderApprovalItems(quest, submissions) {
               ? `<a class="approval-evidence" href="${escapeHtml(evidenceUrl)}" target="_blank" rel="noopener"><i data-lucide="image"></i>エビデンスを見る</a>`
               : ""
           }
+          ${renderSubmissionChat(submission, "issuer")}
           <div class="approval-controls">
             <label>
               評価
@@ -1603,6 +1765,10 @@ function renderIssuedQuests() {
       const submissionId = button.dataset.approveSubmission;
       approveSubmissionFromIssuedCard(button.dataset.approveQuest, submissionId);
     });
+  });
+
+  issuedQuestsEl.querySelectorAll("[data-send-submission-message]").forEach((button) => {
+    button.addEventListener("click", () => sendSubmissionMessage(button.dataset.sendSubmissionMessage, issuedQuestsEl));
   });
 
   issuedQuestsEl.querySelectorAll("[data-edit-issued]").forEach((button) => {
@@ -2569,6 +2735,7 @@ signoutBtn?.addEventListener("click", async () => {
   remote.issuerSubmissions = [];
   remote.pendingSubmissions = [];
   remote.participantSubmissions = [];
+  remote.submissionMessages = {};
   setAuthStatus("未ログイン");
   setAuthNote("ログアウトしました。");
   await refreshRemoteState();

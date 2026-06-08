@@ -2957,6 +2957,93 @@ h3 {
   font-weight: 900;
 }
 
+.submission-chat {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.75rem;
+  border: 1px solid #d9e3ef;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.submission-chat-head,
+.submission-chat-message > div,
+.submission-chat-form {
+  display: flex;
+  gap: 0.55rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.submission-chat-head span,
+.submission-chat-head strong,
+.submission-chat-message strong,
+.submission-chat-message time {
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.submission-chat-head span {
+  color: #24475d;
+}
+
+.submission-chat-head strong,
+.submission-chat-message time {
+  color: var(--muted);
+}
+
+.submission-chat-log {
+  display: grid;
+  gap: 0.45rem;
+  max-height: 220px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.submission-chat-message {
+  display: grid;
+  gap: 0.25rem;
+  justify-self: start;
+  width: min(92%, 520px);
+  padding: 0.55rem 0.65rem;
+  border: 1px solid #e3e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.submission-chat-message.is-mine {
+  justify-self: end;
+  border-color: #c7dfd2;
+  background: #f2fbf5;
+}
+
+.submission-chat-message p,
+.submission-chat-empty {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.86rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.submission-chat-empty {
+  color: var(--muted);
+}
+
+.submission-chat-form {
+  align-items: stretch;
+}
+
+.submission-chat-form textarea {
+  min-height: 42px;
+  resize: vertical;
+}
+
+.submission-chat-form .btn {
+  flex: 0 0 auto;
+}
+
 .closed-review-comment {
   display: grid;
   gap: 0.25rem;
@@ -3543,6 +3630,14 @@ h3 {
 
   .issued-quest-actions .btn {
     flex: 1 1 120px;
+  }
+
+  .submission-chat-form {
+    display: grid;
+  }
+
+  .submission-chat-form .btn {
+    width: 100%;
   }
 
   .approval-panel-head,

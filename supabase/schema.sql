@@ -67,6 +67,15 @@ create table if not exists public.quest_reviews (
   check (reviewer_id <> reviewee_id)
 );
 
+create table if not exists public.quest_submission_messages (
+  id uuid primary key default gen_random_uuid(),
+  submission_id uuid not null references public.quest_submissions(id) on delete cascade,
+  sender_id uuid not null default auth.uid() references public.profiles(id) on delete cascade,
+  body text not null check (char_length(trim(body)) between 1 and 1000),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 create table if not exists public.gold_ledger (
   id uuid primary key default gen_random_uuid(),
   profile_id uuid not null references public.profiles(id) on delete cascade,
@@ -103,6 +112,10 @@ for each row execute function public.touch_updated_at();
 
 drop trigger if exists submissions_touch_updated_at on public.quest_submissions;
 create trigger submissions_touch_updated_at before update on public.quest_submissions
+for each row execute function public.touch_updated_at();
+
+drop trigger if exists submission_messages_touch_updated_at on public.quest_submission_messages;
+create trigger submission_messages_touch_updated_at before update on public.quest_submission_messages
 for each row execute function public.touch_updated_at();
 
 create or replace function public.create_profile_for_new_user()
@@ -435,6 +448,7 @@ alter table public.profiles enable row level security;
 alter table public.quests enable row level security;
 alter table public.quest_submissions enable row level security;
 alter table public.quest_reviews enable row level security;
+alter table public.quest_submission_messages enable row level security;
 alter table public.gold_ledger enable row level security;
 alter table public.trust_ledger enable row level security;
 
@@ -456,6 +470,34 @@ for select using (
 drop policy if exists "Reviews are visible" on public.quest_reviews;
 create policy "Reviews are visible" on public.quest_reviews for select using (true);
 
+drop policy if exists "Submission messages visible to participants" on public.quest_submission_messages;
+create policy "Submission messages visible to participants" on public.quest_submission_messages
+for select using (
+  exists (
+    select 1
+    from public.quest_submissions s
+    join public.quests q on q.id = s.quest_id
+    where s.id = submission_id
+      and s.submission_type = 'application'
+      and (s.adventurer_id = auth.uid() or q.issuer_id = auth.uid())
+  )
+);
+
+drop policy if exists "Submission participants create messages" on public.quest_submission_messages;
+create policy "Submission participants create messages" on public.quest_submission_messages
+for insert with check (
+  sender_id = auth.uid()
+  and exists (
+    select 1
+    from public.quest_submissions s
+    join public.quests q on q.id = s.quest_id
+    where s.id = submission_id
+      and s.submission_type = 'application'
+      and s.status = 'pending'
+      and (s.adventurer_id = auth.uid() or q.issuer_id = auth.uid())
+  )
+);
+
 drop policy if exists "Gold ledger owner visible" on public.gold_ledger;
 create policy "Gold ledger owner visible" on public.gold_ledger for select using (auth.uid() = profile_id);
 drop policy if exists "Trust ledger owner visible" on public.trust_ledger;
@@ -463,7 +505,8 @@ create policy "Trust ledger owner visible" on public.trust_ledger for select usi
 
 grant usage on schema public to anon, authenticated;
 grant select on public.quest_board to anon, authenticated;
-grant select on public.profiles, public.quests, public.quest_submissions, public.quest_reviews, public.gold_ledger, public.trust_ledger to authenticated;
+grant select on public.profiles, public.quests, public.quest_submissions, public.quest_reviews, public.quest_submission_messages, public.gold_ledger, public.trust_ledger to authenticated;
+grant insert on public.quest_submission_messages to authenticated;
 grant execute on function public.issue_quest(text, text, integer, text, text, integer, date, text[], text, text) to authenticated;
 grant execute on function public.submit_quest(uuid, text, text, text) to authenticated;
 grant execute on function public.update_quest(uuid, text, text, integer, text, text, integer, date, text[], text, text) to authenticated;
