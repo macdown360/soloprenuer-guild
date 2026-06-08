@@ -1125,7 +1125,7 @@ function getSubmissionMessages(submissionId) {
 }
 
 function renderSubmissionChat(submission, context) {
-  if (!submission || submission.submission_type !== "application" || submission.status === "approved") return "";
+  if (!submission || submission.submission_type !== "application" || submission.status !== "pending") return "";
 
   const submissionId = String(submission.id);
   const messages = getSubmissionMessages(submissionId);
@@ -1175,6 +1175,9 @@ async function sendSubmissionMessage(submissionId, container = document) {
   const bodyEl = container.querySelector(`[data-submission-chat-body="${CSS.escape(String(submissionId))}"]`);
   const noteEl = container.querySelector(`[data-submission-chat-note="${CSS.escape(String(submissionId))}"]`);
   const body = String(bodyEl?.value || "").trim();
+  const openApprovalPanelIds = issuedQuestsEl
+    ? [...issuedQuestsEl.querySelectorAll("[data-approval-panel]:not([hidden])")].map((panel) => panel.dataset.approvalPanel)
+    : [];
 
   if (!body) {
     if (noteEl) noteEl.textContent = "コメントを入力してください。";
@@ -1201,6 +1204,7 @@ async function sendSubmissionMessage(submissionId, container = document) {
     if (bodyEl) bodyEl.value = "";
     showToast("コメントを送信しました。");
     await refreshRemoteState();
+    restoreOpenApprovalPanels(openApprovalPanelIds);
     return;
   }
 
@@ -1218,6 +1222,14 @@ async function sendSubmissionMessage(submissionId, container = document) {
   showToast("コメントを送信しました。");
   renderIssuedQuests();
   renderParticipantQuests();
+}
+
+function restoreOpenApprovalPanels(questIds) {
+  if (!issuedQuestsEl || !questIds.length) return;
+  questIds.forEach((questId) => {
+    const panel = issuedQuestsEl.querySelector(`[data-approval-panel="${CSS.escape(String(questId))}"]`);
+    if (panel) panel.hidden = false;
+  });
 }
 
 function getParticipantQuestSubmissions(status) {
