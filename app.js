@@ -205,6 +205,7 @@ const remote = {
   enabled: Boolean(supabaseClient),
   user: null,
   profile: null,
+  issuerSubmissions: [],
   pendingSubmissions: [],
   participantSubmissions: [],
 };
@@ -581,6 +582,7 @@ async function loadRemoteState() {
 
   if (!remote.user) {
     remote.profile = null;
+    remote.issuerSubmissions = [];
     remote.pendingSubmissions = [];
     remote.participantSubmissions = [];
     setAuthNote("クエストは閲覧できます。発行・応募・承認にはログインしてください。");
@@ -606,8 +608,8 @@ async function loadRemoteState() {
   const issuedQuestIds = new Set(state.quests.filter((quest) => quest.issuerId === remote.user.id).map((quest) => String(quest.id)));
   const { data: submissions, error: submissionsError } = await supabaseClient
     .from("quest_submissions")
-    .select("id, quest_id, adventurer_id, submission_type, comment, evidence_url, status, created_at")
-    .eq("status", "pending")
+    .select("id, quest_id, adventurer_id, submission_type, comment, evidence_url, status, created_at, updated_at, quest_reviews(comment, rating, created_at)")
+    .in("status", ["pending", "approved", "rejected"])
     .order("created_at", { ascending: false });
 
   if (submissionsError) throw submissionsError;
@@ -622,14 +624,19 @@ async function loadRemoteState() {
     if (profilesError) throw profilesError;
     adventurerProfiles = new Map((profiles || []).map((profile) => [String(profile.id), profile]));
   }
-  remote.pendingSubmissions = visibleSubmissions.map((submission) => {
+  remote.issuerSubmissions = visibleSubmissions.map((submission) => {
     const adventurer = adventurerProfiles.get(String(submission.adventurer_id));
+    const review = Array.isArray(submission.quest_reviews) ? submission.quest_reviews[0] : submission.quest_reviews;
     return {
       ...submission,
       adventurerName: adventurer?.adventurer_name || "冒険者",
       adventurerHeadline: adventurer?.headline || "",
+      reviewComment: review?.comment || "",
+      reviewRating: review?.rating || null,
+      reviewedAt: review?.created_at || "",
     };
   });
+  remote.pendingSubmissions = remote.issuerSubmissions.filter((submission) => submission.status === "pending");
 
   const { data: participantSubmissions, error: participantSubmissionsError } = await supabaseClient
     .from("quest_submissions")
@@ -899,6 +906,30 @@ function getQuestPendingSubmissions(quest) {
     ];
   }
   return [];
+}
+
+function getQuestIssuerSubmissions(quest) {
+  if (!quest) return [];
+  if (remote.enabled) {
+    return remote.issuerSubmissions.filter((submission) => String(submission.quest_id) === String(quest.id));
+  }
+
+  if (!isQuestClosed(quest)) return [];
+  const comments = normalizeList(quest.comments);
+  if (!comments.length && !Number(quest.approvedReports)) return [];
+
+  return (comments.length ? comments : ["承認済みの提出内容です。"]).map((comment, index) => ({
+    id: `local-closed-submission-${quest.id}-${index}`,
+    quest_id: quest.id,
+    submission_type: quest.type === "report" ? "report" : "application",
+    status: "approved",
+    adventurerName: "冒険者",
+    adventurerHeadline: "",
+    comment,
+    evidence_url: "",
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * (24 + index)).toISOString(),
+    updated_at: new Date(Date.now() - 1000 * 60 * 60 * (12 + index)).toISOString(),
+  }));
 }
 
 function getQuestDeadlineDate(daysValue) {
@@ -1401,6 +1432,57 @@ function renderApprovalItems(quest, submissions) {
     .join("");
 }
 
+function getSubmissionStatusLabel(status) {
+  if (status === "approved") return "承認済み";
+  if (status === "rejected") return "却下";
+  return "承認待ち";
+}
+
+function renderClosedSubmissionItems(submissions) {
+  if (!submissions.length) {
+    return '<div class="approval-empty">保存されている応募・完了報告はありません。</div>';
+  }
+
+  return submissions
+    .map((submission) => {
+      const typeLabel = getSubmissionTypeLabel(submission.submission_type);
+      const statusLabel = getSubmissionStatusLabel(submission.status);
+      const comment = submission.comment?.trim() || "内容コメントはありません。";
+      const evidenceUrl = normalizeQuestUrl(submission.evidence_url || "");
+      const reviewComment = submission.reviewComment?.trim() || "";
+      const timeValue = submission.updated_at || submission.created_at;
+
+      return `
+        <article class="approval-item closed-submission-item">
+          <div class="approval-item-head">
+            <div>
+              <span class="approval-type">${typeLabel}</span>
+              <span class="quest-status-badge">${statusLabel}</span>
+              <h4>${escapeHtml(submission.adventurerName || "冒険者")}</h4>
+              ${submission.adventurerHeadline ? `<p>${escapeHtml(submission.adventurerHeadline)}</p>` : ""}
+            </div>
+            <time>${formatDateTime(timeValue)}</time>
+          </div>
+          <div class="approval-comment">${escapeHtml(comment)}</div>
+          ${
+            evidenceUrl
+              ? `<a class="approval-evidence" href="${escapeHtml(evidenceUrl)}" target="_blank" rel="noopener"><i data-lucide="image"></i>エビデンスを見る</a>`
+              : ""
+          }
+          ${
+            reviewComment
+              ? `<div class="closed-review-comment">
+                  <span>承認コメント</span>
+                  <p>${escapeHtml(reviewComment)}</p>
+                </div>`
+              : ""
+          }
+        </article>
+      `;
+    })
+    .join("");
+}
+
 function renderIssuedQuests() {
   if (!issuedQuestsEl) return;
 
@@ -1511,6 +1593,8 @@ function renderClosedIssuedQuests() {
     .map((quest) => {
       const type = getQuestType(quest);
       const progress = Math.min(getQuestProgress(quest), getQuestCapacity(quest));
+      const submissions = getQuestIssuerSubmissions(quest);
+      const submissionCount = submissions.length;
       return `
         <article class="closed-quest-card">
           <div class="closed-quest-main">
@@ -1518,6 +1602,7 @@ function renderClosedIssuedQuests() {
               <span class="category">${quest.category}</span>
               <span class="quest-type-badge">${type.label}</span>
               <span class="quest-status-badge">${type.closedLabel}</span>
+              ${submissionCount ? `<span class="quest-status-badge">提出 ${submissionCount}件</span>` : ""}
             </div>
             <h3>${quest.title}</h3>
             <p>${quest.description}</p>
@@ -1527,11 +1612,34 @@ function renderClosedIssuedQuests() {
               <span>締切: ${formatDate(quest.deadline)}</span>
             </div>
           </div>
-          <a class="btn btn-outline btn-sm" href="${getQuestDetailUrl(quest.id)}" target="_blank" rel="noopener"><i data-lucide="external-link"></i>詳細</a>
+          <div class="closed-quest-actions">
+            <a class="btn btn-outline btn-sm" href="${getQuestDetailUrl(quest.id)}" target="_blank" rel="noopener"><i data-lucide="external-link"></i>詳細</a>
+            <button class="btn btn-outline btn-sm" type="button" data-toggle-closed-submissions="${quest.id}" ${submissionCount ? "" : "disabled"}>
+              <i data-lucide="message-square-text"></i>提出内容${submissionCount ? ` (${submissionCount})` : ""}
+            </button>
+          </div>
+          <div class="approval-panel closed-submission-panel" data-closed-submission-panel="${quest.id}" hidden>
+            <div class="approval-panel-head">
+              <div>
+                <span class="eyebrow">SUBMISSIONS</span>
+                <h4>応募・完了報告の内容</h4>
+              </div>
+              <span class="status-pill">${submissionCount}件</span>
+            </div>
+            ${renderClosedSubmissionItems(submissions)}
+          </div>
         </article>
       `;
     })
     .join("");
+
+  closedIssuedQuestsEl.querySelectorAll("[data-toggle-closed-submissions]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const panel = closedIssuedQuestsEl.querySelector(`[data-closed-submission-panel="${CSS.escape(button.dataset.toggleClosedSubmissions)}"]`);
+      if (!panel) return;
+      panel.hidden = !panel.hidden;
+    });
+  });
 
   if (window.lucide) lucide.createIcons();
 }
@@ -2413,6 +2521,7 @@ signoutBtn?.addEventListener("click", async () => {
   await supabaseClient.auth.signOut();
   remote.user = null;
   remote.profile = null;
+  remote.issuerSubmissions = [];
   remote.pendingSubmissions = [];
   remote.participantSubmissions = [];
   setAuthStatus("未ログイン");
