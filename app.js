@@ -352,25 +352,87 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
-function getSubmitQuestErrorMessage(error, fallback) {
+function isDuplicateSubmissionError(error) {
   const message = error?.message || "";
   const code = error?.code || "";
-  if (/self_submission_denied/i.test(message)) return SELF_SUBMISSION_MESSAGE;
-  if (
+  return (
     code === "23505" ||
     /duplicate key value violates unique constraint/i.test(message) ||
     /quest_submissions_quest_id_adventurer_id_submission_type_key/i.test(message)
-  ) {
-    return "このクエストには既に応募済みです。";
+  );
+}
+
+function getStorageErrorMessage(error, fallback) {
+  const message = error?.message || "";
+  if (/bucket not found|storage bucket/i.test(message)) return "画像保存先の設定が見つかりません。管理者に確認してください。";
+  if (/row-level security|violates row-level security|not authorized|unauthorized|permission/i.test(message)) {
+    return "画像をアップロードする権限がありません。ログイン状態を確認してください。";
   }
-  return message || fallback;
+  if (/payload too large|file size|exceeded/i.test(message)) return "画像のサイズが大きすぎます。小さい画像で再度お試しください。";
+  return fallback;
+}
+
+function getQuestSaveErrorMessage(error, isEditing) {
+  const message = error?.message || "";
+  if (/not_authenticated/i.test(message)) return isEditing ? "クエスト編集にはログインが必要です。" : "クエスト発行にはログインが必要です。";
+  if (/insufficient_gold/i.test(message)) return "Gold残高が不足しています。報酬または募集人数を見直してください。";
+  if (/quest_not_editable/i.test(message)) return "編集できる発行中クエストが見つかりません。";
+  if (/capacity_below_submission_count/i.test(message)) return "募集人数は現在の応募・完了報告数より少なくできません。";
+  if (/violates check constraint|invalid input value|not-null constraint|null value/i.test(message)) {
+    return "入力内容に不備があります。各項目を確認してください。";
+  }
+  return isEditing ? "クエストを更新できませんでした。" : "クエストを発行できませんでした。";
+}
+
+function getSubmitQuestErrorMessage(error, fallback) {
+  const message = error?.message || "";
+  if (/not_authenticated/i.test(message)) return "応募・完了報告にはログインが必要です。";
+  if (/quest_not_available/i.test(message)) return "このクエストは現在受付していません。";
+  if (/quest_full/i.test(message)) return "募集人数に達したため、受付は終了しました。";
+  if (/self_submission_denied/i.test(message)) return SELF_SUBMISSION_MESSAGE;
+  if (isDuplicateSubmissionError(error)) return "このクエストには既に応募済みです。";
+  if (/violates check constraint|invalid input value|not-null constraint|null value/i.test(message)) return "送信内容に不備があります。入力内容を確認してください。";
+  return fallback;
 }
 
 function getDeleteQuestErrorMessage(error) {
   const message = error?.message || "";
   if (/quest_not_deletable/i.test(message)) return "削除できる発行中クエストが見つかりません。";
   if (/not_authenticated/i.test(message)) return "クエスト削除にはログインが必要です。";
-  return message || "クエストを削除できませんでした。";
+  return "クエストを削除できませんでした。時間をおいて再度お試しください。";
+}
+
+function getApprovalErrorMessage(error) {
+  const message = error?.message || "";
+  if (/not_authenticated/i.test(message)) return "承認にはログインが必要です。";
+  if (/submission_not_available/i.test(message)) return "承認できる応募・完了報告が見つかりません。";
+  if (/not_quest_issuer/i.test(message)) return "このクエストを承認できるのは発行者のみです。";
+  if (/self_review_denied/i.test(message)) return "自分の応募・完了報告は承認できません。";
+  if (/violates check constraint|invalid input value|not-null constraint|null value/i.test(message)) return "承認内容に不備があります。入力内容を確認してください。";
+  return "承認できませんでした。時間をおいて再度お試しください。";
+}
+
+function getAuthErrorMessage(error, fallback) {
+  const message = error?.message || "";
+  if (/invalid login credentials/i.test(message)) return "メールアドレスまたはパスワードが正しくありません。";
+  if (/password should be at least|weak password|password/i.test(message)) return "パスワードは8文字以上で入力してください。";
+  if (/invalid email|email/i.test(message)) return "メールアドレスの形式を確認してください。";
+  if (/rate limit|too many requests/i.test(message)) return "アクセスが集中しています。少し時間をおいて再度お試しください。";
+  return fallback;
+}
+
+function getProfileSaveErrorMessage(error) {
+  const message = error?.message || "";
+  if (/row-level security|not authorized|unauthorized|permission/i.test(message)) return "プロフィールを更新する権限がありません。ログイン状態を確認してください。";
+  if (/violates check constraint|invalid input value|not-null constraint|null value/i.test(message)) return "プロフィールの入力内容に不備があります。";
+  return "プロフィールを保存できませんでした。時間をおいて再度お試しください。";
+}
+
+function getDataLoadErrorMessage(error) {
+  const message = error?.message || "";
+  if (/failed to fetch|network|fetch/i.test(message)) return "通信に失敗しました。ネットワーク接続を確認してください。";
+  if (/permission|row-level security|not authorized|unauthorized/i.test(message)) return "データを読み込む権限がありません。ログイン状態を確認してください。";
+  return "Supabaseからデータを読み込めませんでした。時間をおいて再度お試しください。";
 }
 
 async function resendSignupConfirmation(email) {
@@ -1678,7 +1740,7 @@ function renderQuestDetail(quest) {
         try {
           evidenceUrl = await uploadQuestAsset(evidence.files[0], "evidence");
         } catch (error) {
-          showToast(error.message || "エビデンスをアップロードできませんでした。");
+          showToast(getStorageErrorMessage(error, "エビデンスをアップロードできませんでした。"));
           return;
         }
         const { error } = await supabaseClient.rpc("submit_quest", {
@@ -1865,7 +1927,7 @@ questForm?.addEventListener("submit", async (event) => {
     try {
       screenshotUrl = await uploadQuestAsset(screenshotFile, "quest-screenshots");
     } catch (error) {
-      formNote.textContent = error.message || "スクショをアップロードできませんでした。";
+      formNote.textContent = getStorageErrorMessage(error, "スクショをアップロードできませんでした。");
       return;
     }
 
@@ -1886,7 +1948,7 @@ questForm?.addEventListener("submit", async (event) => {
       : await supabaseClient.rpc("issue_quest", payload);
 
     if (error) {
-      formNote.textContent = error.message || (editingQuest ? "クエストを更新できませんでした。" : "クエストを発行できませんでした。");
+      formNote.textContent = getQuestSaveErrorMessage(error, Boolean(editingQuest));
       return;
     }
 
@@ -2026,7 +2088,7 @@ async function approveQuestSubmission({ questId, submissionId, trustBonus, comme
     });
 
     if (error) {
-      if (noteEl) noteEl.textContent = error.message || "承認できませんでした。";
+      if (noteEl) noteEl.textContent = getApprovalErrorMessage(error);
       return;
     }
 
@@ -2238,7 +2300,7 @@ registerForm?.addEventListener("submit", async (event) => {
       return;
     }
 
-    setAuthNote(error.message || "登録できませんでした。");
+    setAuthNote(getAuthErrorMessage(error, "登録できませんでした。"));
     return;
   }
 
@@ -2281,7 +2343,7 @@ authForm?.addEventListener("submit", async (event) => {
       );
       return;
     }
-    setAuthNote(error.message || "ログインできませんでした。");
+    setAuthNote(getAuthErrorMessage(error, "ログインできませんでした。"));
     return;
   }
 
@@ -2319,7 +2381,7 @@ profileForm?.addEventListener("submit", async (event) => {
     .eq("id", remote.user.id);
 
   if (error) {
-    if (profileNoteEl) profileNoteEl.textContent = error.message || "プロフィールを保存できませんでした。";
+    if (profileNoteEl) profileNoteEl.textContent = getProfileSaveErrorMessage(error);
     return;
   }
 
@@ -2369,7 +2431,7 @@ async function initApp() {
   } catch (error) {
     console.error(error);
     setAuthStatus("接続エラー");
-    setAuthNote(error.message || "Supabaseからデータを読み込めませんでした。");
+    setAuthNote(getDataLoadErrorMessage(error));
   }
 }
 
