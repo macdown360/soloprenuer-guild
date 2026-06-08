@@ -507,6 +507,18 @@ grant usage on schema public to anon, authenticated;
 grant select on public.quest_board to anon, authenticated;
 grant select on public.profiles, public.quests, public.quest_submissions, public.quest_reviews, public.quest_submission_messages, public.gold_ledger, public.trust_ledger to authenticated;
 grant insert on public.quest_submission_messages to authenticated;
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_publication_tables
+    where pubname = 'supabase_realtime'
+      and schemaname = 'public'
+      and tablename = 'quest_submission_messages'
+  ) then
+    alter publication supabase_realtime add table public.quest_submission_messages;
+  end if;
+end $$;
 grant execute on function public.issue_quest(text, text, integer, text, text, integer, date, text[], text, text) to authenticated;
 grant execute on function public.submit_quest(uuid, text, text, text) to authenticated;
 grant execute on function public.update_quest(uuid, text, text, integer, text, text, integer, date, text[], text, text) to authenticated;

@@ -43,3 +43,16 @@ for insert with check (
 
 grant select on public.quest_submission_messages to authenticated;
 grant insert on public.quest_submission_messages to authenticated;
+
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_publication_tables
+    where pubname = 'supabase_realtime'
+      and schemaname = 'public'
+      and tablename = 'quest_submission_messages'
+  ) then
+    alter publication supabase_realtime add table public.quest_submission_messages;
+  end if;
+end $$;

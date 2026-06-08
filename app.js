@@ -210,6 +210,8 @@ const remote = {
   pendingSubmissions: [],
   participantSubmissions: [],
   submissionMessages: {},
+  messageChannel: null,
+  messageRefreshTimer: null,
 };
 
 const SELF_SUBMISSION_MESSAGE = "自分の発行したクエストには応募できません";
@@ -767,6 +769,61 @@ async function refreshRemoteState() {
   syncStats();
   renderQuestList();
   renderQuestDetailPage();
+  syncSubmissionMessageRealtime();
+}
+
+function shouldUseSubmissionMessageRealtime() {
+  return Boolean(remote.enabled && remote.user && (issuedQuestsEl || participantPendingQuestsEl));
+}
+
+function getOpenApprovalPanelIds() {
+  if (!issuedQuestsEl) return [];
+  return [...issuedQuestsEl.querySelectorAll("[data-approval-panel]:not([hidden])")]
+    .map((panel) => panel.dataset.approvalPanel)
+    .filter(Boolean);
+}
+
+function clearSubmissionMessageRealtime() {
+  if (remote.messageRefreshTimer) {
+    clearTimeout(remote.messageRefreshTimer);
+    remote.messageRefreshTimer = null;
+  }
+  if (remote.messageChannel) {
+    supabaseClient.removeChannel(remote.messageChannel);
+    remote.messageChannel = null;
+  }
+}
+
+function syncSubmissionMessageRealtime() {
+  if (!shouldUseSubmissionMessageRealtime()) {
+    clearSubmissionMessageRealtime();
+    return;
+  }
+  if (remote.messageChannel) return;
+
+  remote.messageChannel = supabaseClient
+    .channel("quest-submission-messages")
+    .on(
+      "postgres_changes",
+      { event: "INSERT", schema: "public", table: "quest_submission_messages" },
+      () => scheduleSubmissionMessageRefresh()
+    )
+    .subscribe();
+}
+
+function scheduleSubmissionMessageRefresh() {
+  if (!shouldUseSubmissionMessageRealtime()) return;
+  const openApprovalPanelIds = getOpenApprovalPanelIds();
+  if (remote.messageRefreshTimer) clearTimeout(remote.messageRefreshTimer);
+  remote.messageRefreshTimer = setTimeout(async () => {
+    remote.messageRefreshTimer = null;
+    try {
+      await refreshRemoteState();
+      restoreOpenApprovalPanels(openApprovalPanelIds);
+    } catch (error) {
+      console.error("Failed to refresh submission messages", error);
+    }
+  }, 250);
 }
 
 async function uploadQuestAsset(file, folder) {
@@ -1185,9 +1242,7 @@ async function sendSubmissionMessage(submissionId, container = document) {
   const bodyEl = container.querySelector(`[data-submission-chat-body="${CSS.escape(String(submissionId))}"]`);
   const noteEl = container.querySelector(`[data-submission-chat-note="${CSS.escape(String(submissionId))}"]`);
   const body = String(bodyEl?.value || "").trim();
-  const openApprovalPanelIds = issuedQuestsEl
-    ? [...issuedQuestsEl.querySelectorAll("[data-approval-panel]:not([hidden])")].map((panel) => panel.dataset.approvalPanel)
-    : [];
+  const openApprovalPanelIds = getOpenApprovalPanelIds();
 
   if (!body) {
     if (noteEl) noteEl.textContent = "コメントを入力してください。";
@@ -2802,6 +2857,7 @@ profileForm?.addEventListener("submit", async (event) => {
 
 signoutBtn?.addEventListener("click", async () => {
   if (!remote.enabled) return;
+  clearSubmissionMessageRealtime();
   await supabaseClient.auth.signOut();
   remote.user = null;
   remote.profile = null;
