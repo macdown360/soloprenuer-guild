@@ -3041,6 +3041,14 @@ h3 {
   flex: 0 0 auto;
 }
 
+.issued-quest-card .submission-chat-form {
+  gap: 0.4rem;
+}
+
+.issued-quest-card .submission-chat-form .btn {
+  padding-inline: 0.65rem;
+}
+
 .closed-review-comment {
   display: grid;
   gap: 0.25rem;
