@@ -760,7 +760,53 @@ function getIssuerProfile(name) {
 }
 
 function renderIssuerButton(name) {
-  return `<span class="issuer-name">${name || "冒険者"}</span>`;
+  const issuerName = name || "冒険者";
+  return `
+    <span class="issuer-hover">
+      <span class="issuer-name">${escapeHtml(issuerName)}</span>
+      ${renderIssuerPopover(issuerName)}
+    </span>
+  `;
+}
+
+function renderIssuerPopover(name) {
+  const issuerName = name || "冒険者";
+  const profile = getIssuerProfile(issuerName);
+
+  if (!profile) {
+    return `
+      <span class="issuer-profile-popover" aria-hidden="true">
+        <span class="popover-eyebrow">ISSUER PROFILE</span>
+        <span class="popover-head">
+          <span class="issuer-avatar trust-avatar trust-rank-apprentice" title="見習い冒険者">${escapeHtml(issuerName.slice(0, 1))}</span>
+          <span>
+            <strong>${escapeHtml(issuerName)}</strong>
+            <span>プロフィール未登録</span>
+          </span>
+        </span>
+        <span class="popover-summary">この発行者のプロフィール情報はまだ登録されていません。</span>
+      </span>
+    `;
+  }
+
+  return `
+    <span class="issuer-profile-popover" aria-hidden="true">
+      <span class="popover-eyebrow">ISSUER PROFILE</span>
+      <span class="popover-head">
+        <span class="issuer-avatar trust-avatar ${getTrustRankFrame(profile.trust)}" title="${getRank(profile.trust)}">${escapeHtml(profile.initials)}</span>
+        <span>
+          <strong>${escapeHtml(issuerName)}</strong>
+          <span>${escapeHtml(profile.headline)}</span>
+        </span>
+      </span>
+      <span class="popover-summary">${escapeHtml(profile.summary)}</span>
+      <span class="popover-stats">
+        <span><small>Trust</small><b>${Number(profile.trust) || 0}</b></span>
+        <span><small>完了</small><b>${Number(profile.completed) || 0}</b></span>
+        <span><small>発行</small><b>${Number(profile.issued) || 0}</b></span>
+      </span>
+    </span>
+  `;
 }
 
 function getQuestDetailUrl(id) {
@@ -1279,7 +1325,7 @@ function renderLatestQuestSlider() {
             <h3>${quest.title}</h3>
             <p class="quest-card-desc">${quest.description}</p>
             <div class="quest-card-meta">
-              <span>発行者: ${quest.issuer}</span>
+              <span>発行者: ${renderIssuerButton(quest.issuer)}</span>
               <span>締切: ${formatDate(quest.deadline)}</span>
               <span>${type.metricLabel}: ${progress}/${getQuestCapacity(quest)}名</span>
             </div>
@@ -1703,7 +1749,7 @@ function renderQuestList() {
         <h3>${quest.title}</h3>
         <p class="quest-card-desc">${quest.description}</p>
         <div class="quest-card-meta">
-          <span>発行者: ${quest.issuer}</span>
+          <span>発行者: ${renderIssuerButton(quest.issuer)}</span>
           <span>締切: ${formatDate(quest.deadline)}</span>
           <span>${getQuestActionHint(quest)}</span>
         </div>
