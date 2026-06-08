@@ -353,8 +353,17 @@ function escapeHtml(value) {
 }
 
 function getSubmitQuestErrorMessage(error, fallback) {
-  if (/self_submission_denied/i.test(error?.message || "")) return SELF_SUBMISSION_MESSAGE;
-  return error?.message || fallback;
+  const message = error?.message || "";
+  const code = error?.code || "";
+  if (/self_submission_denied/i.test(message)) return SELF_SUBMISSION_MESSAGE;
+  if (
+    code === "23505" ||
+    /duplicate key value violates unique constraint/i.test(message) ||
+    /quest_submissions_quest_id_adventurer_id_submission_type_key/i.test(message)
+  ) {
+    return "このクエストには既に応募済みです。";
+  }
+  return message || fallback;
 }
 
 function getDeleteQuestErrorMessage(error) {
