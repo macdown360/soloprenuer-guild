@@ -6,56 +6,108 @@
 
 ## MVPの核
 
-- クエストを投稿できる
-- クエストに応募し、達成できる
-- 発行者が完了を承認できる
+- クエストを発行できる
+- 応募型または完了報告型で参加できる
+- 発行者が承認できる
 - Gold報酬とTrustが反映される
-- 5段階評価で追加Trustが付与される
+- 5段階評価に応じたTrustボーナスが付与される
 
-最重要ループは「クエスト投稿 → クエスト達成 → 信頼獲得」です。
+最重要ループは「クエスト発行 -> クエスト参加 -> 承認 -> 信頼蓄積」です。
 
-## ポイント設計
+## 現在の画面構成
 
-- Gold: クエスト発行に使う通貨。新規登録で100G付与され、クエスト達成などで増えます。
-- Trust: 譲渡不可、売買不可の信用スコア。ランクと信頼度表示に使います。
+- `index.html`: トップページ、最新クエスト、紹介セクション
+- `quests.html`: クエスト一覧、検索、カテゴリ絞り込み
+- `quest-detail.html`: クエスト詳細、応募/完了報告
+- `mypage.html`: プロフィール編集、おすすめ、承認、発行/編集/削除
+- `login.html`: 新規登録/ログイン
+- `charter.html`: ギルド憲章
+- `privacy.html`: プライバシーポリシー
 
-MVPの最重要ルールは、Goldは増減し、Trustは蓄積することです。
+## 現在の実装仕様（重要）
 
-## 画面
+### クエスト
 
-- `index.html`: トップページ、最新クエスト、ランキング、登録導線
-- `login.html`: 登録済みユーザーのログイン
-- `quests.html`: クエスト検索、カテゴリ絞り込み、一覧、詳細、応募
-- `mypage.html`: アカウント情報、プロフィール、クエスト作成、完了承認、評価
-- `charter.html`: ギルド憲章、ポイントルール、不正対策
+- 種別は2種類
+   - `recruiting`（応募型）
+   - `report`（完了報告型）
+- カテゴリは10種類（固定）
+- 募集人数は1-50
+- 報酬Goldは5-50（5刻み）
+- 締切は3/5/7/10/20/30日後から選択
 
-静的HTML/CSS/JavaScriptで構成しています。ローカル環境でSupabase未設定の場合のみデモデータで動作し、本番環境ではSupabase未設定時にデモデータを表示しません。
+### 承認と加算
 
-## Supabase / Vercel リリース手順
+- 承認時のTrust加算は `5 + 評価ボーナス`
+- 評価ボーナスは以下
+   - ★★★★★: +10
+   - ★★★★: +8
+   - ★★★: +5
+   - ★★: +2
+   - ★: +0
+- クエスト発行時は `reward * capacity` をエスクローとして確保
 
-1. Supabaseプロジェクトを作成し、SQL Editorで `supabase/schema.sql` を実行します。
-2. Authenticationのメール設定を確認します。メール確認を必須にする場合、登録後は確認メール経由でログインします。
-3. VercelのEnvironment Variablesに以下を設定します。
-   - `SUPABASE_URL`
-   - `SUPABASE_ANON_KEY`
-4. Vercelへデプロイします。`npm run build` が `supabase-env.js` を生成し、フロントからSupabaseへ接続します。
+### ランク（Trustのみ）
 
-### チャット機能追加時の補足
+- 見習い冒険者: 0-99
+- 駆け出し冒険者: 100-299
+- 一人前冒険者: 300-699
+- 熟練冒険者: 700-1499
+- 上級冒険者: 1500-2999
+- マスター冒険者: 3000-4999
+- 伝説の冒険者: 5000以上
 
-本番Supabaseに `quest_submission_messages` が未作成の場合は、SQL Editorで `supabase/add-submission-messages.sql` を実行してください。新規構築または全スキーマを更新する場合は `supabase/schema.sql` を実行しても同じチャット用テーブル・RLS・権限が入ります。
+### チャット
 
-### RPC更新時の補足
+- 応募型クエストの `pending` 提出に対して、発行者と応募者がメッセージ送信可能
+- `approved` 後の応募はチャット入力を停止
 
-発行中クエストの編集時に `Could not find the function public.update_quest(...) in the schema cache` が出る場合は、Supabase SQL Editorで `supabase/fix-update-quest-rpc.sql` を実行してください。既存の `update_quest` 関数を正しい引数名で作り直し、PostgRESTのschema cacheを再読み込みします。
+### デモモード
 
-## 実装済みの本番機能
+- Supabase未設定でも以下の条件ではデモデータで動作
+   - `file:` で開いた場合
+   - `localhost` または `127.0.0.1`
+- 本番ホストでSupabase未設定の場合はデモデータを無効化
 
-- 冒険者アカウント登録・ログイン・ログアウト
-- プロフィール、Gold、Trust、完了数、発行数のSupabase同期
-- クエスト発行時のGold確保
-- クエスト一覧・詳細のSupabase表示
-- 応募型クエストへの応募
-- 完了報告型クエストのエビデンス画像アップロードと報告
-- 発行者による承認、5段階評価、報酬GoldとTrustの反映
-- 応募型クエストの参加者・発行者チャット
-- Gold/Trust台帳、レビュー台帳、RLS、Storageバケット
+## セットアップ
+
+### ローカル起動
+
+1. 依存インストールは不要（静的構成）
+2. `npm run dev`
+3. `http://localhost:4173` を開く
+
+### Supabase接続
+
+1. Supabase SQL Editorで `supabase/schema.sql` を実行
+2. 環境変数を設定
+    - `SUPABASE_URL`
+    - `SUPABASE_ANON_KEY`
+3. `npm run build` を実行して `supabase-env.js` を生成
+
+### Vercelデプロイ
+
+1. Vercelの環境変数に `SUPABASE_URL` と `SUPABASE_ANON_KEY` を設定
+2. ビルドコマンドは `npm run build`
+3. 出力は静的ファイルをそのまま配信
+
+## 追加SQLの用途
+
+- `supabase/add-submission-messages.sql`
+   - 既存環境へチャット用テーブルを後付けするための補助SQL
+- `supabase/fix-update-quest-rpc.sql`
+   - `update_quest` 関数シグネチャ不一致の修正用
+
+## 実装済み機能
+
+- 冒険者アカウント登録/ログイン/ログアウト
+- プロフィール編集（名前、肩書き、概要、スキル、関心）
+- クエスト発行、編集、削除
+- クエスト検索、詳細表示
+- 応募型の応募と進行
+- 完了報告型のエビデンス画像アップロード
+- 発行者による承認、評価、Trust反映
+- 応募型の提出メッセージチャット
+- おすすめクエスト（プロフィール適合スコア）
+- 承認待ち/承認済みクエストの参加者ビュー
+- Gold/Trust台帳、レビュー、RLS、Storage連携
