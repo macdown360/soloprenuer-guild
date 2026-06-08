@@ -759,17 +759,9 @@ h3 {
 
 .popover-head {
   display: grid;
-  grid-template-columns: 40px minmax(0, 1fr);
-  gap: 0.6rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.25rem;
   align-items: center;
-}
-
-.popover-head .issuer-avatar {
-  box-sizing: border-box;
-  width: 40px;
-  height: 40px;
-  font-size: 0.95rem;
-  line-height: 1;
 }
 
 .popover-head strong,

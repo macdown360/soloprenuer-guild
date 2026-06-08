@@ -870,7 +870,6 @@ function renderIssuerPopover(name) {
       <span class="issuer-profile-popover" aria-hidden="true">
         <span class="popover-eyebrow">ISSUER PROFILE</span>
         <span class="popover-head">
-          <span class="issuer-avatar trust-avatar trust-rank-apprentice" title="見習い冒険者">${escapeHtml(issuerName.slice(0, 1))}</span>
           <span>
             <strong>${escapeHtml(issuerName)}</strong>
             <span>プロフィール未登録</span>
@@ -885,7 +884,6 @@ function renderIssuerPopover(name) {
     <span class="issuer-profile-popover" aria-hidden="true">
       <span class="popover-eyebrow">ISSUER PROFILE</span>
       <span class="popover-head">
-        <span class="issuer-avatar trust-avatar ${getTrustRankFrame(profile.trust)}" title="${getRank(profile.trust)}">${escapeHtml(profile.initials)}</span>
         <span>
           <strong>${escapeHtml(issuerName)}</strong>
           <span>${escapeHtml(profile.headline)}</span>
