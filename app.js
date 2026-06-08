@@ -652,14 +652,21 @@ async function loadRemoteState() {
   setAuthNote(`${state.account.name}としてログイン中です。`);
 
   const issuedQuestIds = new Set(state.quests.filter((quest) => quest.issuerId === remote.user.id).map((quest) => String(quest.id)));
-  const { data: submissions, error: submissionsError } = await supabaseClient
-    .from("quest_submissions")
-    .select("id, quest_id, adventurer_id, submission_type, comment, evidence_url, status, created_at, updated_at, quest_reviews(comment, rating, created_at)")
-    .in("status", ["pending", "approved", "rejected"])
-    .order("created_at", { ascending: false });
+  let submissions = [];
+  let submissionsError = null;
+  if (issuedQuestIds.size) {
+    const response = await supabaseClient
+      .from("quest_submissions")
+      .select("id, quest_id, adventurer_id, submission_type, comment, evidence_url, status, created_at, updated_at, quest_reviews(comment, rating, created_at)")
+      .in("quest_id", [...issuedQuestIds])
+      .in("status", ["pending", "approved", "rejected"])
+      .order("created_at", { ascending: false });
+    submissions = response.data;
+    submissionsError = response.error;
+  }
 
   if (submissionsError) throw submissionsError;
-  const visibleSubmissions = (submissions || []).filter((submission) => issuedQuestIds.has(String(submission.quest_id)));
+  const visibleSubmissions = submissions || [];
   const adventurerIds = unique(visibleSubmissions.map((submission) => submission.adventurer_id).filter(Boolean));
   let adventurerProfiles = new Map();
   if (adventurerIds.length) {
@@ -787,7 +794,7 @@ function overlap(left, right) {
 
 function createChips(values, modifier = "") {
   return normalizeList(values)
-    .map((value) => `<span class="tag-chip${modifier ? ` ${modifier}` : ""}">${value}</span>`)
+    .map((value) => `<span class="tag-chip${modifier ? ` ${modifier}` : ""}">${escapeHtml(value)}</span>`)
     .join("");
 }
 
@@ -1305,7 +1312,7 @@ function renderParticipantQuestList(targetEl, countEl, status) {
             <span>${timeLabel}: ${formatDateTime(timeValue)}</span>
           </div>
           <div class="participant-quest-actions">
-            <a class="btn btn-outline btn-sm" href="${detailHref}"><i data-lucide="external-link"></i>詳細</a>
+            <a class="btn btn-outline btn-sm" href="${escapeHtml(detailHref)}"><i data-lucide="external-link"></i>詳細</a>
           </div>
           ${!isApproved ? renderSubmissionChat(submission, "participant") : ""}
         </article>
@@ -1402,7 +1409,9 @@ function renderAccountProfile() {
           ["強いタグ", "未設定"],
           ["受けやすい依頼", "スキルを登録すると表示されます"],
         ];
-    matchSignalsEl.innerHTML = signals.map(([label, value]) => `<article><span>${label}</span><strong>${value}</strong></article>`).join("");
+    matchSignalsEl.innerHTML = signals
+      .map(([label, value]) => `<article><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></article>`)
+      .join("");
   }
 
   if (categoryMatrixEl) {
@@ -1412,7 +1421,7 @@ function renderAccountProfile() {
         const matchedTags = overlap(tags, account.preferredTags);
         return `
           <article class="${isPreferred ? "is-preferred" : ""}">
-            <strong>${category}</strong>
+            <strong>${escapeHtml(category)}</strong>
             <span>${isPreferred ? "優先" : "通常"} / ${matchedTags.length}タグ一致</span>
           </article>
         `;
@@ -1481,17 +1490,17 @@ function renderRecommendedQuests() {
       return `
         <article class="rec-quest-card">
           <div class="rec-quest-top">
-            <span class="category">${quest.category}</span>
+            <span class="category">${escapeHtml(quest.category)}</span>
             <span class="rec-match-badge"><i data-lucide="sparkles"></i> ${match.score}% match</span>
           </div>
-          <h3>${quest.title}</h3>
-          <p>${quest.description}</p>
+          <h3>${escapeHtml(quest.title)}</h3>
+          <p>${escapeHtml(quest.description)}</p>
           <div class="rec-tags">${tags}</div>
-          <div class="match-reason"><span>一致理由</span><strong>${reason}</strong></div>
+          <div class="match-reason"><span>一致理由</span><strong>${escapeHtml(reason)}</strong></div>
           <div class="rec-quest-foot">
             <span class="rec-reward"><i data-lucide="coins"></i> ${quest.reward}G</span>
             <span class="rec-trust"><i data-lucide="shield-check"></i> +5 Trust</span>
-            <a class="btn btn-primary btn-sm" href="${getQuestDetailUrl(quest.id)}">詳細へ</a>
+            <a class="btn btn-primary btn-sm" href="${escapeHtml(getQuestDetailUrl(quest.id))}">詳細へ</a>
           </div>
         </article>
       `;
@@ -1512,18 +1521,18 @@ function renderLatestQuestSlider() {
       const closed = isQuestClosed(quest);
       const progress = Math.min(getQuestProgress(quest), getQuestCapacity(quest));
       return `
-        <a class="quest-card quest-card-link latest-quest-card${closed ? " is-closed" : ""}" href="${getQuestDetailUrl(quest.id)}">
+        <a class="quest-card quest-card-link latest-quest-card${closed ? " is-closed" : ""}" href="${escapeHtml(getQuestDetailUrl(quest.id))}">
           <div class="quest-main">
             <div class="quest-card-top">
               <div class="quest-card-labels">
-                <span class="category">${quest.category}</span>
+                <span class="category">${escapeHtml(quest.category)}</span>
                 <span class="quest-type-badge">${type.label}</span>
                 ${closed ? `<span class="quest-status-badge">${type.closedLabel}</span>` : ""}
               </div>
               <strong class="gold">${quest.reward}G</strong>
             </div>
-            <h3>${quest.title}</h3>
-            <p class="quest-card-desc">${quest.description}</p>
+            <h3>${escapeHtml(quest.title)}</h3>
+            <p class="quest-card-desc">${escapeHtml(quest.description)}</p>
             <div class="quest-card-meta">
               <span>発行者: ${renderIssuerButton(quest.issuer)}</span>
               <span>締切: ${formatDate(quest.deadline)}</span>
@@ -1572,7 +1581,7 @@ function syncDashboardSummary() {
   const pendingCount = remote.enabled ? remote.pendingSubmissions.length : getLocalPendingApprovalCount();
   const openIssuedCount = remote.enabled
     ? state.quests.filter((quest) => quest.issuerId === remote.user?.id && !isQuestClosed(quest)).length
-    : 2;
+    : getIssuedQuests().length;
   const rankInfo = getNextRankInfo(state.trust);
 
   if (pendingTitleEl) pendingTitleEl.textContent = pendingCount ? `承認待ちが${pendingCount}件あります` : "承認待ちはありません";
@@ -1756,12 +1765,12 @@ function renderIssuedQuests() {
         <article class="issued-quest-card">
           <div class="issued-quest-main">
             <div class="quest-card-labels">
-              <span class="category">${quest.category}</span>
+              <span class="category">${escapeHtml(quest.category)}</span>
               <span class="quest-type-badge">${type.label}</span>
               ${approvalCount ? `<span class="quest-status-badge">承認待ち ${approvalCount}件</span>` : ""}
             </div>
-            <h3>${quest.title}</h3>
-            <p>${quest.description}</p>
+            <h3>${escapeHtml(quest.title)}</h3>
+            <p>${escapeHtml(quest.description)}</p>
             <div class="quest-card-meta">
               <span>${quest.reward}G</span>
               <span>${type.metricLabel}: ${progress}/${getQuestCapacity(quest)}名</span>
@@ -1769,14 +1778,14 @@ function renderIssuedQuests() {
             </div>
           </div>
           <div class="issued-quest-actions">
-            <a class="btn btn-outline btn-sm" href="${getQuestDetailUrl(quest.id)}" target="_blank" rel="noopener"><i data-lucide="external-link"></i>詳細</a>
-            <button class="btn btn-primary btn-sm" type="button" data-toggle-approvals="${quest.id}" ${approvalCount ? "" : "disabled"}>
+            <a class="btn btn-outline btn-sm" href="${escapeHtml(getQuestDetailUrl(quest.id))}" target="_blank" rel="noopener"><i data-lucide="external-link"></i>詳細</a>
+            <button class="btn btn-primary btn-sm" type="button" data-toggle-approvals="${escapeHtml(quest.id)}" ${approvalCount ? "" : "disabled"}>
               <i data-lucide="badge-check"></i>承認${approvalCount ? ` (${approvalCount})` : ""}
             </button>
-            <button class="btn btn-outline btn-sm" type="button" data-edit-issued="${quest.id}"><i data-lucide="pencil"></i>編集</button>
-            <button class="btn btn-danger btn-sm" type="button" data-delete-issued="${quest.id}"><i data-lucide="trash-2"></i>削除</button>
+            <button class="btn btn-outline btn-sm" type="button" data-edit-issued="${escapeHtml(quest.id)}"><i data-lucide="pencil"></i>編集</button>
+            <button class="btn btn-danger btn-sm" type="button" data-delete-issued="${escapeHtml(quest.id)}"><i data-lucide="trash-2"></i>削除</button>
           </div>
-          <div class="approval-panel" data-approval-panel="${quest.id}" hidden>
+          <div class="approval-panel" data-approval-panel="${escapeHtml(quest.id)}" hidden>
             <div class="approval-panel-head">
               <div>
                 <span class="eyebrow">APPROVAL</span>
@@ -1850,13 +1859,13 @@ function renderClosedIssuedQuests() {
         <article class="closed-quest-card">
           <div class="closed-quest-main">
             <div class="quest-card-labels">
-              <span class="category">${quest.category}</span>
+              <span class="category">${escapeHtml(quest.category)}</span>
               <span class="quest-type-badge">${type.label}</span>
               <span class="quest-status-badge">${type.closedLabel}</span>
               ${submissionCount ? `<span class="quest-status-badge">提出 ${submissionCount}件</span>` : ""}
             </div>
-            <h3>${quest.title}</h3>
-            <p>${quest.description}</p>
+            <h3>${escapeHtml(quest.title)}</h3>
+            <p>${escapeHtml(quest.description)}</p>
             <div class="quest-card-meta">
               <span>${quest.reward}G</span>
               <span>${type.metricLabel}: ${progress}/${getQuestCapacity(quest)}名</span>
@@ -1864,12 +1873,12 @@ function renderClosedIssuedQuests() {
             </div>
           </div>
           <div class="closed-quest-actions">
-            <a class="btn btn-outline btn-sm" href="${getQuestDetailUrl(quest.id)}" target="_blank" rel="noopener"><i data-lucide="external-link"></i>詳細</a>
-            <button class="btn btn-outline btn-sm" type="button" data-toggle-closed-submissions="${quest.id}" ${submissionCount ? "" : "disabled"}>
+            <a class="btn btn-outline btn-sm" href="${escapeHtml(getQuestDetailUrl(quest.id))}" target="_blank" rel="noopener"><i data-lucide="external-link"></i>詳細</a>
+            <button class="btn btn-outline btn-sm" type="button" data-toggle-closed-submissions="${escapeHtml(quest.id)}" ${submissionCount ? "" : "disabled"}>
               <i data-lucide="message-square-text"></i>提出内容${submissionCount ? ` (${submissionCount})` : ""}
             </button>
           </div>
-          <div class="approval-panel closed-submission-panel" data-closed-submission-panel="${quest.id}" hidden>
+          <div class="approval-panel closed-submission-panel" data-closed-submission-panel="${escapeHtml(quest.id)}" hidden>
             <div class="approval-panel-head">
               <div>
                 <span class="eyebrow">SUBMISSIONS</span>
@@ -1945,14 +1954,14 @@ function renderQuestList() {
       <div class="quest-main">
         <div class="quest-card-top">
           <div class="quest-card-labels">
-            <span class="category">${quest.category}</span>
+            <span class="category">${escapeHtml(quest.category)}</span>
             <span class="quest-type-badge">${type.label}</span>
             ${closed ? `<span class="quest-status-badge">${type.closedLabel}</span>` : ""}
           </div>
           <strong class="gold">${quest.reward}G</strong>
         </div>
-        <h3>${quest.title}</h3>
-        <p class="quest-card-desc">${quest.description}</p>
+        <h3>${escapeHtml(quest.title)}</h3>
+        <p class="quest-card-desc">${escapeHtml(quest.description)}</p>
         <div class="quest-card-meta">
           <span>発行者: ${renderIssuerButton(quest.issuer)}</span>
           <span>締切: ${formatDate(quest.deadline)}</span>
@@ -2001,19 +2010,20 @@ function renderQuestDetail(quest) {
     ? `
       <div>
         <span>参考URL</span>
-        <strong><a class="detail-link" href="${referenceUrl}" target="_blank" rel="noopener">開く</a></strong>
+        <strong><a class="detail-link" href="${escapeHtml(referenceUrl)}" target="_blank" rel="noopener">開く</a></strong>
       </div>
     `
     : "";
-  const screenshotPreview = quest.screenshot?.url
+  const screenshotUrl = normalizeQuestUrl(quest.screenshot?.url || "");
+  const screenshotPreview = screenshotUrl
     ? `
       <section class="quest-attachment-preview">
         <div>
           <span class="panel-label">SCREENSHOT</span>
           <h3>添付スクショ</h3>
-          <p>${quest.screenshot.name || "添付画像"}</p>
+          <p>${escapeHtml(quest.screenshot.name || "添付画像")}</p>
         </div>
-        <img src="${quest.screenshot.url}" alt="クエスト発行時に添付されたスクショ" />
+        <img src="${escapeHtml(screenshotUrl)}" alt="クエスト発行時に添付されたスクショ" />
       </section>
     `
     : "";
@@ -2048,14 +2058,14 @@ function renderQuestDetail(quest) {
   questDetail.innerHTML = `
     <div class="quest-detail-head">
       <div class="quest-card-labels">
-        <span class="category">${quest.category}</span>
+        <span class="category">${escapeHtml(quest.category)}</span>
         <span class="quest-type-badge">${type.label}</span>
         ${closed ? `<span class="quest-status-badge">${type.closedLabel}</span>` : ""}
       </div>
       <strong class="gold detail-gold">${quest.reward}G</strong>
     </div>
-    <h2>${quest.title}</h2>
-    <p class="quest-detail-desc">${quest.description}</p>
+    <h2>${escapeHtml(quest.title)}</h2>
+    <p class="quest-detail-desc">${escapeHtml(quest.description)}</p>
     <div class="quest-tags">${createChips(quest.tags || [])}</div>
     <div class="quest-progress detail-progress" aria-label="${getQuestStatusText(quest)}">
       <div class="quest-progress-head">
@@ -2193,15 +2203,16 @@ function renderQuestDetailPage() {
 function renderIssuerProfile(name) {
   const issuerName = name || "冒険者";
   const profile = getIssuerProfile(issuerName);
+  const safeIssuerName = escapeHtml(issuerName);
 
   if (!profile) {
     return `
       <section class="issuer-profile-card">
         <div class="issuer-profile-head">
-          <div class="issuer-avatar trust-avatar trust-rank-apprentice" title="見習い冒険者">${issuerName.slice(0, 1)}</div>
+          <div class="issuer-avatar trust-avatar trust-rank-apprentice" title="見習い冒険者">${escapeHtml(issuerName.slice(0, 1))}</div>
           <div>
             <span class="eyebrow">Issuer Profile</span>
-            <h3>${issuerName}</h3>
+            <h3>${safeIssuerName}</h3>
           </div>
         </div>
         <p>この発行者のプロフィール情報はまだ登録されていません。</p>
@@ -2212,18 +2223,18 @@ function renderIssuerProfile(name) {
   return `
     <section class="issuer-profile-card">
       <div class="issuer-profile-head">
-        <div class="issuer-avatar trust-avatar ${getTrustRankFrame(profile.trust)}" title="${getRank(profile.trust)}">${profile.initials}</div>
+        <div class="issuer-avatar trust-avatar ${getTrustRankFrame(profile.trust)}" title="${getRank(profile.trust)}">${escapeHtml(profile.initials)}</div>
         <div>
           <span class="eyebrow">Issuer Profile</span>
-          <h3>${issuerName}</h3>
-          <p>${profile.headline}</p>
+          <h3>${safeIssuerName}</h3>
+          <p>${escapeHtml(profile.headline)}</p>
         </div>
       </div>
-      <p>${profile.summary}</p>
+      <p>${escapeHtml(profile.summary)}</p>
       <dl class="issuer-profile-stats">
-        <div><dt>Trust</dt><dd>${profile.trust}</dd></div>
-        <div><dt>完了</dt><dd>${profile.completed}</dd></div>
-        <div><dt>発行</dt><dd>${profile.issued}</dd></div>
+        <div><dt>Trust</dt><dd>${Number(profile.trust) || 0}</dd></div>
+        <div><dt>完了</dt><dd>${Number(profile.completed) || 0}</dd></div>
+        <div><dt>発行</dt><dd>${Number(profile.issued) || 0}</dd></div>
       </dl>
       <div class="profile-chip-block">
         <strong>得意なこと</strong>
@@ -2480,11 +2491,6 @@ async function approveQuestSubmission({ questId, submissionId, trustBonus, comme
     return;
   }
 
-  const reward = Number(quest.reward);
-
-  state.gold += reward;
-  state.trust += gainedTrust;
-  state.completed += 1;
   if (quest.type === "report") {
     quest.approvedReports = Math.min(getQuestCapacity(quest), (Number(quest.approvedReports) || 0) + 1);
   }
@@ -2501,7 +2507,7 @@ async function approveQuestSubmission({ questId, submissionId, trustBonus, comme
       ? "承認数が募集人数に達したため、完了報告型クエストをクローズしました。"
       : "募集人数に達している応募型クエストです。"
     : "承認待ちを更新しました。";
-  showToast(`承認完了。${reward}Gと${gainedTrust} Trustを付与しました。${closeMessage}`);
+  showToast(`承認完了。ローカルデモでは達成者への${Number(quest.reward) || 0}Gと${gainedTrust} Trust付与は表示のみです。${closeMessage}`);
   renderIssuedQuests();
 }
 
