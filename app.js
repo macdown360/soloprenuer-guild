@@ -214,6 +214,40 @@ const remote = {
 
 const SELF_SUBMISSION_MESSAGE = "自分の発行したクエストには応募できません";
 
+function canUseLocalDemoData() {
+  if (remote.enabled) return false;
+  const host = window.location.hostname;
+  return window.location.protocol === "file:" || host === "" || host === "localhost" || host === "127.0.0.1";
+}
+
+function clearDemoStateForProduction() {
+  state.account = {
+    name: "ゲスト",
+    initials: "G",
+    headline: "",
+    summary: "",
+    businessStage: "",
+    strengths: [],
+    interests: [],
+    preferredCategories: [],
+    preferredTags: [],
+  };
+  state.gold = 0;
+  state.trust = 0;
+  state.completed = 0;
+  state.issued = 0;
+  state.selectedQuestId = null;
+  state.editingQuestId = null;
+  state.submissionMessages = {};
+  state.issuerProfiles = {};
+  state.quests = [];
+  remote.profile = null;
+  remote.issuerSubmissions = [];
+  remote.pendingSubmissions = [];
+  remote.participantSubmissions = [];
+  remote.submissionMessages = {};
+}
+
 const goldEls = document.querySelectorAll("[data-gold]");
 const trustEls = document.querySelectorAll("[data-trust]");
 const rankEls = document.querySelectorAll("[data-rank]");
@@ -438,6 +472,9 @@ function getProfileSaveErrorMessage(error) {
 function getDataLoadErrorMessage(error) {
   const message = error?.message || "";
   if (/failed to fetch|network|fetch/i.test(message)) return "通信に失敗しました。ネットワーク接続を確認してください。";
+  if (/quest_submission_messages|relation .* does not exist|schema cache/i.test(message)) {
+    return "チャット用のSupabaseスキーマが未適用です。管理者に設定を確認してください。";
+  }
   if (/permission|row-level security|not authorized|unauthorized/i.test(message)) return "データを読み込む権限がありません。ログイン状態を確認してください。";
   return "Supabaseからデータを読み込めませんでした。時間をおいて再度お試しください。";
 }
@@ -453,7 +490,7 @@ async function resendSignupConfirmation(email) {
 
 function syncAuthVisibility() {
   const isSignedIn = Boolean(remote.user);
-  const canUseAuthRequiredSections = !remote.enabled || isSignedIn;
+  const canUseAuthRequiredSections = canUseLocalDemoData() || isSignedIn;
   const isLoginPage = document.body.classList.contains("login-page");
   authRequiredEls.forEach((el) => {
     el.hidden = !canUseAuthRequiredSections;
@@ -484,7 +521,9 @@ function syncAuthVisibility() {
   if (registerSignedInCopy) {
     registerSignedInCopy.textContent = remote.user
       ? `${state.account.name}としてログイン中です。マイページでGold、Trust、進行中クエストを確認できます。`
-      : "Supabase未設定時はデモデータでギルドの流れを確認できます。";
+      : canUseLocalDemoData()
+        ? "Supabase未設定時はデモデータでギルドの流れを確認できます。"
+        : "登録・ログインにはSupabase接続が必要です。";
   }
 }
 
@@ -2604,8 +2643,12 @@ registerForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   if (!remote.enabled) {
-    setAuthNote("Supabase未設定のため、デモのマイページへ移動します。");
-    window.location.href = "mypage.html";
+    if (canUseLocalDemoData()) {
+      setAuthNote("Supabase未設定のため、デモのマイページへ移動します。");
+      window.location.href = "mypage.html";
+      return;
+    }
+    setAuthNote("Supabaseが未設定です。管理者に環境変数の設定を確認してください。");
     return;
   }
 
@@ -2659,8 +2702,12 @@ registerForm?.addEventListener("submit", async (event) => {
 authForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   if (!remote.enabled) {
-    setAuthNote("Supabase未設定のため、デモのマイページへ移動します。");
-    window.location.href = "mypage.html";
+    if (canUseLocalDemoData()) {
+      setAuthNote("Supabase未設定のため、デモのマイページへ移動します。");
+      window.location.href = "mypage.html";
+      return;
+    }
+    setAuthNote("Supabaseが未設定です。管理者に環境変数の設定を確認してください。");
     return;
   }
 
@@ -2754,23 +2801,46 @@ latestQuestNext?.addEventListener("click", () => scrollLatestQuests(1));
 
 async function initApp() {
   syncAuthVisibility();
-  renderAccountProfile();
-  syncStats();
-  renderQuestList();
-  renderQuestDetailPage();
-  updateMissionUI();
-  updateWeeklyChallenge();
 
   if (!remote.enabled) {
-    setAuthNote("Supabase未設定のため、デモデータで動作しています。");
+    if (canUseLocalDemoData()) {
+      renderAccountProfile();
+      syncStats();
+      renderQuestList();
+      renderQuestDetailPage();
+      updateMissionUI();
+      updateWeeklyChallenge();
+      setAuthNote("Supabase未設定のため、デモデータで動作しています。");
+      return;
+    }
+
+    clearDemoStateForProduction();
+    setAuthStatus("未接続");
+    renderAccountProfile();
+    syncStats();
+    renderQuestList();
+    renderQuestDetailPage();
+    updateMissionUI();
+    updateWeeklyChallenge();
+    setAuthNote("Supabaseが未設定です。Vercelの環境変数を確認してください。");
     return;
   }
 
   try {
+    setAuthStatus("読込中");
     await refreshRemoteState();
+    updateMissionUI();
+    updateWeeklyChallenge();
   } catch (error) {
     console.error(error);
+    clearDemoStateForProduction();
     setAuthStatus("接続エラー");
+    renderAccountProfile();
+    syncStats();
+    renderQuestList();
+    renderQuestDetailPage();
+    updateMissionUI();
+    updateWeeklyChallenge();
     setAuthNote(getDataLoadErrorMessage(error));
   }
 }
