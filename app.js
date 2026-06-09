@@ -1053,14 +1053,18 @@ function getAbsoluteQuestDetailUrl(id) {
   return new URL(getQuestDetailUrl(id), window.location.href).href;
 }
 
+const QUEST_SHARE_HASHTAGS = "#ソロプレナー #個人開発 #AIソロプレナー";
+
 function getQuestShareText(quest) {
   return `ソロプレナー・ギルドのクエスト「${quest.title}」に挑む⚔️`;
 }
 
 function getXShareUrl(quest) {
   const params = new URLSearchParams({
-    text: getQuestShareText(quest),
-    url: getAbsoluteQuestDetailUrl(quest.id),
+    text: `${getQuestShareText(quest)}
+${getAbsoluteQuestDetailUrl(quest.id)}
+
+${QUEST_SHARE_HASHTAGS}`,
   });
   return `https://twitter.com/intent/tweet?${params.toString()}`;
 }
