@@ -1044,7 +1044,7 @@ function getAbsoluteQuestDetailUrl(id) {
 }
 
 function getQuestShareText(quest) {
-  return `ソロプレナー・ギルドのクエスト「${quest.title}」をチェック`;
+  return `ソロプレナー・ギルドのクエスト「${quest.title}」に挑む⚔️`;
 }
 
 function getXShareUrl(quest) {
@@ -2263,11 +2263,11 @@ function renderQuestDetail(quest) {
     </div>
     <h2>${escapeHtml(quest.title)}</h2>
     <div class="quest-share-actions" aria-label="クエストを共有">
-      <a class="btn btn-outline btn-sm quest-share-x" href="${escapeHtml(xShareUrl)}" target="_blank" rel="noopener" data-share-x>
-        <i data-lucide="share-2"></i>Xでシェア
+      <a class="btn btn-outline btn-sm quest-share-x" href="${escapeHtml(xShareUrl)}" target="_blank" rel="noopener" data-share-x aria-label="Xでシェア" title="Xでシェア">
+        <i data-lucide="share-2"></i>
       </a>
-      <button class="btn btn-outline btn-sm" type="button" data-copy-quest-url="${escapeHtml(shareUrl)}">
-        <i data-lucide="copy"></i>URLをコピー
+      <button class="btn btn-outline btn-sm" type="button" data-copy-quest-url="${escapeHtml(shareUrl)}" aria-label="URLをコピー" title="URLをコピー">
+        <i data-lucide="copy"></i>
       </button>
     </div>
     <p class="quest-detail-desc">${escapeHtml(quest.description)}</p>
@@ -2314,10 +2314,14 @@ function renderQuestDetail(quest) {
     try {
       await copyTextToClipboard(url);
       showToast("クエストURLをコピーしました。");
-      button.innerHTML = '<i data-lucide="check"></i>コピー済み';
+      button.innerHTML = '<i data-lucide="check"></i>';
+      button.setAttribute("aria-label", "コピー済み");
+      button.setAttribute("title", "コピー済み");
       if (window.lucide) lucide.createIcons();
       setTimeout(() => {
-        button.innerHTML = '<i data-lucide="copy"></i>URLをコピー';
+        button.innerHTML = '<i data-lucide="copy"></i>';
+        button.setAttribute("aria-label", "URLをコピー");
+        button.setAttribute("title", "URLをコピー");
         if (window.lucide) lucide.createIcons();
       }, 1800);
     } catch {

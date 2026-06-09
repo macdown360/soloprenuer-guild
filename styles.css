@@ -683,7 +683,11 @@ h3 {
 }
 
 .quest-share-actions .btn {
-  min-width: 142px;
+  width: 38px;
+  min-width: 38px;
+  min-height: 38px;
+  padding: 0;
+  border-radius: 8px;
 }
 
 .quest-share-x {
