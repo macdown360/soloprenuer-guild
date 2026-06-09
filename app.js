@@ -2109,7 +2109,7 @@ function renderQuestDetail(quest) {
     ? `
       <div>
         <span>参考URL</span>
-        <strong><a class="detail-link" href="${escapeHtml(referenceUrl)}" target="_blank" rel="noopener">開く</a></strong>
+        <strong><a class="detail-link" href="${escapeHtml(referenceUrl)}" target="_blank" rel="noopener">${escapeHtml(referenceUrl)}</a></strong>
       </div>
     `
     : "";
