@@ -191,6 +191,24 @@ const QUEST_TYPES = {
   },
 };
 
+const AUTO_TAG_RULES = [
+  { tag: "生成AI", keywords: ["生成ai", "ai活用", "chatgpt", "gpt", "llm"] },
+  { tag: "AI", keywords: ["ai", "人工知能"] },
+  { tag: "BtoB SaaS", keywords: ["btob", "b2b", "saas", "法人向け"] },
+  { tag: "UXレビュー", keywords: ["ux", "使いやす", "わかりやす", "迷う", "導線"] },
+  { tag: "オンボーディング", keywords: ["オンボーディング", "初回利用", "初回体験", "チュートリアル"] },
+  { tag: "フォーム改善", keywords: ["フォーム", "入力", "申込", "予約"] },
+  { tag: "動作確認", keywords: ["動作", "テスト", "バグ", "確認"] },
+  { tag: "ユーザー登録", keywords: ["登録", "サインアップ", "アカウント作成"] },
+  { tag: "SNS", keywords: ["sns", "x", "twitter", "linkedin", "拡散", "投稿"] },
+  { tag: "告知文", keywords: ["告知", "コピー", "見出し", "cta"] },
+  { tag: "顧客理解", keywords: ["顧客", "ユーザー理解", "インタビュー", "ヒアリング"] },
+  { tag: "課題検証", keywords: ["課題", "仮説", "検証"] },
+  { tag: "営業資料", keywords: ["営業", "提案資料", "資料"] },
+  { tag: "価格設計", keywords: ["価格", "料金", "プラン"] },
+  { tag: "レビュー", keywords: ["レビュー", "評価", "口コミ"] },
+];
+
 const formatter = new Intl.DateTimeFormat("ja-JP", {
   month: "numeric",
   day: "numeric",
@@ -862,6 +880,45 @@ function unique(values) {
 function overlap(left, right) {
   const rightSet = new Set(normalizeList(right));
   return normalizeList(left).filter((value) => rightSet.has(value));
+}
+
+function normalizeTagSearchText(value) {
+  return String(value || "").toLowerCase().replace(/\s+/g, "");
+}
+
+function getAutoTagCandidates() {
+  return unique([
+    ...Object.values(state.questTaxonomy).flat(),
+    ...state.account.strengths,
+    ...state.account.interests,
+    ...state.account.preferredTags,
+    ...state.quests.flatMap((quest) => quest.tags || []),
+    ...AUTO_TAG_RULES.map((rule) => rule.tag),
+  ]);
+}
+
+function inferQuestTagsFromContent(title, description) {
+  const source = normalizeTagSearchText(`${title || ""} ${description || ""}`);
+  if (!source) return [];
+
+  const ruleMap = AUTO_TAG_RULES.reduce((map, rule) => {
+    map.set(rule.tag, rule.keywords.map(normalizeTagSearchText));
+    return map;
+  }, new Map());
+
+  return getAutoTagCandidates()
+    .map((tag, index) => {
+      const normalizedTag = normalizeTagSearchText(tag);
+      const ruleKeywords = ruleMap.get(tag) || [];
+      const directMatch = normalizedTag && source.includes(normalizedTag);
+      const keywordMatches = ruleKeywords.filter((keyword) => keyword && source.includes(keyword)).length;
+      const score = (directMatch ? 3 : 0) + keywordMatches * 2;
+      return { tag, score, index };
+    })
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score || a.index - b.index)
+    .slice(0, 5)
+    .map((item) => item.tag);
 }
 
 function createChips(values, modifier = "") {
@@ -2404,7 +2461,8 @@ questForm?.addEventListener("submit", async (event) => {
   }
 
   const selectedCategory = data.get("category");
-  const tags = unique([...(state.questTaxonomy[selectedCategory] || []).slice(0, 2), ...normalizeList(data.get("tags"))]);
+  const inferredTags = inferQuestTagsFromContent(data.get("title"), data.get("description"));
+  const tags = unique([...(state.questTaxonomy[selectedCategory] || []).slice(0, 2), ...inferredTags, ...normalizeList(data.get("tags"))]);
   const editingQuest = state.editingQuestId
     ? state.quests.find((quest) => String(quest.id) === String(state.editingQuestId))
     : null;
