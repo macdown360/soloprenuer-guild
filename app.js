@@ -395,6 +395,11 @@ function getCurrentUserName() {
   return remote.profile?.adventurer_name || state.account.name || "冒険者";
 }
 
+function trackAnalytics(eventName, params = {}) {
+  if (typeof window.gtag !== "function") return;
+  window.gtag("event", eventName, params);
+}
+
 function isDuplicateSubmissionError(error) {
   const message = error?.message || "";
   const code = error?.code || "";
@@ -2227,12 +2232,24 @@ function renderQuestDetail(quest) {
           showToast(getSubmitQuestErrorMessage(error, "完了報告を送信できませんでした。"));
           return;
         }
+        trackAnalytics("quest_report_submit", {
+          mode: "remote",
+          quest_id: String(quest.id),
+          category: quest.category,
+          reward: Number(quest.reward) || 0,
+        });
         showToast("完了報告を送信しました。発行者の承認を待ちます。");
         await refreshRemoteState();
         return;
       }
       quest.applicants += 1;
       quest.comments.unshift("スクショ付きの完了報告が送信されました。承認待ちです。");
+      trackAnalytics("quest_report_submit", {
+        mode: "demo",
+        quest_id: String(quest.id),
+        category: quest.category,
+        reward: Number(quest.reward) || 0,
+      });
       showToast("完了報告を送信しました。発行者の承認後にクローズ判定されます。");
       renderQuestList();
       renderQuestDetail(quest);
@@ -2257,12 +2274,24 @@ function renderQuestDetail(quest) {
         showToast(getSubmitQuestErrorMessage(error, "応募できませんでした。"));
         return;
       }
+      trackAnalytics("quest_application_submit", {
+        mode: "remote",
+        quest_id: String(quest.id),
+        category: quest.category,
+        reward: Number(quest.reward) || 0,
+      });
       showToast("応募しました。発行者との約束を進めてください。");
       await refreshRemoteState();
       return;
     }
     quest.applicants += 1;
     updateQuestStatus(quest);
+    trackAnalytics("quest_application_submit", {
+      mode: "demo",
+      quest_id: String(quest.id),
+      category: quest.category,
+      reward: Number(quest.reward) || 0,
+    });
     showToast(isQuestClosed(quest) ? "募集人数に達したため、応募受付を停止しました。" : "応募しました。発行者との約束を進めてください。");
     renderQuestList();
     renderQuestDetail(quest);
@@ -2427,6 +2456,14 @@ questForm?.addEventListener("submit", async (event) => {
       return;
     }
 
+    trackAnalytics(editingQuest ? "quest_update_success" : "quest_issue_success", {
+      mode: "remote",
+      quest_type: type,
+      reward,
+      capacity,
+      category: selectedCategory,
+    });
+
     formNote.textContent = editingQuest
       ? "クエストを更新しました。"
       : `${escrowGold}Gを確保して${QUEST_TYPES[type].label}クエストを発行しました。`;
@@ -2455,6 +2492,13 @@ questForm?.addEventListener("submit", async (event) => {
     renderQuestList();
     renderQuestDetailPage();
     renderAccountProfile();
+    trackAnalytics("quest_update_success", {
+      mode: "demo",
+      quest_type: type,
+      reward,
+      capacity,
+      category: selectedCategory,
+    });
     formNote.textContent = "クエストを更新しました。";
     resetQuestForm();
     return;
@@ -2487,6 +2531,13 @@ questForm?.addEventListener("submit", async (event) => {
   syncStats();
   renderQuestList();
   renderAccountProfile();
+  trackAnalytics("quest_issue_success", {
+    mode: "demo",
+    quest_type: type,
+    reward,
+    capacity,
+    category: selectedCategory,
+  });
   formNote.textContent = `${escrowGold}Gを確保して${getQuestType(quest).label}クエストを発行しました。`;
   resetQuestForm();
 });
@@ -2732,20 +2783,27 @@ document.querySelectorAll("[data-category-link]").forEach((link) => {
   });
 });
 
+registerCta?.addEventListener("click", () => {
+  trackAnalytics("cta_register_click", { location: "hero" });
+});
+
 registerForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   if (!remote.enabled) {
     if (canUseLocalDemoData()) {
+      trackAnalytics("sign_up_demo_redirect", { source: "register_form" });
       setAuthNote("Supabase未設定のため、デモのマイページへ移動します。");
       window.location.href = "mypage.html";
       return;
     }
+    trackAnalytics("sign_up_error", { reason: "supabase_not_configured" });
     setAuthNote("Supabaseが未設定です。管理者に環境変数の設定を確認してください。");
     return;
   }
 
   if (remote.user) {
+    trackAnalytics("sign_up_skip_already_signed_in", { source: "register_form" });
     setAuthNote("すでにログイン中です。マイページへ移動します。");
     window.location.href = "mypage.html";
     return;
@@ -2770,24 +2828,30 @@ registerForm?.addEventListener("submit", async (event) => {
 
   if (error) {
     if (isAlreadyRegisteredError(error)) {
+      trackAnalytics("sign_up_error", { reason: "already_registered" });
       setAuthNote("このメールアドレスはすでに登録済みです。登録済みの方はログインしてください。");
       return;
     }
 
+    trackAnalytics("sign_up_error", { reason: "auth_error" });
     setAuthNote(getAuthErrorMessage(error, "登録できませんでした。"));
     return;
   }
 
   if (isDuplicateSignupResponse(signUpData)) {
+    trackAnalytics("sign_up_error", { reason: "duplicate_signup_response" });
     setAuthNote("このメールアドレスはすでに登録済みです。登録済みの方はログインしてください。");
     return;
   }
 
   if (signUpData?.session) {
+    trackAnalytics("sign_up_success", { method: "password", auto_signed_in: true });
     setAuthNote("登録しました。マイページへ移動します。");
     window.location.href = "mypage.html";
     return;
   }
+
+  trackAnalytics("sign_up_success", { method: "password", auto_signed_in: false });
 
   setAuthNote("登録しました。確認メールを開いて認証を完了してからログインしてください。");
 });
@@ -2796,10 +2860,12 @@ authForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   if (!remote.enabled) {
     if (canUseLocalDemoData()) {
+      trackAnalytics("login_demo_redirect", { source: "login_form" });
       setAuthNote("Supabase未設定のため、デモのマイページへ移動します。");
       window.location.href = "mypage.html";
       return;
     }
+    trackAnalytics("login_error", { reason: "supabase_not_configured" });
     setAuthNote("Supabaseが未設定です。管理者に環境変数の設定を確認してください。");
     return;
   }
@@ -2814,6 +2880,7 @@ authForm?.addEventListener("submit", async (event) => {
   if (error) {
     if (isEmailNotConfirmedError(error)) {
       const resent = await resendSignupConfirmation(email);
+      trackAnalytics("login_error", { reason: "email_not_confirmed" });
       setAuthNote(
         resent
           ? "メール認証が未完了です。確認メールを再送しました。メール内のリンクで認証してからログインしてください。"
@@ -2821,10 +2888,12 @@ authForm?.addEventListener("submit", async (event) => {
       );
       return;
     }
+    trackAnalytics("login_error", { reason: "auth_error" });
     setAuthNote(getAuthErrorMessage(error, "ログインできませんでした。"));
     return;
   }
 
+  trackAnalytics("login_success", { method: "password" });
   setAuthNote("ログインしました。アカウント情報を読み込んでいます。");
   await refreshRemoteState();
 });
@@ -2844,6 +2913,7 @@ profileForm?.addEventListener("submit", async (event) => {
     state.account = mapProfile(nextProfile);
     renderAccountProfile();
     renderRecommendedQuests();
+    trackAnalytics("profile_save", { mode: "demo" });
     if (profileNoteEl) profileNoteEl.textContent = "デモプロフィールを更新しました。";
     return;
   }
@@ -2863,12 +2933,14 @@ profileForm?.addEventListener("submit", async (event) => {
     return;
   }
 
+  trackAnalytics("profile_save", { mode: "remote" });
   if (profileNoteEl) profileNoteEl.textContent = "プロフィールを保存しました。";
   await refreshRemoteState();
 });
 
 signoutBtn?.addEventListener("click", async () => {
   if (!remote.enabled) return;
+  trackAnalytics("logout", { source: "mypage" });
   clearSubmissionMessageRealtime();
   await supabaseClient.auth.signOut();
   remote.user = null;
