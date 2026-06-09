@@ -328,8 +328,6 @@
               <span class="status-pill" data-quest-form-status>発行可能</span>
             </div>
             <form class="guild-form" id="questForm">
-              <label for="questTitle">タイトル</label>
-              <input id="questTitle" name="title" type="text" placeholder="例: 初回体験に率直なコメントがほしい" required />
               <label>
                 カテゴリ
                 <select id="questCategory" name="category">
@@ -345,6 +343,21 @@
                   <option>とにかく褒めちぎって欲しい</option>
                 </select>
               </label>
+              <fieldset class="radio-fieldset">
+                <legend>形式</legend>
+                <div class="radio-options">
+                  <label class="radio-option" for="questTypeReport">
+                    <input id="questTypeReport" name="type" type="radio" value="report" checked />
+                    <span>完了報告型</span>
+                  </label>
+                  <label class="radio-option" for="questTypeRecruiting">
+                    <input id="questTypeRecruiting" name="type" type="radio" value="recruiting" />
+                    <span>応募型</span>
+                  </label>
+                </div>
+              </fieldset>
+              <label for="questTitle">タイトル</label>
+              <input id="questTitle" name="title" type="text" placeholder="例: 初回体験に率直なコメントがほしい" required />
               <label for="questDescription">詳細説明</label>
               <textarea id="questDescription" name="description" rows="5" placeholder="依頼したい内容、確認してほしい観点、提出してほしいものを書いてください。" required></textarea>
               <label for="questUrl">参考URL</label>
@@ -352,13 +365,6 @@
               <label for="questScreenshot">スクショ画面</label>
               <input id="questScreenshot" name="screenshot" type="file" accept="image/*" />
               <div class="form-row">
-                <label>
-                  形式
-                  <select id="questType" name="type">
-                    <option value="report">完了報告型</option>
-                    <option value="recruiting">応募型</option>
-                  </select>
-                </label>
                 <label>
                   募集人数
                   <input id="questCapacity" name="capacity" type="number" min="1" max="50" value="1" required />

@@ -1206,6 +1206,47 @@ h3 {
   font-weight: 900;
 }
 
+.radio-fieldset {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.radio-fieldset legend {
+  padding: 0;
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.radio-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.guild-form .radio-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.72rem 0.78rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  font-weight: 700;
+}
+
+.guild-form .radio-option input[type="radio"] {
+  width: 1rem;
+  height: 1rem;
+  padding: 0;
+  margin: 0;
+  border-radius: 999px;
+  accent-color: var(--gold);
+}
+
 .guild-form input,
 .guild-form select,
 .guild-form textarea,
@@ -3600,6 +3641,7 @@ h3 {
   }
 
   .form-row,
+  .radio-options,
   .filters,
   .profile-meta div,
   .issuer-profile-stats,
