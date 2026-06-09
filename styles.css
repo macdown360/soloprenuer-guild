@@ -676,6 +676,26 @@ h3 {
   line-height: 1.35;
 }
 
+.quest-share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.quest-share-actions .btn {
+  min-width: 142px;
+}
+
+.quest-share-x {
+  color: #111827;
+  border-color: #111827;
+  background: #fff;
+}
+
+.quest-share-x:hover {
+  box-shadow: 0 8px 20px rgba(17, 24, 39, 0.12);
+}
+
 .quest-card-desc,
 .quest-detail-desc {
   display: -webkit-box;

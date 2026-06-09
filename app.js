@@ -1039,6 +1039,45 @@ function getQuestDetailUrl(id) {
   return `quest-detail.html?id=${encodeURIComponent(id)}`;
 }
 
+function getAbsoluteQuestDetailUrl(id) {
+  return new URL(getQuestDetailUrl(id), window.location.href).href;
+}
+
+function getQuestShareText(quest) {
+  return `ソロプレナー・ギルドのクエスト「${quest.title}」をチェック`;
+}
+
+function getXShareUrl(quest) {
+  const params = new URLSearchParams({
+    text: getQuestShareText(quest),
+    url: getAbsoluteQuestDetailUrl(quest.id),
+  });
+  return `https://twitter.com/intent/tweet?${params.toString()}`;
+}
+
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard?.writeText && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.top = "-9999px";
+  textarea.style.left = "-9999px";
+  document.body.appendChild(textarea);
+  textarea.select();
+
+  try {
+    const copied = document.execCommand("copy");
+    if (!copied) throw new Error("copy_failed");
+  } finally {
+    textarea.remove();
+  }
+}
+
 function normalizeQuestUrl(value) {
   const rawValue = String(value || "").trim();
   if (!rawValue) return "";
@@ -2162,6 +2201,8 @@ function renderQuestDetail(quest) {
   const progress = Math.min(getQuestProgress(quest), getQuestCapacity(quest));
   const progressPercent = getQuestProgressPercent(quest);
   const referenceUrl = normalizeQuestUrl(quest.url);
+  const shareUrl = getAbsoluteQuestDetailUrl(quest.id);
+  const xShareUrl = getXShareUrl(quest);
   const referenceMeta = referenceUrl
     ? `
       <div>
@@ -2221,6 +2262,14 @@ function renderQuestDetail(quest) {
       <strong class="gold detail-gold">${quest.reward}G</strong>
     </div>
     <h2>${escapeHtml(quest.title)}</h2>
+    <div class="quest-share-actions" aria-label="クエストを共有">
+      <a class="btn btn-outline btn-sm quest-share-x" href="${escapeHtml(xShareUrl)}" target="_blank" rel="noopener" data-share-x>
+        <i data-lucide="share-2"></i>Xでシェア
+      </a>
+      <button class="btn btn-outline btn-sm" type="button" data-copy-quest-url="${escapeHtml(shareUrl)}">
+        <i data-lucide="copy"></i>URLをコピー
+      </button>
+    </div>
     <p class="quest-detail-desc">${escapeHtml(quest.description)}</p>
     <div class="quest-tags">${createChips(quest.tags || [])}</div>
     <div class="quest-progress detail-progress" aria-label="${getQuestStatusText(quest)}">
@@ -2258,6 +2307,30 @@ function renderQuestDetail(quest) {
     issuerProfileEl.hidden = false;
     issuerProfileEl.innerHTML = issuerProfileMarkup;
   }
+
+  questDetail.querySelector("[data-copy-quest-url]")?.addEventListener("click", async (event) => {
+    const button = event.currentTarget;
+    const url = button.dataset.copyQuestUrl || shareUrl;
+    try {
+      await copyTextToClipboard(url);
+      showToast("クエストURLをコピーしました。");
+      button.innerHTML = '<i data-lucide="check"></i>コピー済み';
+      if (window.lucide) lucide.createIcons();
+      setTimeout(() => {
+        button.innerHTML = '<i data-lucide="copy"></i>URLをコピー';
+        if (window.lucide) lucide.createIcons();
+      }, 1800);
+    } catch {
+      showToast("URLをコピーできませんでした。");
+    }
+  });
+
+  questDetail.querySelector("[data-share-x]")?.addEventListener("click", () => {
+    trackAnalytics("quest_share_x", {
+      quest_id: String(quest.id),
+      category: quest.category,
+    });
+  });
 
   questDetail.querySelector("[data-apply]")?.addEventListener("click", async () => {
     if (isQuestClosed(quest)) return;
