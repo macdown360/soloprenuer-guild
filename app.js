@@ -927,6 +927,15 @@ function createChips(values, modifier = "") {
     .join("");
 }
 
+function createQuestTagChips(values) {
+  return normalizeList(values)
+    .map((value) => {
+      const label = value.startsWith("#") ? value : `#${value}`;
+      return `<span class="tag-chip">${escapeHtml(label)}</span>`;
+    })
+    .join("");
+}
+
 function getQuestType(quest) {
   return QUEST_TYPES[quest.type] || QUEST_TYPES.recruiting;
 }
@@ -1678,7 +1687,7 @@ function renderRecommendedQuests() {
 
   recommendedQuestsEl.innerHTML = recommended
     .map(({ quest, match }) => {
-      const tags = createChips(quest.tags.slice(0, 4));
+      const tags = createQuestTagChips(quest.tags.slice(0, 4));
       const reason = match.reasons.length ? match.reasons.join(" / ") : "カテゴリと依頼内容";
       return `
         <article class="rec-quest-card">
@@ -2169,7 +2178,7 @@ function renderQuestList() {
           </div>
           <div class="quest-progress-track"><span style="width: ${progressPercent}%"></span></div>
         </div>
-        <div class="quest-tags">${createChips(quest.tags || [])}</div>
+        <div class="quest-tags">${createQuestTagChips(quest.tags || [])}</div>
       </div>
     `;
     questList.append(card);
@@ -2271,7 +2280,7 @@ function renderQuestDetail(quest) {
       </button>
     </div>
     <p class="quest-detail-desc">${escapeHtml(quest.description)}</p>
-    <div class="quest-tags">${createChips(quest.tags || [])}</div>
+    <div class="quest-tags">${createQuestTagChips(quest.tags || [])}</div>
     <div class="quest-progress detail-progress" aria-label="${getQuestStatusText(quest)}">
       <div class="quest-progress-head">
         <span>${type.metricLabel}状況</span>
