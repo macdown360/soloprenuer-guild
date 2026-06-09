@@ -882,8 +882,15 @@ function getQuestProgress(quest) {
   return Number(quest.applicants) || 0;
 }
 
+function isQuestDeadlinePassed(quest) {
+  if (!quest?.deadline) return false;
+  const deadline = new Date(`${quest.deadline}T23:59:59`);
+  const deadlineTime = deadline.getTime();
+  return Number.isFinite(deadlineTime) && deadlineTime <= Date.now();
+}
+
 function isQuestClosed(quest) {
-  return quest.status === "closed" || quest.status === "cancelled" || getQuestProgress(quest) >= getQuestCapacity(quest);
+  return quest.status === "closed" || quest.status === "cancelled" || isQuestDeadlinePassed(quest) || getQuestProgress(quest) >= getQuestCapacity(quest);
 }
 
 function updateQuestStatus(quest) {

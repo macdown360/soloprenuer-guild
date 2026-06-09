@@ -27,7 +27,7 @@ begin
 
   select * into v_quest
   from public.quests
-  where id = p_quest_id and issuer_id = v_user and status = 'open'
+  where id = p_quest_id and issuer_id = v_user and status = 'open' and deadline >= current_date
   for update;
 
   if not found then raise exception 'quest_not_editable'; end if;

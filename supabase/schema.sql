@@ -158,7 +158,10 @@ select
   q.category,
   q.quest_type,
   q.capacity,
-  q.status,
+  case
+    when q.status = 'open' and q.deadline < current_date then 'closed'
+    else q.status
+  end as status,
   q.deadline,
   q.tags,
   q.reference_url,
@@ -235,7 +238,7 @@ begin
 
   select issuer_id, capacity into v_issuer, v_capacity
   from public.quests
-  where id = p_quest_id and status = 'open';
+  where id = p_quest_id and status = 'open' and deadline >= current_date;
 
   if not found then raise exception 'quest_not_available'; end if;
   if v_issuer = v_user then raise exception 'self_submission_denied'; end if;
@@ -283,7 +286,7 @@ begin
 
   select * into v_quest
   from public.quests
-  where id = p_quest_id and issuer_id = v_user and status = 'open'
+  where id = p_quest_id and issuer_id = v_user and status = 'open' and deadline >= current_date
   for update;
 
   if not found then raise exception 'quest_not_editable'; end if;
@@ -346,7 +349,7 @@ begin
 
   select * into v_quest
   from public.quests
-  where id = p_quest_id and issuer_id = v_user and status = 'open'
+  where id = p_quest_id and issuer_id = v_user and status = 'open' and deadline >= current_date
   for update;
 
   if not found then raise exception 'quest_not_deletable'; end if;
