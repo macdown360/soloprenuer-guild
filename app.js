@@ -277,6 +277,7 @@ const totalQuestEls = document.querySelectorAll("[data-total-quests]");
 const formNote = document.querySelector("[data-form-note]");
 const questList = document.querySelector("#questList");
 const questDetail = document.querySelector("#questDetail");
+const questShareActionsEl = document.querySelector("#questShareActions");
 const issuerProfileEl = document.querySelector("#issuerProfile");
 const latestQuestSlider = document.querySelector("#latestQuestSlider");
 const latestQuestPrev = document.querySelector("[data-latest-prev]");
@@ -1062,6 +1063,14 @@ function getXShareUrl(quest) {
     url: getAbsoluteQuestDetailUrl(quest.id),
   });
   return `https://twitter.com/intent/tweet?${params.toString()}`;
+}
+
+function getXLogoSvg() {
+  return `
+    <svg class="x-logo" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817-5.966 6.817H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z" />
+    </svg>
+  `;
 }
 
 async function copyTextToClipboard(text) {
@@ -2189,6 +2198,10 @@ function renderQuestDetail(quest) {
   if (!questDetail) return;
 
   if (!quest) {
+    if (questShareActionsEl) {
+      questShareActionsEl.hidden = true;
+      questShareActionsEl.innerHTML = "";
+    }
     questDetail.innerHTML = `
       <div class="empty-detail">
         <h2>クエストが見つかりません</h2>
@@ -2261,6 +2274,18 @@ function renderQuestDetail(quest) {
       `;
   const issuerProfileMarkup = renderIssuerProfile(quest.issuer);
 
+  if (questShareActionsEl) {
+    questShareActionsEl.hidden = false;
+    questShareActionsEl.innerHTML = `
+      <a class="btn btn-outline btn-sm quest-share-x" href="${escapeHtml(xShareUrl)}" target="_blank" rel="noopener" data-share-x aria-label="Xでシェア" title="Xでシェア">
+        ${getXLogoSvg()}
+      </a>
+      <button class="btn btn-outline btn-sm" type="button" data-copy-quest-url="${escapeHtml(shareUrl)}" aria-label="URLをコピー" title="URLをコピー">
+        <i data-lucide="copy"></i>
+      </button>
+    `;
+  }
+
   questDetail.innerHTML = `
     <div class="quest-detail-head">
       <div class="quest-card-labels">
@@ -2271,14 +2296,6 @@ function renderQuestDetail(quest) {
       <strong class="gold detail-gold">${quest.reward}G</strong>
     </div>
     <h2>${escapeHtml(quest.title)}</h2>
-    <div class="quest-share-actions" aria-label="クエストを共有">
-      <a class="btn btn-outline btn-sm quest-share-x" href="${escapeHtml(xShareUrl)}" target="_blank" rel="noopener" data-share-x aria-label="Xでシェア" title="Xでシェア">
-        <i data-lucide="share-2"></i>
-      </a>
-      <button class="btn btn-outline btn-sm" type="button" data-copy-quest-url="${escapeHtml(shareUrl)}" aria-label="URLをコピー" title="URLをコピー">
-        <i data-lucide="copy"></i>
-      </button>
-    </div>
     <p class="quest-detail-desc">${escapeHtml(quest.description)}</p>
     <div class="quest-tags">${createQuestTagChips(quest.tags || [])}</div>
     <div class="quest-progress detail-progress" aria-label="${getQuestStatusText(quest)}">
@@ -2317,7 +2334,7 @@ function renderQuestDetail(quest) {
     issuerProfileEl.innerHTML = issuerProfileMarkup;
   }
 
-  questDetail.querySelector("[data-copy-quest-url]")?.addEventListener("click", async (event) => {
+  questShareActionsEl?.querySelector("[data-copy-quest-url]")?.addEventListener("click", async (event) => {
     const button = event.currentTarget;
     const url = button.dataset.copyQuestUrl || shareUrl;
     try {
@@ -2338,12 +2355,14 @@ function renderQuestDetail(quest) {
     }
   });
 
-  questDetail.querySelector("[data-share-x]")?.addEventListener("click", () => {
+  questShareActionsEl?.querySelector("[data-share-x]")?.addEventListener("click", () => {
     trackAnalytics("quest_share_x", {
       quest_id: String(quest.id),
       category: quest.category,
     });
   });
+
+  if (window.lucide) lucide.createIcons();
 
   questDetail.querySelector("[data-apply]")?.addEventListener("click", async () => {
     if (isQuestClosed(quest)) return;

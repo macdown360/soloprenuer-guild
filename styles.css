@@ -676,18 +676,31 @@ h3 {
   line-height: 1.35;
 }
 
-.quest-share-actions {
+.quest-detail-share-actions {
+  position: absolute;
+  top: 0;
+  right: 0;
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
 
-.quest-share-actions .btn {
+.quest-detail-share-actions[hidden] {
+  display: none;
+}
+
+.quest-detail-share-actions .btn {
   width: 38px;
   min-width: 38px;
   min-height: 38px;
   padding: 0;
   border-radius: 8px;
+}
+
+.quest-detail-share-actions .x-logo {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
 }
 
 .quest-share-x {
@@ -1750,10 +1763,12 @@ h3 {
 
 .quest-detail-container {
   width: min(1120px, 92vw);
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
   gap: 1.4rem;
   align-items: start;
+  padding-top: 48px;
 }
 
 .quest-detail-full {
