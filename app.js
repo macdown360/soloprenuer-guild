@@ -223,6 +223,7 @@ const supabaseClient =
 
 const remote = {
   enabled: Boolean(supabaseClient),
+  initialized: false,
   user: null,
   profile: null,
   issuerSubmissions: [],
@@ -548,7 +549,8 @@ async function resendSignupConfirmation(email) {
 
 function syncAuthVisibility() {
   const isSignedIn = Boolean(remote.user);
-  const canUseAuthRequiredSections = canUseLocalDemoData() || isSignedIn;
+  const hasResolvedRemoteState = !remote.enabled || remote.initialized;
+  const canUseAuthRequiredSections = canUseLocalDemoData() || (hasResolvedRemoteState && isSignedIn);
   const isLoginPage = document.body.classList.contains("login-page");
   authRequiredEls.forEach((el) => {
     el.hidden = !canUseAuthRequiredSections;
@@ -689,6 +691,7 @@ async function loadRemoteState() {
     remote.pendingSubmissions = [];
     remote.participantSubmissions = [];
     remote.submissionMessages = {};
+    remote.initialized = true;
     setAuthNote("クエストは閲覧できます。発行・応募・承認にはログインしてください。");
     syncAuthVisibility();
     return;
@@ -805,7 +808,7 @@ async function loadRemoteState() {
       });
     });
   }
-  syncAuthVisibility();
+  remote.initialized = true;
 }
 
 async function refreshRemoteState() {
@@ -815,6 +818,7 @@ async function refreshRemoteState() {
   syncStats();
   renderQuestList();
   renderQuestDetailPage();
+  syncAuthVisibility();
   syncSubmissionMessageRealtime();
 }
 
@@ -3220,6 +3224,7 @@ signoutBtn?.addEventListener("click", async () => {
   remote.pendingSubmissions = [];
   remote.participantSubmissions = [];
   remote.submissionMessages = {};
+  remote.initialized = false;
   setAuthStatus("未ログイン");
   setAuthNote("ログアウトしました。");
   await refreshRemoteState();
