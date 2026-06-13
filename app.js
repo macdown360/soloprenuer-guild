@@ -515,8 +515,8 @@ function getAuthErrorMessage(error, fallback) {
   const message = error?.message || "";
   if (/invalid login credentials/i.test(message)) return "メールアドレスまたはパスワードが正しくありません。";
   if (/password should be at least|weak password|password/i.test(message)) return "パスワードは8文字以上で入力してください。";
-  if (/invalid email|email/i.test(message)) return "メールアドレスの形式を確認してください。";
   if (/rate limit|too many requests/i.test(message)) return "アクセスが集中しています。少し時間をおいて再度お試しください。";
+  if (/invalid email|email address.*invalid|unable to validate email/i.test(message)) return "メールアドレスの形式を確認してください。";
   return fallback;
 }
 
