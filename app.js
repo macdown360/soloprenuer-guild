@@ -398,9 +398,8 @@ function setPasswordUpdateNote(message) {
 }
 
 function syncPasswordRecoveryUI() {
-  if (!passwordRecoveryForm || !passwordUpdateForm) return;
-  passwordRecoveryForm.hidden = state.isPasswordRecovery;
-  passwordUpdateForm.hidden = !state.isPasswordRecovery;
+  if (passwordRecoveryForm) passwordRecoveryForm.hidden = state.isPasswordRecovery;
+  if (passwordUpdateForm) passwordUpdateForm.hidden = !state.isPasswordRecovery;
   if (state.isPasswordRecovery) {
     setAuthNote("新しいパスワードを入力してください。");
     setPasswordUpdateNote("新しいパスワードを入力してください。");
@@ -3109,7 +3108,7 @@ passwordRecoveryForm?.addEventListener("submit", async (event) => {
 
   const data = new FormData(passwordRecoveryForm);
   const email = data.get("email");
-  const redirectTo = `${window.location.origin}${window.location.pathname}`;
+  const redirectTo = `${window.location.origin}${window.location.pathname.replace(/[^/]*$/, "reset-password.html")}`;
   setPasswordRecoveryNote("再設定メールを送信しています。");
   if (submitButton) submitButton.disabled = true;
 
