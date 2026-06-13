@@ -13,7 +13,7 @@ create table if not exists public.profiles (
   interests text[] not null default '{}',
   sns_url text default '',
   website_url text default '',
-  gold integer not null default 100 check (gold >= 0),
+  gold integer not null default 50 check (gold >= 0),
   trust integer not null default 0 check (trust >= 0),
   completed_quests integer not null default 0 check (completed_quests >= 0),
   issued_quests integer not null default 0 check (issued_quests >= 0),
@@ -131,13 +131,13 @@ begin
       when coalesce(new.raw_user_meta_data->>'skills', '') = '' then '{}'
       else string_to_array(new.raw_user_meta_data->>'skills', ',')
     end,
-    100,
+    50,
     0
   )
   on conflict (id) do nothing;
 
   insert into public.gold_ledger (profile_id, amount, reason)
-  values (new.id, 100, 'signup_bonus')
+  values (new.id, 50, 'signup_bonus')
   on conflict do nothing;
 
   return new;
