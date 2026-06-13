@@ -1,4 +1,5 @@
 const state = {
+  isPasswordRecovery: /type=recovery/i.test(window.location.hash) || /type=recovery/i.test(window.location.search),
   account: {
     name: "アキラ",
     initials: "A",
@@ -325,6 +326,8 @@ const matchSignalsEl = document.querySelector("[data-match-signals]");
 const categoryMatrixEl = document.querySelector("[data-category-matrix]");
 const registerForm = document.querySelector("#registerForm");
 const authForm = document.querySelector("#authForm");
+const passwordRecoveryForm = document.querySelector("#passwordRecoveryForm");
+const passwordUpdateForm = document.querySelector("#passwordUpdateForm");
 const profileForm = document.querySelector("#profileForm");
 const profileNoteEl = document.querySelector("[data-profile-note]");
 const authNoteEls = document.querySelectorAll("[data-auth-note]");
@@ -382,6 +385,15 @@ function setAuthNote(message) {
 
 function setAuthStatus(label) {
   if (authStatusEl) authStatusEl.textContent = label;
+}
+
+function syncPasswordRecoveryUI() {
+  if (!passwordRecoveryForm || !passwordUpdateForm) return;
+  passwordRecoveryForm.hidden = state.isPasswordRecovery;
+  passwordUpdateForm.hidden = !state.isPasswordRecovery;
+  if (state.isPasswordRecovery) {
+    setAuthNote("新しいパスワードを入力してください。");
+  }
 }
 
 function isEmailNotConfirmedError(error) {
@@ -633,7 +645,7 @@ async function loadRemoteState() {
     return;
   }
 
-  if (remote.user && document.body.classList.contains("login-page")) {
+  if (remote.user && document.body.classList.contains("login-page") && !state.isPasswordRecovery) {
     window.location.href = "mypage.html";
     return;
   }
@@ -3072,6 +3084,59 @@ authForm?.addEventListener("submit", async (event) => {
   await refreshRemoteState();
 });
 
+passwordRecoveryForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  if (!remote.enabled) {
+    trackAnalytics("password_reset_error", { reason: "supabase_not_configured" });
+    setAuthNote("Supabaseが未設定です。管理者に環境変数の設定を確認してください。");
+    return;
+  }
+
+  const data = new FormData(passwordRecoveryForm);
+  const email = data.get("email");
+  const redirectTo = `${window.location.origin}${window.location.pathname}`;
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+    redirectTo,
+  });
+
+  if (error) {
+    trackAnalytics("password_reset_error", { reason: "auth_error" });
+    setAuthNote(getAuthErrorMessage(error, "再設定メールを送信できませんでした。"));
+    return;
+  }
+
+  trackAnalytics("password_reset_request", { method: "email" });
+  setAuthNote("パスワード再設定メールを送信しました。メール内のリンクから手続きを進めてください。");
+});
+
+passwordUpdateForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  if (!remote.enabled) {
+    trackAnalytics("password_update_error", { reason: "supabase_not_configured" });
+    setAuthNote("Supabaseが未設定です。管理者に環境変数の設定を確認してください。");
+    return;
+  }
+
+  const data = new FormData(passwordUpdateForm);
+  const { error } = await supabaseClient.auth.updateUser({
+    password: data.get("password"),
+  });
+
+  if (error) {
+    trackAnalytics("password_update_error", { reason: "auth_error" });
+    setAuthNote(getAuthErrorMessage(error, "パスワードを更新できませんでした。"));
+    return;
+  }
+
+  trackAnalytics("password_update_success", { method: "email" });
+  state.isPasswordRecovery = false;
+  syncPasswordRecoveryUI();
+  setAuthNote("パスワードを更新しました。マイページへ移動します。");
+  window.location.href = "mypage.html";
+});
+
 profileForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const data = new FormData(profileForm);
@@ -3140,6 +3205,8 @@ latestQuestPrev?.addEventListener("click", () => scrollLatestQuests(-1));
 latestQuestNext?.addEventListener("click", () => scrollLatestQuests(1));
 
 async function initApp() {
+  syncPasswordRecoveryUI();
+
   syncAuthVisibility();
 
   if (!remote.enabled) {
@@ -3184,5 +3251,12 @@ async function initApp() {
     setAuthNote(getDataLoadErrorMessage(error));
   }
 }
+
+supabaseClient?.auth?.onAuthStateChange((event) => {
+  if (event !== "PASSWORD_RECOVERY") return;
+  state.isPasswordRecovery = true;
+  syncPasswordRecoveryUI();
+  setAuthStatus("再設定中");
+});
 
 initApp();
