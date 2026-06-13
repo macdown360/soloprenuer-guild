@@ -235,6 +235,8 @@ const remote = {
 };
 
 const SELF_SUBMISSION_MESSAGE = "自分の発行したクエストには応募できません";
+const QUEST_REWARD_OPTIONS = [10, 20, 30, 40, 50];
+const QUEST_CAPACITY_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 function canUseLocalDemoData() {
   if (remote.enabled) return false;
@@ -902,6 +904,16 @@ function normalizeList(values) {
 
 function unique(values) {
   return [...new Set(normalizeList(values))];
+}
+
+function getQuestRewardFormValue(reward) {
+  const numericReward = Number(reward);
+  return QUEST_REWARD_OPTIONS.includes(numericReward) ? numericReward : QUEST_REWARD_OPTIONS[0];
+}
+
+function getQuestCapacityFormValue(capacity) {
+  const numericCapacity = Number(capacity);
+  return QUEST_CAPACITY_OPTIONS.includes(numericCapacity) ? numericCapacity : QUEST_CAPACITY_OPTIONS[0];
 }
 
 function overlap(left, right) {
@@ -1600,8 +1612,8 @@ function populateQuestForm(quest) {
   questForm.elements.description.value = quest.description || "";
   questForm.elements.url.value = quest.url || "";
   questForm.elements.type.value = quest.type || "report";
-  questForm.elements.capacity.value = getQuestCapacity(quest);
-  questForm.elements.reward.value = String(quest.reward || 5);
+  questForm.elements.capacity.value = String(getQuestCapacityFormValue(quest.capacity));
+  questForm.elements.reward.value = String(getQuestRewardFormValue(quest.reward));
   questForm.elements.category.value = quest.category || "フィードバックが欲しい";
   questForm.elements.tags.value = normalizeList(quest.tags).join(", ");
   questForm.elements.deadline_days.value = getDeadlineDaysValue(quest.deadline);
@@ -2580,13 +2592,13 @@ questForm?.addEventListener("submit", async (event) => {
         }
       : null;
 
-  if (!Number.isInteger(reward) || reward < 5 || reward > 50 || reward % 5 !== 0) {
-    formNote.textContent = "報酬Goldは5G単位で5Gから50Gまでを選んでください。";
+  if (!QUEST_REWARD_OPTIONS.includes(reward)) {
+    formNote.textContent = "報酬Goldは10G、20G、30G、40G、50Gから選んでください。";
     return;
   }
 
-  if (!Number.isInteger(capacity) || capacity < 1 || capacity > 50) {
-    formNote.textContent = "募集人数は1名から50名までで入力してください。";
+  if (!QUEST_CAPACITY_OPTIONS.includes(capacity)) {
+    formNote.textContent = "募集人数は1名から10名までで選んでください。";
     return;
   }
 
