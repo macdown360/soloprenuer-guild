@@ -328,6 +328,8 @@ const registerForm = document.querySelector("#registerForm");
 const authForm = document.querySelector("#authForm");
 const passwordRecoveryForm = document.querySelector("#passwordRecoveryForm");
 const passwordUpdateForm = document.querySelector("#passwordUpdateForm");
+const passwordRecoveryNoteEl = document.querySelector("[data-password-recovery-note]");
+const passwordUpdateNoteEl = document.querySelector("[data-password-update-note]");
 const profileForm = document.querySelector("#profileForm");
 const profileNoteEl = document.querySelector("[data-profile-note]");
 const authNoteEls = document.querySelectorAll("[data-auth-note]");
@@ -387,12 +389,21 @@ function setAuthStatus(label) {
   if (authStatusEl) authStatusEl.textContent = label;
 }
 
+function setPasswordRecoveryNote(message) {
+  if (passwordRecoveryNoteEl) passwordRecoveryNoteEl.textContent = message;
+}
+
+function setPasswordUpdateNote(message) {
+  if (passwordUpdateNoteEl) passwordUpdateNoteEl.textContent = message;
+}
+
 function syncPasswordRecoveryUI() {
   if (!passwordRecoveryForm || !passwordUpdateForm) return;
   passwordRecoveryForm.hidden = state.isPasswordRecovery;
   passwordUpdateForm.hidden = !state.isPasswordRecovery;
   if (state.isPasswordRecovery) {
     setAuthNote("新しいパスワードを入力してください。");
+    setPasswordUpdateNote("新しいパスワードを入力してください。");
   }
 }
 
@@ -3086,47 +3097,69 @@ authForm?.addEventListener("submit", async (event) => {
 
 passwordRecoveryForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
+  const submitButton = passwordRecoveryForm.querySelector("button[type='submit']");
 
   if (!remote.enabled) {
     trackAnalytics("password_reset_error", { reason: "supabase_not_configured" });
-    setAuthNote("Supabaseが未設定です。管理者に環境変数の設定を確認してください。");
+    const message = "Supabaseが未設定です。管理者に環境変数の設定を確認してください。";
+    setAuthNote(message);
+    setPasswordRecoveryNote(message);
     return;
   }
 
   const data = new FormData(passwordRecoveryForm);
   const email = data.get("email");
   const redirectTo = `${window.location.origin}${window.location.pathname}`;
+  setPasswordRecoveryNote("再設定メールを送信しています。");
+  if (submitButton) submitButton.disabled = true;
+
   const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
     redirectTo,
   });
 
+  if (submitButton) submitButton.disabled = false;
+
   if (error) {
     trackAnalytics("password_reset_error", { reason: "auth_error" });
-    setAuthNote(getAuthErrorMessage(error, "再設定メールを送信できませんでした。"));
+    const message = getAuthErrorMessage(error, "再設定メールを送信できませんでした。");
+    setAuthNote(message);
+    setPasswordRecoveryNote(message);
     return;
   }
 
   trackAnalytics("password_reset_request", { method: "email" });
-  setAuthNote("パスワード再設定メールを送信しました。メール内のリンクから手続きを進めてください。");
+  const message = "パスワード再設定メールを送信しました。メール内のリンクから手続きを進めてください。";
+  setAuthNote(message);
+  setPasswordRecoveryNote(message);
 });
 
 passwordUpdateForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
+  const submitButton = passwordUpdateForm.querySelector("button[type='submit']");
 
   if (!remote.enabled) {
     trackAnalytics("password_update_error", { reason: "supabase_not_configured" });
-    setAuthNote("Supabaseが未設定です。管理者に環境変数の設定を確認してください。");
+    const message = "Supabaseが未設定です。管理者に環境変数の設定を確認してください。";
+    setAuthNote(message);
+    setPasswordUpdateNote(message);
     return;
   }
 
   const data = new FormData(passwordUpdateForm);
+  setPasswordUpdateNote("パスワードを更新しています。");
+  if (submitButton) submitButton.disabled = true;
+
   const { error } = await supabaseClient.auth.updateUser({
     password: data.get("password"),
   });
 
+  if (submitButton) submitButton.disabled = false;
+
   if (error) {
     trackAnalytics("password_update_error", { reason: "auth_error" });
-    setAuthNote(getAuthErrorMessage(error, "パスワードを更新できませんでした。"));
+    const message = getAuthErrorMessage(error, "パスワードを更新できませんでした。");
+    setAuthNote(message);
+    setPasswordUpdateNote(message);
     return;
   }
 
