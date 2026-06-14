@@ -237,6 +237,14 @@ const remote = {
 const SELF_SUBMISSION_MESSAGE = "自分の発行したクエストには応募できません";
 const QUEST_REWARD_OPTIONS = [10, 20, 30, 40, 50];
 const QUEST_CAPACITY_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const LOGIN_GENERIC_ERROR_MESSAGE = "メールアドレスまたはパスワードが正しくありません。";
+const LOGIN_RATE_LIMIT_KEY = "sg_login_rate_limit_v1";
+const LOGIN_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+const LOGIN_RATE_LIMIT_STEPS = [
+  { attempts: 5, lockMs: 2 * 60 * 1000 },
+  { attempts: 8, lockMs: 10 * 60 * 1000 },
+  { attempts: 12, lockMs: 60 * 60 * 1000 },
+];
 
 function canUseLocalDemoData() {
   if (remote.enabled) return false;
@@ -444,6 +452,79 @@ function trackAnalytics(eventName, params = {}) {
   window.gtag("event", eventName, params);
 }
 
+function trackSecurityEvent(eventName, params = {}) {
+  const payload = {
+    page: window.location.pathname,
+    ...params,
+  };
+  trackAnalytics(eventName, payload);
+  console.warn(`[security] ${eventName}`, payload);
+}
+
+function readLoginRateLimitState() {
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(LOGIN_RATE_LIMIT_KEY) || "{}");
+    const now = Date.now();
+    const failures = Array.isArray(parsed.failures)
+      ? parsed.failures.filter((timestamp) => Number(timestamp) > now - LOGIN_RATE_LIMIT_WINDOW_MS)
+      : [];
+    const lockedUntil = Number(parsed.lockedUntil) || 0;
+    return {
+      failures,
+      lockedUntil: lockedUntil > now ? lockedUntil : 0,
+    };
+  } catch (error) {
+    return { failures: [], lockedUntil: 0 };
+  }
+}
+
+function writeLoginRateLimitState(rateLimitState) {
+  try {
+    window.localStorage.setItem(LOGIN_RATE_LIMIT_KEY, JSON.stringify(rateLimitState));
+  } catch (error) {
+    trackSecurityEvent("login_rate_limit_storage_error", { reason: "local_storage_unavailable" });
+  }
+}
+
+function clearLoginRateLimitState() {
+  try {
+    window.localStorage.removeItem(LOGIN_RATE_LIMIT_KEY);
+  } catch (error) {
+    writeLoginRateLimitState({ failures: [], lockedUntil: 0 });
+  }
+}
+
+function getLoginRateLimitBlock() {
+  const rateLimitState = readLoginRateLimitState();
+  const remainingMs = rateLimitState.lockedUntil - Date.now();
+  if (remainingMs <= 0) return null;
+  return {
+    remainingMs,
+    failures: rateLimitState.failures.length,
+  };
+}
+
+function getLoginRateLimitMessage(remainingMs) {
+  const minutes = Math.max(1, Math.ceil(remainingMs / 60000));
+  return `ログイン試行が多すぎます。約${minutes}分後に再度お試しください。`;
+}
+
+function recordLoginFailure(reason) {
+  const now = Date.now();
+  const rateLimitState = readLoginRateLimitState();
+  const failures = [...rateLimitState.failures, now].filter((timestamp) => timestamp > now - LOGIN_RATE_LIMIT_WINDOW_MS);
+  const matchedStep = LOGIN_RATE_LIMIT_STEPS.reduce((match, step) => (failures.length >= step.attempts ? step : match), null);
+  const lockedUntil = matchedStep ? Math.max(rateLimitState.lockedUntil, now + matchedStep.lockMs) : rateLimitState.lockedUntil;
+  const nextState = { failures, lockedUntil };
+  writeLoginRateLimitState(nextState);
+  trackSecurityEvent("login_failure_observed", {
+    reason,
+    failure_count: failures.length,
+    locked: lockedUntil > now,
+  });
+  return nextState;
+}
+
 function isDuplicateSubmissionError(error) {
   const message = error?.message || "";
   const code = error?.code || "";
@@ -516,7 +597,7 @@ function getSubmissionMessageErrorMessage(error) {
 
 function getAuthErrorMessage(error, fallback) {
   const message = error?.message || "";
-  if (/invalid login credentials/i.test(message)) return "メールアドレスまたはパスワードが正しくありません。";
+  if (/invalid login credentials|email not confirmed/i.test(message)) return LOGIN_GENERIC_ERROR_MESSAGE;
   if (/password should be at least|weak password|password/i.test(message)) return "パスワードは8文字以上で入力してください。";
   if (/rate limit|too many requests/i.test(message)) return "アクセスが集中しています。少し時間をおいて再度お試しください。";
   if (/invalid email|email address.*invalid|unable to validate email/i.test(message)) return "メールアドレスの形式を確認してください。";
@@ -538,15 +619,6 @@ function getDataLoadErrorMessage(error) {
   }
   if (/permission|row-level security|not authorized|unauthorized/i.test(message)) return "データを読み込む権限がありません。ログイン状態を確認してください。";
   return "Supabaseからデータを読み込めませんでした。時間をおいて再度お試しください。";
-}
-
-async function resendSignupConfirmation(email) {
-  if (!remote.enabled || !email) return false;
-  const { error } = await supabaseClient.auth.resend({
-    type: "signup",
-    email,
-  });
-  return !error;
 }
 
 function syncAuthVisibility() {
@@ -3070,6 +3142,16 @@ registerForm?.addEventListener("submit", async (event) => {
 
 authForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
+  const rateLimitBlock = getLoginRateLimitBlock();
+  if (rateLimitBlock) {
+    trackSecurityEvent("login_rate_limited", {
+      failure_count: rateLimitBlock.failures,
+      remaining_seconds: Math.ceil(rateLimitBlock.remainingMs / 1000),
+    });
+    setAuthNote(getLoginRateLimitMessage(rateLimitBlock.remainingMs));
+    return;
+  }
+
   if (!remote.enabled) {
     if (canUseLocalDemoData()) {
       trackAnalytics("login_demo_redirect", { source: "login_form" });
@@ -3090,21 +3172,19 @@ authForm?.addEventListener("submit", async (event) => {
   });
 
   if (error) {
-    if (isEmailNotConfirmedError(error)) {
-      const resent = await resendSignupConfirmation(email);
-      trackAnalytics("login_error", { reason: "email_not_confirmed" });
-      setAuthNote(
-        resent
-          ? "メール認証が未完了です。確認メールを再送しました。メール内のリンクで認証してからログインしてください。"
-          : "メール認証が未完了です。登録時の確認メールを開いて認証してからログインしてください。"
-      );
-      return;
-    }
-    trackAnalytics("login_error", { reason: "auth_error" });
-    setAuthNote(getAuthErrorMessage(error, "ログインできませんでした。"));
+    const reason = isEmailNotConfirmedError(error) ? "email_not_confirmed" : "auth_error";
+    const nextRateLimitState = recordLoginFailure(reason);
+    trackAnalytics("login_error", { reason });
+    setAuthNote(
+      nextRateLimitState.lockedUntil > Date.now()
+        ? getLoginRateLimitMessage(nextRateLimitState.lockedUntil - Date.now())
+        : getAuthErrorMessage(error, LOGIN_GENERIC_ERROR_MESSAGE)
+    );
     return;
   }
 
+  clearLoginRateLimitState();
+  trackSecurityEvent("login_success_observed", { method: "password" });
   trackAnalytics("login_success", { method: "password" });
   setAuthNote("ログインしました。アカウント情報を読み込んでいます。");
   await refreshRemoteState();
