@@ -28,6 +28,7 @@
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <link rel="stylesheet" href="styles.css" />
     <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   </head>
   <body class="dashboard-page login-page">
     <header class="site-header">
@@ -74,6 +75,7 @@
                 パスワード
                 <input name="password" type="password" placeholder="8文字以上" autocomplete="current-password" required />
               </label>
+              <div class="cf-turnstile" data-sitekey="0x4AAAAAADkbJYlEPfuFtYkP"></div>
               <div class="auth-actions">
                 <button class="btn btn-primary" type="submit" data-auth-action="signin"><i data-lucide="log-in"></i>ログイン</button>
               </div>
@@ -102,6 +104,7 @@
                 パスワード
                 <input name="password" type="password" placeholder="8文字以上" autocomplete="new-password" required minlength="8" />
               </label>
+              <div class="cf-turnstile" data-sitekey="0x4AAAAAADkbJYlEPfuFtYkP"></div>
               <div class="auth-actions">
                 <button class="btn btn-primary" type="submit"><i data-lucide="user-plus"></i>冒険者登録</button>
               </div>

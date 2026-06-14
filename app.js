@@ -237,6 +237,7 @@ const remote = {
 const SELF_SUBMISSION_MESSAGE = "自分の発行したクエストには応募できません";
 const QUEST_REWARD_OPTIONS = [10, 20, 30, 40, 50];
 const QUEST_CAPACITY_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const TURNSTILE_REQUIRED_MESSAGE = "認証チェックを完了してから送信してください。";
 const LOGIN_GENERIC_ERROR_MESSAGE = "メールアドレスまたはパスワードが正しくありません。";
 const LOGIN_RATE_LIMIT_KEY = "sg_login_rate_limit_v1";
 const LOGIN_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
@@ -406,6 +407,32 @@ function setPasswordRecoveryNote(message) {
 
 function setPasswordUpdateNote(message) {
   if (passwordUpdateNoteEl) passwordUpdateNoteEl.textContent = message;
+}
+
+function getTurnstileToken(form) {
+  if (!form?.querySelector(".cf-turnstile")) return "";
+  return String(new FormData(form).get("cf-turnstile-response") || "");
+}
+
+function hasTurnstileWidget(form) {
+  return Boolean(form?.querySelector(".cf-turnstile"));
+}
+
+function resetTurnstile() {
+  if (window.turnstile && typeof window.turnstile.reset === "function") {
+    window.turnstile.reset();
+  }
+}
+
+function requireTurnstileToken(form, setMessage) {
+  if (!hasTurnstileWidget(form)) return "";
+  const captchaToken = getTurnstileToken(form);
+  if (captchaToken) return captchaToken;
+  setMessage(TURNSTILE_REQUIRED_MESSAGE);
+  trackSecurityEvent("turnstile_missing_token", {
+    form: form?.id || "unknown",
+  });
+  return null;
 }
 
 function syncPasswordRecoveryUI() {
@@ -599,6 +626,7 @@ function getAuthErrorMessage(error, fallback) {
   const message = error?.message || "";
   if (/invalid login credentials|email not confirmed/i.test(message)) return LOGIN_GENERIC_ERROR_MESSAGE;
   if (/password should be at least|weak password|password/i.test(message)) return "パスワードは8文字以上で入力してください。";
+  if (/captcha|turnstile|challenge/i.test(message)) return "認証チェックを完了してから再度お試しください。";
   if (/rate limit|too many requests/i.test(message)) return "アクセスが集中しています。少し時間をおいて再度お試しください。";
   if (/invalid email|email address.*invalid|unable to validate email/i.test(message)) return "メールアドレスの形式を確認してください。";
   return fallback;
@@ -3096,6 +3124,8 @@ registerForm?.addEventListener("submit", async (event) => {
   const data = new FormData(registerForm);
   const email = data.get("email");
   const password = data.get("password");
+  const captchaToken = requireTurnstileToken(registerForm, setAuthNote);
+  if (captchaToken === null) return;
   const job = String(data.get("job") || "").trim();
   const metadata = {
     adventurer_name: data.get("name"),
@@ -3103,12 +3133,15 @@ registerForm?.addEventListener("submit", async (event) => {
     skills: String(data.get("skills") || "").trim(),
     headline: job || "ソロプレナー",
   };
+  const signUpOptions = { data: metadata };
+  if (captchaToken) signUpOptions.captchaToken = captchaToken;
 
   const { data: signUpData, error } = await supabaseClient.auth.signUp({
     email,
     password,
-    options: { data: metadata },
+    options: signUpOptions,
   });
+  resetTurnstile();
 
   if (error) {
     if (isAlreadyRegisteredError(error)) {
@@ -3166,10 +3199,15 @@ authForm?.addEventListener("submit", async (event) => {
 
   const data = new FormData(authForm);
   const email = data.get("email");
-  const { error } = await supabaseClient.auth.signInWithPassword({
+  const captchaToken = requireTurnstileToken(authForm, setAuthNote);
+  if (captchaToken === null) return;
+  const signInCredentials = {
     email,
     password: data.get("password"),
-  });
+  };
+  if (captchaToken) signInCredentials.options = { captchaToken };
+  const { error } = await supabaseClient.auth.signInWithPassword(signInCredentials);
+  resetTurnstile();
 
   if (error) {
     const reason = isEmailNotConfirmedError(error) ? "email_not_confirmed" : "auth_error";
@@ -3205,12 +3243,18 @@ passwordRecoveryForm?.addEventListener("submit", async (event) => {
   const data = new FormData(passwordRecoveryForm);
   const email = data.get("email");
   const redirectTo = `${window.location.origin}${window.location.pathname.replace(/[^/]*$/, "reset-password.html")}`;
+  const captchaToken = requireTurnstileToken(passwordRecoveryForm, (message) => {
+    setAuthNote(message);
+    setPasswordRecoveryNote(message);
+  });
+  if (captchaToken === null) return;
   setPasswordRecoveryNote("再設定メールを送信しています。");
   if (submitButton) submitButton.disabled = true;
 
-  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-    redirectTo,
-  });
+  const resetOptions = { redirectTo };
+  if (captchaToken) resetOptions.captchaToken = captchaToken;
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, resetOptions);
+  resetTurnstile();
 
   if (submitButton) submitButton.disabled = false;
 
