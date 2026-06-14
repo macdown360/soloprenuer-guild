@@ -1330,6 +1330,29 @@ h3 {
   font-size: 0.9rem;
 }
 
+.policy-action {
+  margin: 1rem 0 0;
+}
+
+.policy-article a:not(.btn) {
+  color: #795a1d;
+  font-weight: 900;
+  text-underline-offset: 3px;
+}
+
+.contact-summary {
+  position: sticky;
+  top: 96px;
+}
+
+.contact-form {
+  padding: 1.5rem;
+}
+
+.contact-form .form-actions {
+  justify-content: flex-start;
+}
+
 .site-footer {
   color: rgba(238, 242, 246, 0.78);
   background: var(--navy);
@@ -3864,6 +3887,10 @@ h3 {
   .mission-reward-tag {
     white-space: normal;
     overflow-wrap: anywhere;
+  }
+
+  .contact-summary {
+    position: static;
   }
 
   .footer-links {
