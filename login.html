@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ログイン・冒険者登録 | ソロプレナー・ギルド</title>
+    <title>ログイン | ソロプレナー・ギルド</title>
     <meta
       name="description"
-      content="ソロプレナー・ギルドのログイン、冒険者登録ページ。Supabase認証でアカウントを管理します。"
+      content="ソロプレナー・ギルドのログインページ。冒険者未登録の場合はトップページの冒険者登録から参加できます。"
     />
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VPP3GTGQNR"></script>
@@ -91,24 +91,14 @@
               </div>
               <i data-lucide="user-plus" aria-hidden="true"></i>
             </div>
-            <form class="guild-form auth-form" id="registerForm">
-              <label>
-                冒険者名
-                <input name="name" type="text" placeholder="ギルドで使う名前" autocomplete="nickname" required />
-              </label>
-              <label>
-                メールアドレス
-                <input name="email" type="email" placeholder="you@example.com" autocomplete="email" required />
-              </label>
-              <label>
-                パスワード
-                <input name="password" type="password" placeholder="8文字以上" autocomplete="new-password" required minlength="8" />
-              </label>
-              <div class="cf-turnstile" data-sitekey="0x4AAAAAADkbJYlEPfuFtYkP"></div>
+            <div class="auth-form">
+              <p class="section-copy">
+                冒険者未登録の場合は、トップページ一番下の冒険者登録から参加してください。
+              </p>
               <div class="auth-actions">
-                <button class="btn btn-primary" type="submit"><i data-lucide="user-plus"></i>冒険者登録</button>
+                <a class="btn btn-primary" href="index.html#register"><i data-lucide="user-plus"></i>冒険者登録へ</a>
               </div>
-            </form>
+            </div>
           </article>
         </div>
       </section>
