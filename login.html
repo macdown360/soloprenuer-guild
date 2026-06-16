@@ -57,7 +57,7 @@
 
     <main class="dashboard-main">
       <section class="section auth-section login-section" data-login-panel>
-        <div class="container auth-grid login-grid">
+        <div class="container auth-grid login-grid auth-single-grid">
           <article class="workspace-panel auth-card auth-card-login">
             <div class="panel-head">
               <div>
@@ -79,26 +79,12 @@
               <div class="auth-actions">
                 <button class="btn btn-primary" type="submit" data-auth-action="signin"><i data-lucide="log-in"></i>ログイン</button>
               </div>
-              <a class="auth-text-link" href="forgot-password.html">パスワードをお忘れの方</a>
+              <div class="auth-link-row">
+                <a class="auth-text-link" href="forgot-password.html">パスワードをお忘れの方</a>
+                <a class="auth-text-link" href="index.html#register">冒険者未登録の方</a>
+              </div>
               <p class="form-note" data-auth-note>メールアドレスとパスワードを入力してください。</p>
             </form>
-          </article>
-          <article class="workspace-panel auth-card">
-            <div class="panel-head">
-              <div>
-                <p class="eyebrow">SIGN UP</p>
-                <h2>冒険者登録</h2>
-              </div>
-              <i data-lucide="user-plus" aria-hidden="true"></i>
-            </div>
-            <div class="auth-form">
-              <p class="section-copy">
-                冒険者未登録の場合は、トップページ一番下の冒険者登録から参加してください。
-              </p>
-              <div class="auth-actions">
-                <a class="btn btn-primary" href="index.html#register"><i data-lucide="user-plus"></i>冒険者登録へ</a>
-              </div>
-            </div>
           </article>
         </div>
       </section>

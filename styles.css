@@ -1542,6 +1542,13 @@ h3 {
   text-decoration: none;
 }
 
+.auth-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+}
+
 .auth-text-link:hover {
   text-decoration: underline;
 }
