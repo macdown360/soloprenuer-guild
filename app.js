@@ -341,6 +341,7 @@ const authForm = document.querySelector("#authForm");
 const passwordRecoveryForm = document.querySelector("#passwordRecoveryForm");
 const passwordUpdateForm = document.querySelector("#passwordUpdateForm");
 const passwordRecoveryNoteEl = document.querySelector("[data-password-recovery-note]");
+const passwordRecoveryRegisterLink = document.querySelector("[data-password-recovery-register-link]");
 const passwordUpdateNoteEl = document.querySelector("[data-password-update-note]");
 const profileForm = document.querySelector("#profileForm");
 const profileNoteEl = document.querySelector("[data-profile-note]");
@@ -403,6 +404,10 @@ function setAuthStatus(label) {
 
 function setPasswordRecoveryNote(message) {
   if (passwordRecoveryNoteEl) passwordRecoveryNoteEl.textContent = message;
+}
+
+function setPasswordRecoveryRegisterLinkVisible(isVisible) {
+  if (passwordRecoveryRegisterLink) passwordRecoveryRegisterLink.hidden = !isVisible;
 }
 
 function setPasswordUpdateNote(message) {
@@ -630,6 +635,11 @@ function getAuthErrorMessage(error, fallback) {
   if (/rate limit|too many requests/i.test(message)) return "アクセスが集中しています。少し時間をおいて再度お試しください。";
   if (/invalid email|email address.*invalid|unable to validate email/i.test(message)) return "メールアドレスの形式を確認してください。";
   return fallback;
+}
+
+function isUnregisteredPasswordRecoveryError(error) {
+  const message = error?.message || "";
+  return /user.*not.*found|not.*registered|not.*exist|unable.*find.*user|email.*not.*found/i.test(message);
 }
 
 function getProfileSaveErrorMessage(error) {
@@ -3231,6 +3241,7 @@ authForm?.addEventListener("submit", async (event) => {
 passwordRecoveryForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const submitButton = passwordRecoveryForm.querySelector("button[type='submit']");
+  setPasswordRecoveryRegisterLinkVisible(false);
 
   if (!remote.enabled) {
     trackAnalytics("password_reset_error", { reason: "supabase_not_configured" });
@@ -3259,6 +3270,15 @@ passwordRecoveryForm?.addEventListener("submit", async (event) => {
   if (submitButton) submitButton.disabled = false;
 
   if (error) {
+    if (isUnregisteredPasswordRecoveryError(error)) {
+      trackAnalytics("password_reset_error", { reason: "email_not_registered" });
+      const message = "このメールアドレスは登録されていません。冒険者登録をお願いします。";
+      setAuthNote(message);
+      setPasswordRecoveryNote(message);
+      setPasswordRecoveryRegisterLinkVisible(true);
+      return;
+    }
+
     trackAnalytics("password_reset_error", { reason: "auth_error" });
     const message = getAuthErrorMessage(error, "再設定メールを送信できませんでした。");
     setAuthNote(message);
@@ -3270,6 +3290,7 @@ passwordRecoveryForm?.addEventListener("submit", async (event) => {
   const message = "パスワード再設定メールを送信しました。メール内のリンクから手続きを進めてください。";
   setAuthNote(message);
   setPasswordRecoveryNote(message);
+  setPasswordRecoveryRegisterLinkVisible(false);
 });
 
 passwordUpdateForm?.addEventListener("submit", async (event) => {
