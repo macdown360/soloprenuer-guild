@@ -656,7 +656,7 @@ function getDataLoadErrorMessage(error) {
     return "チャット用のSupabaseスキーマが未適用です。管理者に設定を確認してください。";
   }
   if (/permission|row-level security|not authorized|unauthorized/i.test(message)) return "データを読み込む権限がありません。ログイン状態を確認してください。";
-  return "Supabaseからデータを読み込めませんでした。時間をおいて再度お試しください。";
+  return "ログイン情報が確認できませんでした。";
 }
 
 function syncAuthVisibility() {
