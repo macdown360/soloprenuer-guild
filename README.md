@@ -97,6 +97,8 @@
    - 既存環境へチャット用テーブルを後付けするための補助SQL
 - `supabase/fix-update-quest-rpc.sql`
    - `update_quest` 関数シグネチャ不一致の修正用
+- `supabase/fix-signup-gold.sql`
+   - 既存環境で登録ボーナスが100Gになっている場合に、初期Goldを50Gへ補正するためのSQL
 
 ## 実装済み機能
 
